@@ -24,4 +24,21 @@ class Site(models.Model):
     credentials = models.ForeignKey(SiteCredentials, on_delete=models.CASCADE,
                                     help_text='Keystone login credentials for the site')
 
+
+class System(models.Model):
+    """
+    The System class models a physical/virtual system that can be accessed for further
+    information.
+    """
+    # Each variable below represents a database field in this model
+    name_text = models.CharField(max_length=32, default='System',
+                                 help_text='Human readable name for the system')
+    description = models.CharField(max_length=1024, blank=True, null=True)
+
+    # TODO Add system type
+    # TODO Add login/access credentiols
+    # TODO Add last contacted
+    # TODO
+    # TODO
+
 # TODO: Create more models here.
