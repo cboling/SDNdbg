@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
-
 from django.db import models
-from core.models.plcorebase import StrippedCharField
+
 
 class SiteCredentials(models.Model):
     """
@@ -12,6 +11,7 @@ class SiteCredentials(models.Model):
     password = models.CharField(max_length=255, default='password')
     tenant = models.CharField(max_length=255, default='admin')
     auth_url = models.CharField(max_length=255, default='http://localhost:5000/v2.0')
+
 
 class Site(models.Model):
     """
