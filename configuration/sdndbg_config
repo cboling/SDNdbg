@@ -1,0 +1,16 @@
+
+[db]
+name=sdndbg_db
+user=sdn
+password=debugger
+host=localhost
+port=5432
+
+[openstack]
+admin_user=admin
+admin_password=password
+admin_tenant=admin
+url=http://localhost:5000/v2.0/
+
+[collector]
+logfile=/var/log/sdndbg/collector.log
