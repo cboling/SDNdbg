@@ -32,6 +32,17 @@ activate_models()
     python manage.py makemigrations ${models}
 }
 
+##################################################
+# Seed superuser name in djano database
+#
+seed_superuser()
+{
+    username=admin
+    email=admin@example.com
+    pwd=password
+
+    echo "from django.contrib.auth.models import User; User.objects.create_superuser('${username}', '${email}', '${pwd}')" | python manage.py shell
+}
 
 ##################################################
 # Seed the database (or config)
