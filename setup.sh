@@ -29,7 +29,8 @@ activate_models()
 
     # Activate
 
-    python manage.py makemigrations ${models}
+    python manage.py makemigrations # ${models}
+    python manage.py migrate
 }
 
 ##################################################
