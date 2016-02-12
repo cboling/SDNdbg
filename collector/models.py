@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
-import datetime
 
 
 class StrippedCharField(models.CharField):
@@ -15,8 +14,6 @@ class StrippedCharField(models.CharField):
 
 
 class ModelBase(models.Model):
-    # default values for created and updated are only there to keep evolution
-    # from failing.
     created = models.DateTimeField(auto_now_add=True, default=timezone.now)
     updated = models.DateTimeField(auto_now=True, default=timezone.now)
     write_protect = models.BooleanField(default=False)
@@ -28,6 +25,14 @@ class ModelBase(models.Model):
         raise PermissionDenied("Delete denied: %s has its write_protect flag set" % self.__class__.__name__)
 
     def save(self, *args, **kwargs):
+        # If write-protected, only allow changes if the 'force' flag is true
+        force_save = kwargs.get('force', False)
+        if force_save:
+            del kwargs['force']
+
+        if self.write_protect and not force_save:
+            raise PermissionDenied("Save denied: %s has its write_protect flag set" % self.__class__.__name__)
+
         # TODO do we want to modify the 'updated' here?
         # TODO Will any items ever be read-only (after first commit)?
         super(ModelBase, self).save(*args, **kwargs)
