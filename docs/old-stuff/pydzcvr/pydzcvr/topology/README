@@ -1,0 +1,27 @@
+Network Topology
+================
+
+Topology will be described by a set of models that will have graph analogs so that we can
+represent the network elements and links as directed graphs. The terminology below was
+lifted from the ONOS Model Objects.
+
+* Device - A network infrastructure element, e.g. a , switch, router, access-point, or 
+           middle-box (including servers or VM Instances). Devices have a set of
+           interfaces/ports and a DeviceId. Devices are interior vertices of the network graph.
+           
+* Port - A network interface on a Device. A Port and DeviceId pair forms a ConnectPoint,
+         which represents an endpoint of a graph edge. 
+
+* Host - A network end-station, which has an IP address, MAC address, VLAN ID, and a
+         ConnectPoint. Hosts are exterior (leaf) vertices of the network graph.
+
+* Link - A directed link between two infrastructure Devices (ConnectPoints). Links are
+         interior edges of the network graph.
+
+* EdgeLink - A specialized Link connecting a Host to a Device. EdgeLinks are exterior
+             edges of the network graph.
+
+* Path - A list of one or more adjacent Links, including EdgeLinks. EdgeLinks, if
+         present in the path, can only be exterior links (beginning and end of the list).
+
+* Topology - A Snapshot of a traversable graph representing the network.
