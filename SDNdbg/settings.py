@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'collector.apps.OpenstackConfig',
     'collector.apps.CollectorConfig',
     'django.contrib.admin',
     'django.contrib.auth',
