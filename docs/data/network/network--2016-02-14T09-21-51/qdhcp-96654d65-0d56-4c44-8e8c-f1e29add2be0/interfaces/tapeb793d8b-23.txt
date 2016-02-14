@@ -1,0 +1,6 @@
+27: tapeb793d8b-23: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default 
+    link/ether fa:16:3e:b6:a7:7b brd ff:ff:ff:ff:ff:ff
+    inet 10.10.1.2/24 brd 10.10.1.255 scope global tapeb793d8b-23
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f816:3eff:feb6:a77b/64 scope link 
+       valid_lft forever preferred_lft forever

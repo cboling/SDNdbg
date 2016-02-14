@@ -1,0 +1,6 @@
+24: qg-2384886c-e6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default 
+    link/ether fa:16:3e:30:49:31 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.225/27 brd 192.168.1.255 scope global qg-2384886c-e6
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f816:3eff:fe30:4931/64 scope link 
+       valid_lft forever preferred_lft forever

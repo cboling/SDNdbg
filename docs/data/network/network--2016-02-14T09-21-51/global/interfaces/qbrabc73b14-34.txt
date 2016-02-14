@@ -1,0 +1,4 @@
+34: qbrabc73b14-34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether 1a:19:9e:b6:cb:3a brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::1cc3:eff:fe90:d6e9/64 scope link 
+       valid_lft forever preferred_lft forever

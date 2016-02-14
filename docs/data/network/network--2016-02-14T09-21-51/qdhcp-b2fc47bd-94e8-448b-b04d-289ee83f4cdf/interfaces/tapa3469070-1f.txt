@@ -1,0 +1,6 @@
+25: tapa3469070-1f: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default 
+    link/ether fa:16:3e:ec:3e:61 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.120.2/24 brd 192.168.120.255 scope global tapa3469070-1f
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f816:3eff:feec:3e61/64 scope link 
+       valid_lft forever preferred_lft forever

@@ -1,0 +1,6 @@
+23: qr-4a72c99d-71: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default 
+    link/ether fa:16:3e:8b:dd:bb brd ff:ff:ff:ff:ff:ff
+    inet 10.11.12.1/24 brd 10.11.12.255 scope global qr-4a72c99d-71
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f816:3eff:fe8b:ddbb/64 scope link 
+       valid_lft forever preferred_lft forever

@@ -1,0 +1,2 @@
+default via 10.10.0.1 dev tapa60672e5-ca 
+10.10.0.0/24 dev tapa60672e5-ca  proto kernel  scope link  src 10.10.0.2 

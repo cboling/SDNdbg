@@ -1,0 +1,4 @@
+28: qbrb6b21e98-ab: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether b6:ae:fa:80:1b:2d brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::901a:25ff:fedb:631c/64 scope link 
+       valid_lft forever preferred_lft forever

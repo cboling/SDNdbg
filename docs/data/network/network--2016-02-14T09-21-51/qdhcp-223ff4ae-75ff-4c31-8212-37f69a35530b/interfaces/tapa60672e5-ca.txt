@@ -1,0 +1,6 @@
+26: tapa60672e5-ca: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default 
+    link/ether fa:16:3e:64:e8:a7 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.0.2/24 brd 10.10.0.255 scope global tapa60672e5-ca
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f816:3eff:fe64:e8a7/64 scope link 
+       valid_lft forever preferred_lft forever

@@ -1,0 +1,4 @@
+43: qbrdd8cc769-de: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether c2:81:ae:2a:24:a6 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::3499:15ff:fedc:5cac/64 scope link 
+       valid_lft forever preferred_lft forever

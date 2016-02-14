@@ -1,0 +1,4 @@
+44: qvodd8cc769-de: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master ovs-system state UP group default qlen 1000
+    link/ether 82:19:76:8b:7d:9a brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::8019:76ff:fe8b:7d9a/64 scope link 
+       valid_lft forever preferred_lft forever

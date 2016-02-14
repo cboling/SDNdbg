@@ -1,0 +1,18 @@
++-------------------+------------------------------------------------------+
+| Field             | Value                                                |
++-------------------+------------------------------------------------------+
+| allocation_pools  | {"start": "192.168.120.2", "end": "192.168.120.254"} |
+| cidr              | 192.168.120.0/24                                     |
+| dns_nameservers   |                                                      |
+| enable_dhcp       | True                                                 |
+| gateway_ip        | 192.168.120.1                                        |
+| host_routes       |                                                      |
+| id                | ffb58237-d7cc-4610-89bf-ee0decda3fd8                 |
+| ip_version        | 4                                                    |
+| ipv6_address_mode |                                                      |
+| ipv6_ra_mode      |                                                      |
+| name              | subnet_mgmt                                          |
+| network_id        | b2fc47bd-94e8-448b-b04d-289ee83f4cdf                 |
+| subnetpool_id     |                                                      |
+| tenant_id         | 84ae91b17c1e48f6be9b8daa3ff2892d                     |
++-------------------+------------------------------------------------------+

@@ -1,0 +1,2 @@
+default via 192.168.120.1 dev tapa3469070-1f 
+192.168.120.0/24 dev tapa3469070-1f  proto kernel  scope link  src 192.168.120.2 

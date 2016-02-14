@@ -1,0 +1,109 @@
+graph network {
+	rankdir=LR
+"docker0" [shape=oval,style=filled,color=olivedrab]
+"qbr35e8a35a-d9" [shape=oval,style=filled,color=olivedrab]
+"qbr5f3fe3d7-73" [shape=oval,style=filled,color=olivedrab]
+"qbr8b99fe12-76" [shape=oval,style=filled,color=olivedrab]
+"qbrabc73b14-34" [shape=oval,style=filled,color=olivedrab]
+"qbrb6b21e98-ab" [shape=oval,style=filled,color=olivedrab]
+"qbrdd8cc769-de" [shape=oval,style=filled,color=olivedrab]
+"virbr0" [shape=oval,style=filled,color=olivedrab]
+"eth0" [shape=oval,style=filled,color=grey50]
+"instance-00000001" [shape=box,style=filled,color=tomato]
+"instance-00000002" [shape=box,style=filled,color=tomato]
+"br-ext" [shape=oval,style=filled,color=lightblue]
+"br-int" [shape=oval,style=filled,color=lightblue]
+"br-mgmt0" [shape=oval,style=filled,color=lightblue]
+"br-tun" [shape=oval,style=filled,color=lightblue]
+"int-br-ext" [shape=cds,style=filled,color=gold]
+"int-br-mgmt0" [shape=cds,style=filled,color=gold]
+"patch-int" [shape=cds,style=filled,color=gold]
+"patch-tun" [shape=cds,style=filled,color=gold]
+"phy-br-ext" [shape=cds,style=filled,color=gold]
+"phy-br-mgmt0" [shape=cds,style=filled,color=gold]
+"tap35e8a35a-d9" [shape=oval,style=filled,color=grey50]
+"tap5f3fe3d7-73" [shape=oval,style=filled,color=grey50]
+"tap8b99fe12-76" [shape=oval,style=filled,color=grey50]
+"tapabc73b14-34" [shape=oval,style=filled,color=grey50]
+"tapb6b21e98-ab" [shape=oval,style=filled,color=grey50]
+"tapdd8cc769-de" [shape=oval,style=filled,color=grey50]
+"qvb35e8a35a-d9" [shape=oval,style=filled,color=lightgrey]
+"qvb5f3fe3d7-73" [shape=oval,style=filled,color=lightgrey]
+"qvb8b99fe12-76" [shape=oval,style=filled,color=lightgrey]
+"qvbabc73b14-34" [shape=oval,style=filled,color=lightgrey]
+"qvbb6b21e98-ab" [shape=oval,style=filled,color=lightgrey]
+"qvbdd8cc769-de" [shape=oval,style=filled,color=lightgrey]
+"qvo35e8a35a-d9" [shape=oval,style=filled,color=lightgrey]
+"qvo5f3fe3d7-73" [shape=oval,style=filled,color=lightgrey]
+"qvo8b99fe12-76" [shape=oval,style=filled,color=lightgrey]
+"qvoabc73b14-34" [shape=oval,style=filled,color=lightgrey]
+"qvob6b21e98-ab" [shape=oval,style=filled,color=lightgrey]
+"qvodd8cc769-de" [shape=oval,style=filled,color=lightgrey]
+subgraph "cluster_qdhcp-223ff4ae-75ff-4c31-8212-37f69a35530b" {
+  label="qdhcp-223ff4ae-75ff-4c31-8212-37f69a35530b"
+"tapa60672e5-ca" [shape=oval,style=filled,color=grey50]
+}
+subgraph "cluster_qdhcp-96654d65-0d56-4c44-8e8c-f1e29add2be0" {
+  label="qdhcp-96654d65-0d56-4c44-8e8c-f1e29add2be0"
+"tapeb793d8b-23" [shape=oval,style=filled,color=grey50]
+}
+subgraph "cluster_qdhcp-b2fc47bd-94e8-448b-b04d-289ee83f4cdf" {
+  label="qdhcp-b2fc47bd-94e8-448b-b04d-289ee83f4cdf"
+"tapa3469070-1f" [shape=oval,style=filled,color=grey50]
+}
+subgraph "cluster_qdhcp-eabd1ca4-cf6d-477b-b91a-c2f26bcb1b9b" {
+  label="qdhcp-eabd1ca4-cf6d-477b-b91a-c2f26bcb1b9b"
+"tap4fcfcec5-60" [shape=oval,style=filled,color=grey50]
+}
+subgraph "cluster_qrouter-5458aba2-9e97-43be-ab61-7b2ea8fd140f" {
+  label="qrouter-5458aba2-9e97-43be-ab61-7b2ea8fd140f"
+"qg-2384886c-e6" [shape=oval,style=filled,color=grey50]
+"qr-4a72c99d-71" [shape=oval,style=filled,color=grey50]
+}
+"instance-00000001" -- "tapb6b21e98-ab"
+"instance-00000001" -- "tap5f3fe3d7-73"
+"instance-00000001" -- "tapabc73b14-34"
+"instance-00000002" -- "tap35e8a35a-d9"
+"instance-00000002" -- "tapdd8cc769-de"
+"instance-00000002" -- "tap8b99fe12-76"
+"phy-br-ext" -- "br-ext"
+"int-br-ext" -- "br-int"
+"int-br-mgmt0" -- "br-int"
+"patch-tun" -- "br-int"
+"qg-2384886c-e6" -- "br-int"
+"qr-4a72c99d-71" -- "br-int"
+"qvo35e8a35a-d9" -- "br-int"
+"qvo5f3fe3d7-73" -- "br-int"
+"qvo8b99fe12-76" -- "br-int"
+"qvoabc73b14-34" -- "br-int"
+"qvob6b21e98-ab" -- "br-int"
+"qvodd8cc769-de" -- "br-int"
+"tap4fcfcec5-60" -- "br-int"
+"tapa3469070-1f" -- "br-int"
+"tapa60672e5-ca" -- "br-int"
+"tapeb793d8b-23" -- "br-int"
+"phy-br-mgmt0" -- "br-mgmt0"
+"patch-int" -- "br-tun"
+"qbr35e8a35a-d9" -- "qvb35e8a35a-d9"
+"qbr35e8a35a-d9" -- "tap35e8a35a-d9"
+"qbr5f3fe3d7-73" -- "qvb5f3fe3d7-73"
+"qbr5f3fe3d7-73" -- "tap5f3fe3d7-73"
+"qbr8b99fe12-76" -- "qvb8b99fe12-76"
+"qbr8b99fe12-76" -- "tap8b99fe12-76"
+"qbrabc73b14-34" -- "qvbabc73b14-34"
+"qbrabc73b14-34" -- "tapabc73b14-34"
+"qbrb6b21e98-ab" -- "qvbb6b21e98-ab"
+"qbrb6b21e98-ab" -- "tapb6b21e98-ab"
+"qbrdd8cc769-de" -- "qvbdd8cc769-de"
+"qbrdd8cc769-de" -- "tapdd8cc769-de"
+"phy-br-ext" -- "int-br-ext"
+"int-br-mgmt0" -- "phy-br-mgmt0"
+"patch-tun" -- "patch-int"
+"phy-br-mgmt0" -- "int-br-mgmt0"
+"qvb35e8a35a-d9" -- "qvo35e8a35a-d9"
+"qvb5f3fe3d7-73" -- "qvo5f3fe3d7-73"
+"qvb8b99fe12-76" -- "qvo8b99fe12-76"
+"qvbabc73b14-34" -- "qvoabc73b14-34"
+"qvbb6b21e98-ab" -- "qvob6b21e98-ab"
+"qvbdd8cc769-de" -- "qvodd8cc769-de"
+}

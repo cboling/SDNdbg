@@ -1,0 +1,4 @@
+45: qvbdd8cc769-de: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master qbrdd8cc769-de state UP group default qlen 1000
+    link/ether c2:81:ae:2a:24:a6 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::c081:aeff:fe2a:24a6/64 scope link 
+       valid_lft forever preferred_lft forever

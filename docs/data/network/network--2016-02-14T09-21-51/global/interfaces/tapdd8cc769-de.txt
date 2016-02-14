@@ -1,0 +1,4 @@
+50: tapdd8cc769-de: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master qbrdd8cc769-de state UNKNOWN group default qlen 500
+    link/ether fe:16:3e:c3:cc:3b brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::fc16:3eff:fec3:cc3b/64 scope link 
+       valid_lft forever preferred_lft forever

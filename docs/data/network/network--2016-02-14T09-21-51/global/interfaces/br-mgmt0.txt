@@ -1,0 +1,6 @@
+4: br-mgmt0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default 
+    link/ether de:97:c9:fe:9d:43 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.120.1/24 brd 192.168.120.255 scope global br-mgmt0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::dc97:c9ff:fefe:9d43/64 scope link 
+       valid_lft forever preferred_lft forever

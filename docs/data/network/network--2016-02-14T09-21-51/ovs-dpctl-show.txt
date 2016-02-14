@@ -1,0 +1,21 @@
+system@ovs-system:
+	lookups: hit:3981 missed:3391 lost:0
+	flows: 0
+	masks: hit:16082 total:0 hit/pkt:2.18
+	port 0: ovs-system (internal)
+	port 1: br-mgmt0 (internal)
+	port 2: br-int (internal)
+	port 3: br-ext (internal)
+	port 4: br-tun (internal)
+	port 5: tap4fcfcec5-60 (internal)
+	port 6: qr-4a72c99d-71 (internal)
+	port 7: qg-2384886c-e6 (internal)
+	port 8: tapa3469070-1f (internal)
+	port 9: tapa60672e5-ca (internal)
+	port 10: tapeb793d8b-23 (internal)
+	port 11: qvob6b21e98-ab
+	port 12: qvo5f3fe3d7-73
+	port 13: qvoabc73b14-34
+	port 14: qvo35e8a35a-d9
+	port 15: qvodd8cc769-de
+	port 16: qvo8b99fe12-76

@@ -1,0 +1,14 @@
+NXST_FLOW reply (xid=0x4):
+ cookie=0xa41f515659143eeb, duration=6799.174s, table=0, n_packets=7146, n_bytes=1304748, idle_age=6, priority=1,in_port=1 actions=resubmit(,2)
+ cookie=0xa41f515659143eeb, duration=6799.170s, table=0, n_packets=0, n_bytes=0, idle_age=6799, priority=0 actions=drop
+ cookie=0xa41f515659143eeb, duration=6799.169s, table=2, n_packets=0, n_bytes=0, idle_age=6799, priority=0,dl_dst=00:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,20)
+ cookie=0xa41f515659143eeb, duration=6799.165s, table=2, n_packets=7146, n_bytes=1304748, idle_age=6, priority=0,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,22)
+ cookie=0xa41f515659143eeb, duration=6799.164s, table=3, n_packets=0, n_bytes=0, idle_age=6799, priority=0 actions=drop
+ cookie=0xa41f515659143eeb, duration=6799.163s, table=4, n_packets=0, n_bytes=0, idle_age=6799, priority=0 actions=drop
+ cookie=0xa41f515659143eeb, duration=6786.771s, table=4, n_packets=0, n_bytes=0, idle_age=6786, priority=1,tun_id=0x40b actions=mod_vlan_vid:1,resubmit(,10)
+ cookie=0xa41f515659143eeb, duration=6688.674s, table=4, n_packets=0, n_bytes=0, idle_age=6688, priority=1,tun_id=0x407 actions=mod_vlan_vid:4,resubmit(,10)
+ cookie=0xa41f515659143eeb, duration=6688.627s, table=4, n_packets=0, n_bytes=0, idle_age=6688, priority=1,tun_id=0x446 actions=mod_vlan_vid:5,resubmit(,10)
+ cookie=0xa41f515659143eeb, duration=6799.162s, table=6, n_packets=0, n_bytes=0, idle_age=6799, priority=0 actions=drop
+ cookie=0xa41f515659143eeb, duration=6799.160s, table=10, n_packets=0, n_bytes=0, idle_age=6799, priority=1 actions=learn(table=20,hard_timeout=300,priority=1,cookie=0xa41f515659143eeb,NXM_OF_VLAN_TCI[0..11],NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],load:0->NXM_OF_VLAN_TCI[],load:NXM_NX_TUN_ID[]->NXM_NX_TUN_ID[],output:NXM_OF_IN_PORT[]),output:1
+ cookie=0xa41f515659143eeb, duration=6799.159s, table=20, n_packets=0, n_bytes=0, idle_age=6799, priority=0 actions=resubmit(,22)
+ cookie=0xa41f515659143eeb, duration=6799.150s, table=22, n_packets=7146, n_bytes=1304748, idle_age=6, priority=0 actions=drop

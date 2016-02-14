@@ -1,0 +1,4 @@
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 192.168.120.2:53        0.0.0.0:*               LISTEN     
+tcp6       0      0 fe80::f816:3eff:feec:53 :::*                    LISTEN     

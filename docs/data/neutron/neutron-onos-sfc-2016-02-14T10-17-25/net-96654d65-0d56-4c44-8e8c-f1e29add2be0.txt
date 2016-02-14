@@ -1,0 +1,17 @@
++---------------------------+--------------------------------------+
+| Field                     | Value                                |
++---------------------------+--------------------------------------+
+| admin_state_up            | True                                 |
+| id                        | 96654d65-0d56-4c44-8e8c-f1e29add2be0 |
+| mtu                       | 0                                    |
+| name                      | net1                                 |
+| port_security_enabled     | True                                 |
+| provider:network_type     | vxlan                                |
+| provider:physical_network |                                      |
+| provider:segmentation_id  | 1094                                 |
+| router:external           | False                                |
+| shared                    | True                                 |
+| status                    | ACTIVE                               |
+| subnets                   | fb092cab-84fd-4ca1-9b36-0eb7033bf186 |
+| tenant_id                 | 84ae91b17c1e48f6be9b8daa3ff2892d     |
++---------------------------+--------------------------------------+

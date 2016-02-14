@@ -1,0 +1,4 @@
+48: qvb8b99fe12-76: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master qbr8b99fe12-76 state UP group default qlen 1000
+    link/ether 46:7d:4d:b5:09:a4 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::447d:4dff:feb5:9a4/64 scope link 
+       valid_lft forever preferred_lft forever

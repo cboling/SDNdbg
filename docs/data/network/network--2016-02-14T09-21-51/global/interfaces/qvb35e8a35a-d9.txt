@@ -1,0 +1,4 @@
+42: qvb35e8a35a-d9: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master qbr35e8a35a-d9 state UP group default qlen 1000
+    link/ether 9e:ca:c6:5c:4a:bf brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::9cca:c6ff:fe5c:4abf/64 scope link 
+       valid_lft forever preferred_lft forever

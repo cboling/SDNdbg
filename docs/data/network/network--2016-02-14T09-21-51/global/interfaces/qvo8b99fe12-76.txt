@@ -1,0 +1,4 @@
+47: qvo8b99fe12-76: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master ovs-system state UP group default qlen 1000
+    link/ether 52:05:07:ef:28:eb brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::5005:7ff:feef:28eb/64 scope link 
+       valid_lft forever preferred_lft forever

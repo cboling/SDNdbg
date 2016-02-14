@@ -1,0 +1,4 @@
+30: qvbb6b21e98-ab: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master qbrb6b21e98-ab state UP group default qlen 1000
+    link/ether b6:ae:fa:80:1b:2d brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::b4ae:faff:fe80:1b2d/64 scope link 
+       valid_lft forever preferred_lft forever

@@ -1,0 +1,18 @@
++-------------------+----------------------------------------------+
+| Field             | Value                                        |
++-------------------+----------------------------------------------+
+| allocation_pools  | {"start": "10.10.0.2", "end": "10.10.0.254"} |
+| cidr              | 10.10.0.0/24                                 |
+| dns_nameservers   |                                              |
+| enable_dhcp       | True                                         |
+| gateway_ip        | 10.10.0.1                                    |
+| host_routes       |                                              |
+| id                | 0b066194-52e9-4094-8af7-aaf4ea2c7a11         |
+| ip_version        | 4                                            |
+| ipv6_address_mode |                                              |
+| ipv6_ra_mode      |                                              |
+| name              | subnet0                                      |
+| network_id        | 223ff4ae-75ff-4c31-8212-37f69a35530b         |
+| subnetpool_id     |                                              |
+| tenant_id         | 84ae91b17c1e48f6be9b8daa3ff2892d             |
++-------------------+----------------------------------------------+

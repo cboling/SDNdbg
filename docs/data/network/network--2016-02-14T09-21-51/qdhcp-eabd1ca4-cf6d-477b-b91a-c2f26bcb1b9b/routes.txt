@@ -1,0 +1,2 @@
+default via 10.11.12.1 dev tap4fcfcec5-60 
+10.11.12.0/24 dev tap4fcfcec5-60  proto kernel  scope link  src 10.11.12.2 

@@ -1,0 +1,4 @@
+33: qvb5f3fe3d7-73: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast master qbr5f3fe3d7-73 state UP group default qlen 1000
+    link/ether ce:30:74:7a:8a:ff brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::cc30:74ff:fe7a:8aff/64 scope link 
+       valid_lft forever preferred_lft forever

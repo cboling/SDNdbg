@@ -1,0 +1,17 @@
++---------------------------+--------------------------------------+
+| Field                     | Value                                |
++---------------------------+--------------------------------------+
+| admin_state_up            | True                                 |
+| id                        | b2fc47bd-94e8-448b-b04d-289ee83f4cdf |
+| mtu                       | 0                                    |
+| name                      | net_mgmt                             |
+| port_security_enabled     | True                                 |
+| provider:network_type     | flat                                 |
+| provider:physical_network | mgmtphysnet0                         |
+| provider:segmentation_id  |                                      |
+| router:external           | False                                |
+| shared                    | True                                 |
+| status                    | ACTIVE                               |
+| subnets                   | ffb58237-d7cc-4610-89bf-ee0decda3fd8 |
+| tenant_id                 | 84ae91b17c1e48f6be9b8daa3ff2892d     |
++---------------------------+--------------------------------------+

@@ -1,0 +1,2 @@
+20: br-ext: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default 
+    link/ether 06:fb:4f:32:55:49 brd ff:ff:ff:ff:ff:ff

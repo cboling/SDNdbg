@@ -1,0 +1,5 @@
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+udp        0      0 10.11.12.2:53           0.0.0.0:*                          
+udp        0      0 0.0.0.0:67              0.0.0.0:*                          
+udp6       0      0 fe80::f816:3eff:fefd:53 :::*                               

@@ -1,0 +1,2 @@
+default via 10.10.1.1 dev tapeb793d8b-23 
+10.10.1.0/24 dev tapeb793d8b-23  proto kernel  scope link  src 10.10.1.2 

@@ -1,0 +1,4 @@
+46: qbr8b99fe12-76: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether 46:7d:4d:b5:09:a4 brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::70bc:65ff:fea1:7b98/64 scope link 
+       valid_lft forever preferred_lft forever

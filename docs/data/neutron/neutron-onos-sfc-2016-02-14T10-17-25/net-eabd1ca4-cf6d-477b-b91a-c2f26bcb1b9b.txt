@@ -1,0 +1,17 @@
++---------------------------+--------------------------------------+
+| Field                     | Value                                |
++---------------------------+--------------------------------------+
+| admin_state_up            | True                                 |
+| id                        | eabd1ca4-cf6d-477b-b91a-c2f26bcb1b9b |
+| mtu                       | 0                                    |
+| name                      | private                              |
+| port_security_enabled     | True                                 |
+| provider:network_type     | vxlan                                |
+| provider:physical_network |                                      |
+| provider:segmentation_id  | 1035                                 |
+| router:external           | False                                |
+| shared                    | False                                |
+| status                    | ACTIVE                               |
+| subnets                   | 389f6181-3242-47c4-b4d7-a3cc728830f2 |
+| tenant_id                 | eb7e687dc00e44319e5ef9f55bfd1b79     |
++---------------------------+--------------------------------------+
