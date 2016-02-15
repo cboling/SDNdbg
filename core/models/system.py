@@ -10,16 +10,17 @@ class System(ModelBase):
     information.
     """
     # Each variable below represents a database field in this model
-    name = StrippedCharField(max_length=32, default='System',
-                             help_text='Human readable name for the system')
+    name = StrippedCharField(max_length=255, unique=True,
+                             help_text='Unique name for this system')
     description = StrippedCharField(max_length=1024, blank=True, null=True)
 
     # TODO Add system type
-    # TODO Add login/access credentiols
+    # TODO Add login/access credentials
     # TODO Add last contacted
+
+    class Meta:
+        app_label = "core"
+        db_table = "core_system"
 
     def __str__(self):
         return self.name
-
-
-# TODO: Create more models here.

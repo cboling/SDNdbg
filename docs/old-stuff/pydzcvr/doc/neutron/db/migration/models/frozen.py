@@ -63,7 +63,7 @@ CISCO_CONSTANTS_NETWORK = 'network'
 CISCO_CONSTANTS_POLICY = 'policy'
 CISCO_CONSTANTS_TENANT_ID_NOT_SET = 'TENANT_ID_NOT_SET'
 
-#neutron/plugins/ml2/models.py
+#neutron/plugins/ml2/base.py
 BINDING_PROFILE_LEN = 4095
 
 #neutron/extensions/portbindings.py
@@ -797,12 +797,12 @@ class NextHop(BASEV2):
     nexthop = sa.Column(sa.String(64), nullable=False, primary_key=True)
 
 
-#neutron/plugins/brocade/db/models.py
+#neutron/plugins/brocade/db/base.py
 class BrocadeNetwork(BASEV2, HasId):
     vlan = sa.Column(sa.String(10))
 
 
-#neutron/plugins/brocade/db/models.py
+#neutron/plugins/brocade/db/base.py
 class BrocadePort(BASEV2):
     port_id = sa.Column(sa.String(36), primary_key=True, default="",
                         server_default='')
@@ -1058,7 +1058,7 @@ class RouterFlavor(BASEV2):
                           primary_key=True)
 
 
-#neutron/plugins/ml2/drivers/brocade/db/models.py
+#neutron/plugins/ml2/drivers/brocade/db/base.py
 class ML2_BrocadeNetwork(BASEV2, HasId,
                          HasTenant):
     vlan = sa.Column(sa.String(10))
@@ -1066,7 +1066,7 @@ class ML2_BrocadeNetwork(BASEV2, HasId,
     network_type = sa.Column(sa.String(10))
 
 
-#neutron/plugins/ml2/drivers/brocade/db/models.py
+#neutron/plugins/ml2/drivers/brocade/db/base.py
 class ML2_BrocadePort(BASEV2, HasId,
                       HasTenant):
     network_id = sa.Column(sa.String(36),
@@ -1203,7 +1203,7 @@ class VxlanEndpoints(BASEV2):
                          autoincrement=False)
 
 
-#neutron/plugins/ml2/models.py
+#neutron/plugins/ml2/base.py
 class NetworkSegment(BASEV2, HasId):
     __tablename__ = 'ml2_network_segments'
 
@@ -1215,7 +1215,7 @@ class NetworkSegment(BASEV2, HasId):
     segmentation_id = sa.Column(sa.Integer)
 
 
-#neutron/plugins/ml2/models.py
+#neutron/plugins/ml2/base.py
 class PortBinding(BASEV2):
     __tablename__ = 'ml2_port_bindings'
 
@@ -1277,42 +1277,42 @@ class PortProfileBinding(BASEV2):
     vnic_type = sa.Column(sa.String(32), nullable=False)
 
 
-#neutron/plugins/nec/db/models.py
+#neutron/plugins/nec/db/base.py
 class OFCId(object):
     ofc_id = sa.Column(sa.String(255), unique=True, nullable=False)
 
 
-#neutron/plugins/nec/db/models.py
+#neutron/plugins/nec/db/base.py
 class NeutronId(object):
     neutron_id = sa.Column(sa.String(36), primary_key=True)
 
 
-#neutron/plugins/nec/db/models.py
+#neutron/plugins/nec/db/base.py
 class OFCTenantMapping(BASEV2, NeutronId, OFCId):
     """Represents a Tenant on OpenFlow Network/Controller."""
 
 
-#neutron/plugins/nec/db/models.py
+#neutron/plugins/nec/db/base.py
 class OFCNetworkMapping(BASEV2, NeutronId, OFCId):
     """Represents a Network on OpenFlow Network/Controller."""
 
 
-#neutron/plugins/nec/db/models.py
+#neutron/plugins/nec/db/base.py
 class OFCPortMapping(BASEV2, NeutronId, OFCId):
     """Represents a Port on OpenFlow Network/Controller."""
 
 
-#neutron/plugins/nec/db/models.py
+#neutron/plugins/nec/db/base.py
 class OFCRouterMapping(BASEV2, NeutronId, OFCId):
     """Represents a router on OpenFlow Network/Controller."""
 
 
-#neutron/plugins/nec/db/models.py
+#neutron/plugins/nec/db/base.py
 class OFCFilterMapping(BASEV2, NeutronId, OFCId):
     """Represents a Filter on OpenFlow Network/Controller."""
 
 
-#neutron/plugins/nec/db/models.py
+#neutron/plugins/nec/db/base.py
 class PortInfo(BASEV2):
     id = sa.Column(sa.String(36),
                    sa.ForeignKey('ports.id', ondelete="CASCADE"),
@@ -1562,7 +1562,7 @@ class MacLearningState(BASEV2):
                             uselist=False, cascade='delete'))
 
 
-#neutron/plugins/vmware/dbexts/models.py
+#neutron/plugins/vmware/dbexts/base.py
 class TzNetworkBinding(BASEV2):
     __tablename__ = 'tz_network_bindings'
 
@@ -1577,7 +1577,7 @@ class TzNetworkBinding(BASEV2):
                         autoincrement=False)
 
 
-#neutron/plugins/vmware/dbexts/models.py
+#neutron/plugins/vmware/dbexts/base.py
 class NeutronNsxNetworkMapping(BASEV2):
     __tablename__ = 'neutron_nsx_network_mappings'
     neutron_id = sa.Column(sa.String(36),
@@ -1586,7 +1586,7 @@ class NeutronNsxNetworkMapping(BASEV2):
     nsx_id = sa.Column(sa.String(36), primary_key=True)
 
 
-#neutron/plugins/vmware/dbexts/models.py
+#neutron/plugins/vmware/dbexts/base.py
 class NeutronNsxSecurityGroupMapping(BASEV2):
     __tablename__ = 'neutron_nsx_security_group_mappings'
     neutron_id = sa.Column(sa.String(36),
@@ -1596,7 +1596,7 @@ class NeutronNsxSecurityGroupMapping(BASEV2):
     nsx_id = sa.Column(sa.String(36), primary_key=True)
 
 
-#neutron/plugins/vmware/dbexts/models.py
+#neutron/plugins/vmware/dbexts/base.py
 class NeutronNsxPortMapping(BASEV2):
     __tablename__ = 'neutron_nsx_port_mappings'
     neutron_id = sa.Column(sa.String(36),
@@ -1606,7 +1606,7 @@ class NeutronNsxPortMapping(BASEV2):
     nsx_port_id = sa.Column(sa.String(36), nullable=False)
 
 
-#neutron/plugins/vmware/dbexts/models.py
+#neutron/plugins/vmware/dbexts/base.py
 class NeutronNsxRouterMapping(BASEV2):
     __tablename__ = 'neutron_nsx_router_mappings'
     neutron_id = sa.Column(sa.String(36),
@@ -1615,7 +1615,7 @@ class NeutronNsxRouterMapping(BASEV2):
     nsx_id = sa.Column(sa.String(36))
 
 
-#neutron/plugins/vmware/dbexts/models.py
+#neutron/plugins/vmware/dbexts/base.py
 class MultiProviderNetworks(BASEV2):
     __tablename__ = 'multi_provider_networks'
     network_id = sa.Column(sa.String(36),
@@ -1623,7 +1623,7 @@ class MultiProviderNetworks(BASEV2):
                            primary_key=True)
 
 
-#neutron/plugins/vmware/dbexts/models.py
+#neutron/plugins/vmware/dbexts/base.py
 class NSXRouterExtAttributes(BASEV2):
     router_id = sa.Column(sa.String(36),
                           sa.ForeignKey('routers.id', ondelete="CASCADE"),
@@ -1813,7 +1813,7 @@ class PoolLoadbalancerAgentBinding(BASEV2):
                          nullable=False)
 
 
-#neutron/services/loadbalancer/drivers/embrane/models.py
+#neutron/services/loadbalancer/drivers/embrane/base.py
 class PoolPort(BASEV2):
     __tablename__ = 'embrane_pool_port'
 
