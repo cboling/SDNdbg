@@ -7,6 +7,9 @@
 #
 create_database()
 {
+    # TODO support parameters? (may want to create test database)
+    # TODO support parameters? (may want to create test database)
+
     database=sdndbg_db
     username=sdn
     password=debugger
@@ -53,5 +56,13 @@ seed_configuration()
     echo TODO Figure out what is best here
 }
 
+
+##################################################
+# Run unit tests
+#
+run_unit_tests()
+{
+    echo TODO Implement test and coverage reports
+}
 
 # TODO Complete this and test it
