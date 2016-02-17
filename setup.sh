@@ -24,6 +24,7 @@ create_database()
 #
 activate_models()
 {
+    # TODO Add all models here
     models=collector
 
     # Test run before executing
@@ -65,4 +66,13 @@ run_unit_tests()
     echo TODO Implement test and coverage reports
 }
 
-# TODO Complete this and test it
+# TODO Complete this
+# TODO Add unit test support as part of 'setup'
+# TODO Support multiple Linux distro's, not just on Ubuntu. Perhaps centos 7 next
+# TODO Add function to pull in any dependencies
+# TODO Support mariadb and mongodb
+# TODO Add backup/restore capability
+# TODO Add cleanup capability - Leaves packages in place but scrubs DB
+# TODO Put into docker containers as an option
+# TODO For OpenStack, investigate Horizon integration and tie-ins with Ceilometer/Telemetry, tacker, and others
+# TODO Look at OPNFV projects for gaps we could fill (or make use of) such as copper, rs, doctor, promise, ...
