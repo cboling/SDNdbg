@@ -8,6 +8,9 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
+
+# TODO: Look into https://www.rdegges.com/2011/the-perfect-django-settings-file/ and see if it is helpful
+
 """
 
 import os
@@ -24,14 +27,15 @@ SECRET_KEY = '(%n1^m758po6)2lj=d8+rfxgy!5+ul&$&iarr%qg3odz4ov%8j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
 INSTALLED_APPS = [
-    'collector.apps.OpenstackConfig',
+    'core.apps.CoreConfig',
+    'openstack.apps.OpenstackConfig',
     'collector.apps.CollectorConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -113,10 +117,15 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'America/Chicago'
 
+# If you set this to False, Django will make some optimizations so as not
+# to load the internationalization machinery.
 USE_I18N = True
 
+# If you set this to False, Django will not format dates, numbers and
+# calendars according to the current locale.
 USE_L10N = True
 
+# If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
 
