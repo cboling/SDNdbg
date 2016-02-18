@@ -42,14 +42,14 @@ class ModelBase(models.Model):
     'force=True' argument to the 'delete' method.
 
     Fields / Attributes:
-        created (timezone):   The UTC timestamp when this model was created
+        created (timezone):   The UTC timestamp when this model was first created
         updated (timezone):   The UTC timestamp when this model last saved a change
         write_protect (bool): If true, the entire model should be treated as read-only
     """
     # TODO: Investigate how to make the created field read-only but to still allow deserialization...
 
-    created = models.DateTimeField(auto_now_add=True, default=timezone.now)
-    updated = models.DateTimeField(auto_now=True, default=timezone.now)
+    created = models.DateTimeField(editable=False)
+    updated = models.DateTimeField()
     write_protect = models.BooleanField(default=False)
 
     def delete(self, *args, **kwargs):
@@ -70,6 +70,16 @@ class ModelBase(models.Model):
 
         if self.write_protect and not force_save:
             raise PermissionDenied("Save denied: %s has its write_protect flag set" % self.__class__.__name__)
+
+        # Save created if this is a new field
+
+        now = timezone.now()
+
+        if not self.id:
+            self.created = now
+
+        # Update 'updated' field
+        self.updated = now
 
         # TODO do we want to modify the 'updated' here?
         # TODO Will any items ever be read-only (after first commit)?
