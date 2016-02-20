@@ -18,7 +18,8 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
-from core.models import ModelBase, StrippedCharField, Deployment
+from core.models.base import ModelBase, StrippedCharField
+from core.models.deployment import Deployment
 from openstack.consts import *
 from .sitecredentials import SiteCredentials
 

@@ -61,6 +61,13 @@ seed_configuration()
     echo TODO Figure out what is best here
 }
 
+##################################################
+# Run unit tests
+#
+set_up_administrator()
+{
+    echo TODO python manage.py createsuperuser
+}
 
 ##################################################
 # Run unit tests

@@ -17,7 +17,7 @@ from __future__ import unicode_literals
 
 from django.utils.encoding import python_2_unicode_compatible
 
-from core.models import ModelBase, StrippedCharField
+from .base import ModelBase, StrippedCharField
 
 
 @python_2_unicode_compatible

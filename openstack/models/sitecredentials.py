@@ -18,7 +18,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
-from core.models import ModelBase
+from core.models.base import ModelBase
 from openstack.consts import *
 
 

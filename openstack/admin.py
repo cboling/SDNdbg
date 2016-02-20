@@ -14,4 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from django.contrib import admin
+
 # Register your models here.
+
+from .models.site import *
+from .models.sitecredentials import *
+from .models.sitenode import *
+
+admin.site.register(Site)
+admin.site.register(SiteDeployment)
+admin.site.register(SiteCredentials)
+admin.site.register(SiteNode)
