@@ -1,7 +1,6 @@
 This directory contains support libraries that may be used.  For ones available
-on github, I have only included the 'README' from that file.  Below are then
-commands and version info for each of these.
-
+on github, the archive location and the date I last refreshed the archive is
+provided in the notes.
 
 |   Directory   | Version | Notes                                            |
 |:-------------:|:-------:| ------------------------------------------------ |
