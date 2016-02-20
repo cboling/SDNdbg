@@ -32,7 +32,7 @@ class SiteNode(ModelBase):
                              help_text='The unique name for this OpenStack node')
 
     description = StrippedCharField(max_length=1024, blank=True, null=True)
-    site = models.ForeignKey(Site, null=True, blank=True, related_name='nodes')
+    site_ref = models.ForeignKey(Site, null=True, blank=True, related_name='sitenode_site')
 
     # TODO: may need a list of services running, or at least the few we really care about
 

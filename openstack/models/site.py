@@ -45,10 +45,10 @@ class Site(ModelBase):
 
     description = StrippedCharField(max_length=1024, blank=True, null=True)
 
-    deployments = models.ManyToManyField('Deployment', through='SiteDeployment',
+    deployments = models.ManyToManyField('core.Deployment', through='SiteDeployment',
                                          blank=True,
                                          help_text='Select which sites are part of this deployment',
-                                         related_name='sites')
+                                         related_name='site_deployments')
 
     version = models.CharField(max_length=2, choices=SUPPORTED_VERSIONS, default=DEF_SITE_VERSION)
 
@@ -86,8 +86,8 @@ class Site(ModelBase):
 
 @python_2_unicode_compatible
 class SiteDeployment(ModelBase):
-    site = models.ForeignKey(Site, related_name='sitedeployments')
-    deployment = models.ForeignKey(Deployment, related_name='sitedeployments')
+    site_ref = models.ForeignKey(Site, related_name='sitedeployments_site')
+    deployment_ref = models.ForeignKey(Deployment, related_name='sitedeployments_deployment')
     '''
     TODO: Is this best here or elsewhere?
     availability_zone = StrippedCharField(max_length=200, null=True, blank=True,
@@ -97,7 +97,7 @@ class SiteDeployment(ModelBase):
     class Meta:
         app_label = "openstack"
         db_table = "openstack_sitedeployment"
-        unique_together = ('site', 'deployment')
+        unique_together = ('site_ref', 'deployment_ref')
 
     def __str__(self):
         return '%s %s' % (self.deployment, self.site)
