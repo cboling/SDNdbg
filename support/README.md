@@ -13,3 +13,6 @@ provided in the notes.
 |               |         |        |
 |               |         |        |
 |               |         |        |
+
+The 'example.cytoscape.json' file here is just a sample for playing around with the
+Cytoscape Desktop to figure out how to organize the data.
