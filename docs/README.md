@@ -39,44 +39,14 @@ the scripts keep track of nodes it has already seen and does not parse them twic
 
 | Device Major Type | Minor Type | Notes                                                   |
 |:-----------------:|:----------:| ------------------------------------------------------- |
-|     instance      |            | This is a VM image gathered with the **virsh list**     |
-|                   |            | command.  This command does not cover any container     |
-|                   |            | instances (_lxc/lxd_ or _docker_).  It may also list    |
-|                   |            | VMs that are not launched by OpenStack                  |
-|     bridge        |    linux   | Gathered with the 'ethtool -i <dev>' command where the  |
-|                   |            | dev is the device name (eth0, lxcbr0, ...). To read     |
-|                   |            | ports it walks the /sys/class/net/<dev>/brif directory  |
-|                   |            | (may be empty) and emits the dev & port out to the      |
-|                   |            | edges file.  The driver type is 'bridge'                |
-|                   |    OVS     | Gathered similar to the linux bridge above.  The driver |
-|                   |            | type is 'openvswitch' and 'ovs-vsctl br-exists <dev> is |
-|                   |            | called to verify it actual exists. To gather the ports, |
-|                   |            | it uses the 'ovs-vsctl list-ports <dev>' command and    |
-|                   |            | emits the dev & port out to the edges file.             |
-|     port          |  hardware  | Gathered same as linux bridge but the driver type is    |
-|                   |            | easy to decipher.  Just output on to the 'nodes' with   |
-|                   |            | its driver name.  A gig port can show up with a driver  |
-|                   |            | type of 'e1000'.  **TODO**  need a way to gather this.. |
-|                   |    veth    | Gathered same as linux bridge but driver type is 'veth' |
-|                   |            | Script then gets peer index by running the 'ethtool -S  |
-|                   |            | <dev> and parsing the 'peer_ifindex' line. It saves the |
-|                   |            | result off to the peer file.                            |
-|                   |   patch    | Script lists the OVS bridges with the 'ovs-vsctl list-br' |
-|                   | (ovspacth) | command and then for each bridge device <brdev> it runs |
-|                   |            | the 'ovs-vsctl list-ports <brdev>' command.  For each   |
-|                   |            | <port> it gets the type with the 'ovs-vsctl get         |
-|                   |            | Interface <port> type command. For an 'patch' port, it  |
-|                   |            | will get the peer with the ovs-vsctl get Interface      |
-|                   |            | <port> options:peer' command. It saves the 'port' out   |
-|                   |            | to the nodes file and the port + peer out to the edges  |
-|                   |            | file.                                                   |
-|                   |    tun     | Gathered the same as the 'tun' above but the port type  |
-|                   |  (ovstun)  | is either 'gre' or 'vxlan'. For tunnels, it gets the    |
-|                   |            | remote ip 'peer' with the 'ovs-vsctl get Interface      |
-|                   |            | <port> options:remote_ip' command.                      |
-|                   |   remote   | Gathered during 'ovstun' port identification.           |
-|                   |            | **TODO** Need a way to stitch remote ports on different |
-|                   |            | nodes together.                                         |
+|     instance      |            | This is a VM image gathered with the **virsh list** command.  This command does not cover any container instances (_lxc/lxd_ or _docker_).  It may also list VMs that are not launched by OpenStack                  |
+|     bridge        |    linux   | Gathered with the 'ethtool -i <dev>' command where the dev is the device name (eth0, lxcbr0, ...). To read ports it walks the /sys/class/net/<dev>/brif directory (may be empty) and emits the dev & port out to the edges file.  The driver type is 'bridge'                |
+|                   |    OVS     | Gathered similar to the linux bridge above.  The driver type is 'openvswitch' and 'ovs-vsctl br-exists <dev> is called to verify it actual exists. To gather the ports, it uses the 'ovs-vsctl list-ports <dev>' command and emits the dev & port out to the edges file.             |
+|     port          |  hardware  | Gathered same as linux bridge but the driver type is easy to decipher.  Just output on to the 'nodes' with its driver name.  A gig port can show up with a driver type of 'e1000'.  **TODO**  need a way to gather this.. |
+|                   |    veth    | Gathered same as linux bridge but driver type is 'veth' Script then gets peer index by running the 'ethtool -S <dev> and parsing the 'peer_ifindex' line. It saves the result off to the peer file.                            |
+|                   |  ovspatch  | Script lists the OVS bridges with the 'ovs-vsctl list-br' command and then for each bridge device <brdev> it runs the 'ovs-vsctl list-ports <brdev>' command.  For each <port> it gets the type with the 'ovs-vsctl get Interface <port> type command. For an 'patch' port, it will get the peer with the ovs-vsctl get Interface  <port> options:peer' command. It saves the 'port' out to the nodes file and the port + peer out to the edges file.                                                   |
+|                   |  ovstun    | Gathered the same as the 'tun' above but the port typeis either 'gre' or 'vxlan'. For tunnels, it gets the  remote ip 'peer' with the 'ovs-vsctl get Interface <port> options:remote_ip' command.                      |
+|                   |   remote   | Gathered during 'ovstun' port identification.  **TODO** Need a way to stitch remote ports on different nodes together.                                         |
 
 
 > **NOTE**: When processing device types from any APIs we write or consume, we should throw an exception
