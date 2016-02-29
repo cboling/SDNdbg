@@ -24,7 +24,6 @@ from openstack.consts import *
 
 # TODO: As this file gets huge, break it up
 
-
 @python_2_unicode_compatible
 class SiteCredentials(ModelBase):
     """
@@ -38,8 +37,6 @@ class SiteCredentials(ModelBase):
                         V2.0 URL on the localhost.
         region (str):   The OpenStack region / zone. The default is 'RegionOne'
     """
-
-    # Each variable below represents a database field in this model
     username = models.CharField(max_length=255, default=DEF_KEYSTONE_USERNAME)
     password = models.CharField(max_length=255, default=DEF_KEYSTONE_PASSWORD)
     tenant = models.CharField(max_length=255, default=DEF_KEYSTONE_TENANT)

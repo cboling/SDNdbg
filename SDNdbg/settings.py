@@ -30,6 +30,21 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
+from config import Config
+
+config = Config()
+
+
+def overrideDbSettings(v):
+    parsed = urlparse(v)
+    config.db_host = parsed.hostname
+    config.db_port = parsed.port
+
+
+for key, ofunc in env_to_config_dict.items():
+    if key in os.environ:
+        ofunc(os.environ[key])
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -50,6 +65,10 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'core.apps.CoreConfig',
+    'onos.apps.OnosConfig',
+    # 'odl.apps.OdlConfig',
+    'ovs.apps.OvsConfig',
+    'linux.apps.LnxBridgeConfig',
     'openstack.apps.OpenstackConfig',
     'collector.apps.CollectorConfig',
     'django.contrib.admin',
@@ -97,12 +116,17 @@ WSGI_APPLICATION = 'SDNdbg.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sdndbg_db',
-        'USER': 'sdn',
-        'PASSWORD': 'debugger',
-        'HOST': 'localhost',                 # Set to empty string for localhost.
-        # 'PORT': '',                 # Set to empty string for default
+        'ENGINE'  : 'django.db.backends.postgresql_psycopg2',
+        'NAME'    : config.db_name,
+        'USER'    : config.db_user,
+        'PASSWORD': config.db_password,
+        'HOST'    : config.db_host,
+        'PORT'    : config.db_port,
+        # 'NAME': 'sdndbg_db',
+        # 'USER': 'sdn',
+        # 'PASSWORD': 'debugger',
+        # 'HOST': 'localhost',
+        # 'PORT': '',
     }
 }
 
@@ -123,7 +147,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -148,3 +171,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGGING = {
+    'version'                 : 1,
+    'disable_existing_loggers': False,
+    'filters'                 : {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers'                : {
+        'mail_admins': {
+            'level'  : 'ERROR',
+            'filters': ['require_debug_false'],
+            'class'  : 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers'                 : {
+        'django.request': {
+            'handlers' : ['mail_admins'],
+            'level'    : 'ERROR',
+            'propagate': True,
+        },
+    }
+}

@@ -86,7 +86,7 @@ install_dependencies()
     echo TODO: may be best to just put this in the README.md and point them to other locations
     sudo apt-get install -y postgresql postgresql-contrib pgadmin3 apache2 libapache2-mod-wsgi python-dev phppgadmin
 
-    sudo pip install python-openstackclient django psycopg2
+    sudo pip install python-openstackclient django psycopg2 xmlutils
 
     # Postgres install steps
 
