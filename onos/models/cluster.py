@@ -26,7 +26,7 @@ class Cluster(ModelNode):
     """
     ONOS Cluster Model
 
-    This identifies a collection of ONOS Controller Nodes that form a cluster-
+    This identifies a collection of ONOS Controller Nodes that form a cluster
     """
 
     uniqueId = StrippedCharField(db_index=True)
