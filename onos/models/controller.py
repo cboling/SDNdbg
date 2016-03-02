@@ -51,6 +51,17 @@ class Switch(ModelNode):
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=50)  # TODO Remember to use forms.PasswordInput() in the forms.py
 
+    ACTIVE = 'A'  # Signifies that the instance is active and operating normally
+    INACTIVE = 'I'  # Signifies that the instance is inactive, which means either down or up, but not operational
+
+    SUPPORTED_STATE_IN_CLUSTER = (
+        (ACTIVE, 'Active'),
+        (INACTIVE, 'Inactive'),
+    )
+    __valid_controller_states = (ACTIVE, INACTIVE)
+
+    state_in_cluster = models.CharField(max_length=2, choices=SUPPORTED_STATE_IN_CLUSTER, default=ACTIVE)
+
     class Meta:
         app_label = 'onos'
         db_table = 'onos_controller'
@@ -60,4 +71,10 @@ class Switch(ModelNode):
         return cls(name=name, address=address, port=port, username=username, password=password)
 
     def __str__(self):
-        return 'TODO: ONOS Controller'
+        return 'ONOS Controller: %s (%s)' % (self.name, self.address)
+
+    def is_cluster_state_valid(self):
+        """ Is this a valid state for a controller to be in
+        :return: (bool) True if valid, False otherwise.
+        """
+        return self.state_in_cluster in self.__valid_controller_states
