@@ -19,7 +19,9 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from core.models.base import StrippedCharField
 from core.models.node import ModelNode
-
+from onos.models import *
+import requests
+import pprint
 
 @python_2_unicode_compatible
 class Cluster(ModelNode):
@@ -28,8 +30,14 @@ class Cluster(ModelNode):
 
     This identifies a collection of ONOS Controller Nodes that form a cluster
     """
-
     uniqueId = StrippedCharField(db_index=True)
+
+    __URL_LEAF = 'cluster'
+    __NODES = 'nodes'
+    __ID = 'id'
+    __IP = 'ip'
+    __PORT = 'tcpPort'
+    __STATUS = 'status'
 
     class Meta:
         app_label = 'onos'
@@ -38,8 +46,47 @@ class Cluster(ModelNode):
     def __str__(self):
         return 'TODO: ONOS Cluster'
 
-        # REST at: http://$OC1:8181/onos/v1/cluster
-        #
-        # RESULT = {"nodes": [{"id": "10.0.3.175", "ip": "10.0.3.175", "tcpPort": 9876, "status": "ACTIVE"},
-        #                     {"id": "10.0.3.174", "ip": "10.0.3.174", "tcpPort": 9876, "status": "ACTIVE"},
-        #                     {"id": "10.0.3.35",  "ip": "10.0.3.35",  "tcpPort": 9876, "status": "ACTIVE"}]}
+    @classmethod
+    def from_json(cls, json_data):
+        """
+        Create an ONOS Cluster object from JSON returned from a controller
+
+        For the 1.4 Release, the expected JSON looks similar to the following:
+
+        REST at: http://$OC1:8181/onos/v1/cluster
+
+        RESULT = {"nodes": [{"id": "10.0.3.175", "ip": "10.0.3.175", "tcpPort": 9876, "status": "ACTIVE"},
+                            {"id": "10.0.3.174", "ip": "10.0.3.174", "tcpPort": 9876, "status": "ACTIVE"},
+                            {"id": "10.0.3.35",  "ip": "10.0.3.35",  "tcpPort": 9876, "status": "ACTIVE"}]}
+
+        :param json_data: Input JSON string
+
+        :return: Cluster object or None on error
+        """
+
+        # TODO: Implement this
+        raise SyntaxError("Expected field %s not found. JSON:'%s'", ('XYZ', json_data))
+
+        return None
+
+    @classmethod
+    def find_all_controllers(cls, ip_address, port_number=8181, username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD):
+        """
+        Given one ONOS Controller address and credentials, find all (if any) other controllers
+        in the cluster and return an ONOS Cluster object.  For each controller found, an
+        appropriate ONOS Controller object will be created.
+
+        :param ip_address:  IP Address or hostname for ONOS Controller
+        :param port_number: Port number, default is 8181
+        :param username:    Username to use for REST GET invocation, default is 'onos'
+        :param password:    Password to use for REST GET invocation, default is 'rocks'
+
+        :return: Cluster object with appropriate Controller objects created as needed
+        """
+        url = ulr_prefix + Cluster.__URL_LEAF
+        response = requests.get(url, auth=(username, password))
+
+        if response.status_code != requests.codes.ok:
+            return None
+
+        return cluster
