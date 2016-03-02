@@ -18,7 +18,6 @@ from __future__ import unicode_literals
 import requests
 from django.utils.encoding import python_2_unicode_compatible
 
-from core.models.base import StrippedCharField
 from core.models.node import ModelNode
 from onos.models import *
 
@@ -30,8 +29,6 @@ class Cluster(ModelNode):
 
     This identifies a collection of ONOS Controller Nodes that form a cluster
     """
-    uniqueId = StrippedCharField(db_index=True)
-
     __URL_LEAF = 'cluster'
     __NODES = 'nodes'
     __ID = 'id'

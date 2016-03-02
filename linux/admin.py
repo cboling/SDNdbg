@@ -17,7 +17,9 @@ from django.contrib import admin
 
 from .models.port import *
 from .models.switch import *
+from .models.veth import *
 
-admin.model.register(Switch)
-admin.model.register(Port)
-admin.model.register(VEth)
+admin.site.register(Switch)
+admin.site.register(Port)
+admin.site.register(VEthPort)
+admin.site.register(VEthLink)

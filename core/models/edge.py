@@ -16,15 +16,15 @@ limitations under the License.
 from __future__ import unicode_literals
 
 from django.db import models
-from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
-from core.models.base import StrippedCharField
-from core.models.node import ModelNode
+from base import ModelBase
+from base import StrippedCharField
+from node import ModelNode
 
 
 @python_2_unicode_compatible
-class ModelEdge(models.Model):
+class ModelEdge(ModelBase):
     """
     Base Network Graph Edge (link) Model
 
@@ -46,17 +46,12 @@ class ModelEdge(models.Model):
                          highest level object to this item.  The field itself should be
                          some type of concatenation of the source and target
     rawData (char):      Raw data used to create item. Often JSON, XML, or CLI screen data
-    created (timezone):  The UTC timestamp when this model was first created
-    updated (timezone):  The UTC timestamp when this model last saved a change
     name    (char):      Simple human readable name for the node
     parent  (ModelNode): The parent node (if not Null) of this node.  To get all children, of
                          a Node, query for it other 'nodes' parent field.
     """
     uniqueId = StrippedCharField(db_index=True)
     rawData = models.CharField(blank=True, null=True)
-
-    created = models.DateTimeField(editable=False)
-    updated = models.DateTimeField()
 
     name = StrippedCharField(max_length=255)  # TODO Verify max length allowed
     # TODO For some derived types, the max name may be less, figure out how best to do this
@@ -68,16 +63,5 @@ class ModelEdge(models.Model):
         app_label = "core"
         db_table = "core_edge"
 
-    def save(self, *args, **kwargs):
-        # Save created if this is a new field
-
-        now = timezone.now()
-
-        if not self.id:
-            self.created = now
-
-        # Update 'updated' field
-        self.updated = now
-
-        # TODO do we want to modify the 'updated' here?
-        super(ModelEdge, self).save(*args, **kwargs)
+    def __str__(self):
+        return self.name

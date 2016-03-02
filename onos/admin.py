@@ -15,12 +15,16 @@ limitations under the License.
 """
 from django.contrib import admin
 
+from .models.cluster import *
+from .models.controller import *
 from .models.flow import *
 from .models.link import *
 from .models.port import *
 from .models.switch import *
 
-admin.model.register(Switch)
-admin.model.register(Port)
-admin.model.register(Flow)
-admin.model.register(Link)
+admin.site.register(Controller)
+admin.site.register(Cluster)
+admin.site.register(Switch)
+admin.site.register(Port)
+admin.site.register(Flow)
+admin.site.register(Link)

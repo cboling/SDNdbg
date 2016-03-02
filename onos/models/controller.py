@@ -22,7 +22,7 @@ from core.models.node import ModelNode
 
 
 @python_2_unicode_compatible
-class Switch(ModelNode):
+class Controller(ModelNode):
     """
     ONOS Controller Model
 
