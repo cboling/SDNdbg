@@ -44,7 +44,7 @@ class ModelNode(ModelBase):
                          highest level object to this item.  For the field itself, it
                          should be as short enough for display purposes but unique enough
                          not to clash with other items.  For instance, a GUID/UUID is always
-                         unique.  A name like eth0 is not, so it may need to be prepended prepended
+                         unique.  A name like eth0 is not, so it may need to be prepended
                          with it's parent unique ID. For instance, instead of 'eth0' you may want
                          to use <system-name>/eth0  or <system-name>/<bridge-name>/eth0.
     rawData (char):      Raw data used to create item. Often JSON, XML, or CLI screen data
@@ -52,14 +52,14 @@ class ModelNode(ModelBase):
     parent  (ModelNode): The parent node (if not Null) of this node.  To get all children, of
                          a Node, query for it other 'nodes' parent field.
     """
-    uniqueId = StrippedCharField(db_index=True)
-    rawData = models.CharField(blank=True, null=True)
+    uniqueId = StrippedCharField(max_length=255, db_index=True)
+    rawData = models.CharField(max_length=255, blank=True, null=True)
 
     name = StrippedCharField(max_length=255)  # TODO Verify max length allowed
     # TODO For some derived types, the max name may be less, figure out how best to do this
 
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
-                               help_text='Parent Node')
+                               related_name='%(app_label)s_%(class)s_parent', help_text='Parent Node')
 
     class Meta:
         app_label = "core"

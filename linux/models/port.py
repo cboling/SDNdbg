@@ -32,6 +32,7 @@ class Port(ModelNode):
     class Meta:
         app_label = "linux"
         db_table = "linux_port"
+        ordering = []  # Remove parent's ordering effect
 
     def __str__(self):
         return "TODO: Linux bridge Port"

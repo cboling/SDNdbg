@@ -37,9 +37,9 @@ urlpatterns = [
 
     # TODO: Enable each of the following below when ready or clean them up if they will not be used
     #
-    # url(r'^/linux', include('linux.urls')),
-    # url(r'^/odl', include('odl.urls')),
-    url(r'^/onos', include('onos.urls')),
-    # url(r'^/openstack', include('openstack.urls')),
-    # url(r'^/ovs', include('ovs.urls')),
+    # url(r'^linux/', include('linux.urls')),
+    # url(r'^odl/', include('odl.urls')),
+    url(r'^onos/', include('onos.urls')),
+    # url(r'^openstack/', include('openstack.urls')),
+    # url(r'^ovs/', include('ovs.urls')),
 ]
