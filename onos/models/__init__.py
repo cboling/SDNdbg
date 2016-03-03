@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-DEFAULT_USERNAME = 'onos'       # Default ONOS username for REST GET operations
-DEFAULT_PASSWORD = 'rocks'      # Default ONOS password for REST GET operations
+DEFAULT_USERNAME = 'onos'  # Default ONOS username for REST GET operations
+DEFAULT_PASSWORD = 'rocks'  # Default ONOS password for REST GET operations
 
 
 def ulr_prefix(ip_address, port_number=8181, version=1):

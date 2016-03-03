@@ -16,15 +16,15 @@ limitations under the License.
 from __future__ import unicode_literals
 
 from django.db import models
-from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
-from core.models.base import StrippedCharField
-from core.models.node import ModelNode
+from base import ModelBase
+from base import StrippedCharField
+from node import ModelNode
 
 
 @python_2_unicode_compatible
-class ModelEdge(models.Model):
+class ModelEdge(ModelBase):
     """
     Base Network Graph Edge (link) Model
 
@@ -45,39 +45,28 @@ class ModelEdge(models.Model):
                          combined with parent information to provide a unique path from the
                          highest level object to this item.  The field itself should be
                          some type of concatenation of the source and target
-    rawData (char):      Raw data used to create item. Often JSON, XML, or CLI screen data
-    created (timezone):  The UTC timestamp when this model was first created
-    updated (timezone):  The UTC timestamp when this model last saved a change
+    rawData (char):      Raw data used to create item. Often JSON, XML, or CLI screen data. It
+                         is expected that this data is in character format. If not, use an
+                         appropriate binary->ascii conversion such as Base64 and document it
+                         in your derived class
     name    (char):      Simple human readable name for the node
     parent  (ModelNode): The parent node (if not Null) of this node.  To get all children, of
                          a Node, query for it other 'nodes' parent field.
     """
-    uniqueId = StrippedCharField(db_index=True)
-    rawData = models.CharField(blank=True, null=True)
-
-    created = models.DateTimeField(editable=False)
-    updated = models.DateTimeField()
+    uniqueId = StrippedCharField(max_length=255, db_index=True)
+    rawData = models.CharField(max_length=255, blank=True, null=True)
 
     name = StrippedCharField(max_length=255)  # TODO Verify max length allowed
     # TODO For some derived types, the max name may be less, figure out how best to do this
 
-    source = models.ForeignKey(ModelNode, on_delete=models.CASCADE, help_text='Source Edge')
-    target = models.ForeignKey(ModelNode, on_delete=models.CASCADE, help_text='Target Edge')
+    source = models.ForeignKey(ModelNode, on_delete=models.CASCADE, related_name='+',
+                               help_text='Source Edge')
+    target = models.ForeignKey(ModelNode, on_delete=models.CASCADE, related_name='+',
+                               help_text='Target Edge')
 
     class Meta:
         app_label = "core"
         db_table = "core_edge"
 
-    def save(self, *args, **kwargs):
-        # Save created if this is a new field
-
-        now = timezone.now()
-
-        if not self.id:
-            self.created = now
-
-        # Update 'updated' field
-        self.updated = now
-
-        # TODO do we want to modify the 'updated' here?
-        super(ModelEdge, self).save(*args, **kwargs)
+    def __str__(self):
+        return self.name

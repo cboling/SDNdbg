@@ -30,20 +30,20 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
-from config import Config
-
-config = Config()
-
-
-def overrideDbSettings(v):
-    parsed = urlparse(v)
-    config.db_host = parsed.hostname
-    config.db_port = parsed.port
-
-
-for key, ofunc in env_to_config_dict.items():
-    if key in os.environ:
-        ofunc(os.environ[key])
+# from config import Config
+#
+# config = Config()
+#
+#
+# def overrideDbSettings(v):
+#     parsed = urlparse(v)
+#     config.db_host = parsed.hostname
+#     config.db_port = parsed.port
+#
+#
+# for key, ofunc in env_to_config_dict.items():
+#     if key in os.environ:
+#         ofunc(os.environ[key])
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     'onos.apps.OnosConfig',
     # 'odl.apps.OdlConfig',
     'ovs.apps.OvsConfig',
-    'linux.apps.LnxBridgeConfig',
+    'linux.apps.LinuxConfig',
     'openstack.apps.OpenstackConfig',
     'collector.apps.CollectorConfig',
     'django.contrib.admin',
@@ -117,16 +117,16 @@ WSGI_APPLICATION = 'SDNdbg.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE'  : 'django.db.backends.postgresql_psycopg2',
-        'NAME'    : config.db_name,
-        'USER'    : config.db_user,
-        'PASSWORD': config.db_password,
-        'HOST'    : config.db_host,
-        'PORT'    : config.db_port,
-        # 'NAME': 'sdndbg_db',
-        # 'USER': 'sdn',
-        # 'PASSWORD': 'debugger',
-        # 'HOST': 'localhost',
-        # 'PORT': '',
+        # 'NAME'    : config.db_name,
+        # 'USER'    : config.db_user,
+        # 'PASSWORD': config.db_password,
+        # 'HOST'    : config.db_host,
+        # 'PORT'    : config.db_port,
+        'NAME'    : 'sdndbg_db',
+        'USER'    : 'sdn',
+        'PASSWORD': 'debugger',
+        'HOST'    : 'localhost',
+        'PORT'    : '',
     }
 }
 

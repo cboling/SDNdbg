@@ -13,21 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from __future__ import unicode_literals
+from django.conf.urls import url
 
-from django.utils.encoding import python_2_unicode_compatible
+from . import views
 
-from core.models.node import ModelNode
-
-
-@python_2_unicode_compatible
-class Switch(ModelNode):
-    """
-    ONOS Switch (device) model
-    """
-    class Meta:
-        app_label = 'onos'
-        db_table = 'onos_switch'
-
-    def __str__(self):
-        return 'TODO: ONOS Switch'
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+]

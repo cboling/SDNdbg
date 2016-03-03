@@ -22,7 +22,7 @@ from core.models.node import ModelNode
 
 
 @python_2_unicode_compatible
-class Switch(ModelNode):
+class Controller(ModelNode):
     """
     ONOS Controller Model
 
@@ -51,7 +51,7 @@ class Switch(ModelNode):
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=50)  # TODO Remember to use forms.PasswordInput() in the forms.py
 
-    ACTIVE = 'A'    # Signifies that the instance is active and operating normally
+    ACTIVE = 'A'  # Signifies that the instance is active and operating normally
     INACTIVE = 'I'  # Signifies that the instance is inactive, which means either down or up, but not operational
 
     SUPPORTED_STATE_IN_CLUSTER = (
