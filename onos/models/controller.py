@@ -43,8 +43,8 @@ class Controller(ModelNode):
     TODO: Where & how to best store login credentials
     """
 
-    address = models.GenericIPAddressField()
-    port = models.IntegerField()  # TODO Place bounds 0-65535 possible?
+    ipAddress = models.GenericIPAddressField()
+    tcpPort = models.IntegerField()  # TODO Place bounds 0-65535 possible?
 
     # TODO: Username/password is cluster-wide
     # TODO: Each node in a cluster has a unique NodeId

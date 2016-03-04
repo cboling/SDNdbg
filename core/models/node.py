@@ -59,7 +59,7 @@ class ModelNode(ModelBase):
     # TODO For some derived types, the max name may be less, figure out how best to do this
 
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
-                               related_name='%(app_label)s_%(class)s_parent', help_text='Parent Node')
+                               related_name='%(app_label)s_%(class)s_child', help_text='Parent Node')
 
     class Meta:
         app_label = "core"
