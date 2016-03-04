@@ -64,6 +64,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'home.apps.HomeConfig',
     'core.apps.CoreConfig',
     'onos.apps.OnosConfig',
     # TODO: Enable the following 3 when ready
