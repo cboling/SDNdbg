@@ -64,11 +64,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'home.apps.HomeConfig',
     'core.apps.CoreConfig',
     'onos.apps.OnosConfig',
+    # TODO: Enable the following 3 when ready
     # 'odl.apps.OdlConfig',
-    'ovs.apps.OvsConfig',
-    'linux.apps.LinuxConfig',
+    # 'ovs.apps.OvsConfig',
+    # 'linux.apps.LinuxConfig',
     'openstack.apps.OpenstackConfig',
     'collector.apps.CollectorConfig',
     'django.contrib.admin',
