@@ -53,8 +53,9 @@ class SiteCredentials(ModelBase):
                                auth_url=auth_url, region=region)
 
     class Meta:
-        app_label = "openstack"
-        db_table = "openstack_sitecredentials"
+        app_label = 'openstack'
+        db_table = 'openstack_sitecredentials'
+        verbose_name_plural = 'Site Credentials'
 
     def __str__(self):
         return "%s/%s of (%s/%s): %s" % (self.username, self.password, self.tenant,

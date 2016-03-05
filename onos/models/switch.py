@@ -28,6 +28,7 @@ class Switch(ModelNode):
     class Meta:
         app_label = 'onos'
         db_table = 'onos_switch'
+        verbose_name_plural = 'Switches'
 
     def __str__(self):
         return 'TODO: ONOS Switch'
