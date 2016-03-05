@@ -18,12 +18,11 @@ from __future__ import unicode_literals
 import requests
 from django.utils.encoding import python_2_unicode_compatible
 
-from controller import Controller
 from core import json_decode
 from core.logger import logger
 from core.models.node import ModelNode
 from onos.models import *
-
+from onos.models import DEFAULT_PASSWORD, DEFAULT_REST_PORT, DEFAULT_USERNAME
 
 @python_2_unicode_compatible
 class Cluster(ModelNode):
@@ -91,7 +90,7 @@ class Cluster(ModelNode):
         return cluster
 
     @classmethod
-    def find_all_controllers(cls, ip_address, port_number=8181,
+    def find_all_controllers(cls, ip_address, port_number=DEFAULT_REST_PORT,
                              username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD):
         """
         Given one ONOS Controller address and credentials, find all (if any) other controllers

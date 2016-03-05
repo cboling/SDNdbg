@@ -13,6 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import os
+
 """
 Django settings for SDNdbg project.
 
@@ -27,8 +29,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 # TODO: Look into https://www.rdegges.com/2011/the-perfect-django-settings-file/ and see if it is helpful
 
 """
-
-import os
 
 # from config import Config
 #
@@ -64,15 +64,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'home.apps.HomeConfig',
     'core.apps.CoreConfig',
     'onos.apps.OnosConfig',
+    'openstack.apps.OpenstackConfig',
+    'collector.apps.CollectorConfig',
     # TODO: Enable the following 3 when ready
     # 'odl.apps.OdlConfig',
     # 'ovs.apps.OvsConfig',
     # 'linux.apps.LinuxConfig',
-    'openstack.apps.OpenstackConfig',
-    'collector.apps.CollectorConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

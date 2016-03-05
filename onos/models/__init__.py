@@ -25,7 +25,8 @@ __all__ = ['Switch',
            'Cluster',
            'Controller',
            'Flow',
-           'Link'
+           'Link',
+           'ulr_prefix'
            ]
 
 DEFAULT_USERNAME = 'onos'  # Default ONOS username for REST GET operations
