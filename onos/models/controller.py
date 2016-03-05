@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
+from core.logger import logger
 from core.models.node import ModelNode
 
 
@@ -54,27 +55,41 @@ class Controller(ModelNode):
     ACTIVE = 'A'  # Signifies that the instance is active and operating normally
     INACTIVE = 'I'  # Signifies that the instance is inactive, which means either down or up, but not operational
 
-    SUPPORTED_STATE_IN_CLUSTER = (
+    SUPPORTED_STATUS_IN_CLUSTER = (
         (ACTIVE, 'Active'),
         (INACTIVE, 'Inactive'),
     )
-    __valid_controller_states = (ACTIVE, INACTIVE)
+    __valid_controller_status = (ACTIVE, INACTIVE)
 
-    state_in_cluster = models.CharField(max_length=2, choices=SUPPORTED_STATE_IN_CLUSTER, default=ACTIVE)
+    status_in_cluster = models.CharField(max_length=2, choices=SUPPORTED_STATUS_IN_CLUSTER, default=ACTIVE)
 
     class Meta:
         app_label = 'onos'
         db_table = 'onos_controller'
 
     @classmethod
-    def create(cls, name, address, port, username, password):
-        return cls(name=name, address=address, port=port, username=username, password=password)
+    def create(cls, name, address, port, username, password, status=ACTIVE, parent=None):
+        """
+        TODO:    Fill this out...
+        :param name:
+        :param address:
+        :param port:
+        :param username:
+        :param password:
+        :param status:
+        :param parent:
+        :return:
+        """
+        logger.debug('Controller.create(%s, %s, %d, %s, %s, %s)' % (name, address, port, username,
+                                                                    password, str(status)))
+        return cls(name=name, address=address, port=port, username=username, password=password,
+                   status_in_cluster=status, parent=parent)
 
     def __str__(self):
         return 'ONOS Controller: %s (%s)' % (self.name, self.address)
 
-    def is_cluster_state_valid(self):
+    def is_cluster_status_valid(self):
         """ Is this a valid state for a controller to be in
         :return: (bool) True if valid, False otherwise.
         """
-        return self.state_in_cluster in self.__valid_controller_states
+        return self.status_in_cluster in self.__valid_controller_status

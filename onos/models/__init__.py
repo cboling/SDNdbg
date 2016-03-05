@@ -16,9 +16,10 @@ limitations under the License.
 
 DEFAULT_USERNAME = 'onos'  # Default ONOS username for REST GET operations
 DEFAULT_PASSWORD = 'rocks'  # Default ONOS password for REST GET operations
+DEFAULT_REST_PORT = 8181  # Default port for ONOS REST commands
 
 
-def ulr_prefix(ip_address, port_number=8181, version=1):
+def ulr_prefix(ip_address, port_number=DEFAULT_REST_PORT, version=1):
     """
     Create the base URL prefix for an ONOS REST interface
     :param ip_address:  IP Address or hostname for ONOS Controller
