@@ -13,6 +13,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from onos.models.cluster import Cluster
+from onos.models.controller import Controller
+from onos.models.flow import Flow
+from onos.models.link import Link
+from onos.models.port import Port
+from onos.models.switch import Switch
+
+__all__ = ['Switch',
+           'Port',
+           'Cluster',
+           'Controller',
+           'Flow',
+           'Link'
+           ]
 
 DEFAULT_USERNAME = 'onos'  # Default ONOS username for REST GET operations
 DEFAULT_PASSWORD = 'rocks'  # Default ONOS password for REST GET operations
