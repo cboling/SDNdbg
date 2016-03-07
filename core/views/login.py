@@ -13,16 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from django.views import generic
+from django.shortcuts import render
+from django.views.generic import View
 
 
-class HomeIndexView(generic.ListView):
-    template_name = 'polls/index.html'
-    context_object_name = 'latest_question_list'
+class Login(View):
+    template_name = 'core/index.html'
 
-    def get_queryset(self):
-        """Return the last five published questions."""
-        return Question.objects.order_by('-pub_date')[:5]
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+        # context_object_name = 'latest_question_list'
+
+        # def get_queryset(self):
+        #     """Return the last five published questions."""
+        #     return Question.objects.order_by('-pub_date')[:5]
 
 # class DetailView(generic.DetailView):
 #     model = Question

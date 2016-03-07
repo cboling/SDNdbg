@@ -22,7 +22,7 @@ from core import json_decode
 from core.logger import logger
 from core.models.node import ModelNode
 from onos.models import *
-from onos.models import DEFAULT_PASSWORD, DEFAULT_REST_PORT, DEFAULT_USERNAME
+
 
 @python_2_unicode_compatible
 class Cluster(ModelNode):
@@ -90,8 +90,7 @@ class Cluster(ModelNode):
         return cluster
 
     @classmethod
-    def find_all_controllers(cls, ip_address, port_number=DEFAULT_REST_PORT,
-                             username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD):
+    def find_all_controllers(cls, ip_address, port_number=None, username=None, password=None):
         """
         Given one ONOS Controller address and credentials, find all (if any) other controllers
         in the cluster and return an ONOS Cluster object.  For each controller found, an
@@ -104,6 +103,10 @@ class Cluster(ModelNode):
 
         :return: Cluster object with appropriate Controller objects created as needed
         """
+        port_number = get_default_rest_port() if port_number is None else port_number
+        username = get_default_username() if username is None else username
+        password = get_default_password() if password is None else password
+
         url = ulr_prefix(ip_address, port_number) + Cluster.__URL_LEAF
 
         response = requests.get(url, auth=(username, password))

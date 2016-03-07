@@ -48,7 +48,7 @@ seed_superuser()
 {
     username=admin
     email=admin@example.com
-    pwd=password
+    pwd=password123
 
     echo "from django.contrib.auth.models import User; User.objects.create_superuser('${username}', '${email}', '${pwd}')" | python manage.py shell
 }

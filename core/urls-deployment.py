@@ -13,15 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from django.conf.urls import url
-
-from . import views
 
 urlpatterns = [
-    # Example: /deployments/
-    url(r'^$', views.index, name='index'),
-
-    # ex: /deployments/5/
-    url(r'^(?P<deployment_id>[0-9]+)/$', views.detail, name='detail'),
+    # # Example: /deployments/
+    # url(r'^$', views.DeploymentView, name='index'),
+    #
+    # # ex: /deployments/5/
+    # url(r'^(?P<deployment_id>[0-9]+)/$', views.DeploymentDetailView, name='detail'),
 
 ]
