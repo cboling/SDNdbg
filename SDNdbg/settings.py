@@ -13,6 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import os
+
 """
 Django settings for SDNdbg project.
 
@@ -27,8 +29,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 # TODO: Look into https://www.rdegges.com/2011/the-perfect-django-settings-file/ and see if it is helpful
 
 """
-
-import os
 
 # from config import Config
 #
@@ -48,7 +48,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
@@ -57,28 +56,27 @@ SECRET_KEY = '(%n1^m758po6)2lj=d8+rfxgy!5+ul&$&iarr%qg3odz4ov%8j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-# TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
 
 # Application definition
 
 INSTALLED_APPS = [
-    'home.apps.HomeConfig',
     'core.apps.CoreConfig',
     'onos.apps.OnosConfig',
+    'openstack.apps.OpenstackConfig',
+    'collector.apps.CollectorConfig',
     # TODO: Enable the following 3 when ready
     # 'odl.apps.OdlConfig',
     # 'ovs.apps.OvsConfig',
     # 'linux.apps.LinuxConfig',
-    'openstack.apps.OpenstackConfig',
-    'collector.apps.CollectorConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'django.contrib.sites',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -96,10 +94,12 @@ ROOT_URLCONF = 'SDNdbg.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'BACKEND' : 'django.template.backends.django.DjangoTemplates',
+        'DIRS'    : [
+            BASE_DIR + '/core/templates/core/',
+        ],
         'APP_DIRS': True,
-        'OPTIONS': {
+        'OPTIONS' : {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -111,7 +111,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'SDNdbg.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
@@ -168,11 +167,13 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
+# URL where requests are redirected for login
+LOGIN_URL = '/login/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/core/static/'
 
 LOGGING = {
     'version'                 : 1,

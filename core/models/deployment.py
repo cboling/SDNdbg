@@ -23,7 +23,8 @@ from .base import ModelBase, StrippedCharField
 @python_2_unicode_compatible
 class Deployment(ModelBase):
     """
-    The Deployment class models a grouping of Sites (OpenStack installations)
+    The Deployment class models a grouping of Sites (OpenStack installations) and
+    associated SDN Controller Clusters
     """
     # Each variable below represents a database field in this model
     name = StrippedCharField(max_length=64, unique=True,

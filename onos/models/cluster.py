@@ -18,6 +18,8 @@ from __future__ import unicode_literals
 import requests
 from django.utils.encoding import python_2_unicode_compatible
 
+from core import json_decode
+from core.logger import logger
 from core.models.node import ModelNode
 from onos.models import *
 
@@ -43,31 +45,52 @@ class Cluster(ModelNode):
     def __str__(self):
         return 'TODO: ONOS Cluster'
 
-    @classmethod
-    def from_json(cls, json_data):
+    @staticmethod
+    def create(uniqueId, name, username, password, json_data):
         """
-        Create an ONOS Cluster object from JSON returned from a controller
+        Create a Cluster object from JSON data and recurse into
+        any found controllers and perform discovery of them as well.
 
-        For the 1.4 Release, the expected JSON looks similar to the following:
+        For the 1.4 ONOS Emu release, the expected JSON looks similar to the following:
 
-        REST at: http://$OC1:8181/onos/v1/cluster
+        REST at: http://<ip-addr>:8181/onos/v1/cluster
 
         RESULT = {"nodes": [{"id": "10.0.3.175", "ip": "10.0.3.175", "tcpPort": 9876, "status": "ACTIVE"},
                             {"id": "10.0.3.174", "ip": "10.0.3.174", "tcpPort": 9876, "status": "ACTIVE"},
                             {"id": "10.0.3.35",  "ip": "10.0.3.35",  "tcpPort": 9876, "status": "ACTIVE"}]}
 
-        :param json_data: Input JSON string
+        :param uniqueId:  Unique ID for the cluster
+        :param name:      A name for the cluster
+        :param username:  Username to use for REST GET invocation, default is 'onos'
+        :param password:  Password to use for REST GET invocation, default is 'rocks'
+        :param json_data: JSON data for Cluster
 
-        :return: Cluster object or None on error
+        :return: (Cluster) The Cluster or None on error
         """
+        if Cluster.__NODES not in json_data:
+            raise SyntaxError("Expected field %s not found in Cluster JSON data: '%s'",
+                              Cluster.__NODES, json_data)
 
-        # TODO: Implement this
-        raise SyntaxError("Expected field %s not found. JSON:'%s'", ('XYZ', json_data))
+        cluster = Cluster(uniqueId=id, name='TODO: need a name', rawData=json_data)
 
-        return None
+        for node in json_data[Cluster.__NODES]:
+            # id = json_decode(json_data, Cluster.__ID, '', True)
+            ip = json_decode(json_data, Cluster.__IP, '', True)
+            # port = json_decode(json_data, Cluster.__PORT, '', True)
+            port = DEFAULT_REST_PORT
+            status_str = json_decode(json_data, Cluster.__STATUS, '', True)
+
+            # TODO: Validate Status string and assign enumeration, then pass it into controller
+
+            controller_name = 'ONOS [%s:%d]' % (ip, port)
+
+            Controller.create(controller_name, ip, port, username, password,
+                              status=Controller.ACTIVE, parent=cluster)
+
+        return cluster
 
     @classmethod
-    def find_all_controllers(cls, ip_address, port_number=8181, username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD):
+    def find_all_controllers(cls, ip_address, port_number=None, username=None, password=None):
         """
         Given one ONOS Controller address and credentials, find all (if any) other controllers
         in the cluster and return an ONOS Cluster object.  For each controller found, an
@@ -80,10 +103,23 @@ class Cluster(ModelNode):
 
         :return: Cluster object with appropriate Controller objects created as needed
         """
-        url = ulr_prefix + Cluster.__URL_LEAF
+        port_number = get_default_rest_port() if port_number is None else port_number
+        username = get_default_username() if username is None else username
+        password = get_default_password() if password is None else password
+
+        url = ulr_prefix(ip_address, port_number) + Cluster.__URL_LEAF
+
         response = requests.get(url, auth=(username, password))
 
+        logger.info('Cluster: Request Status for %s: %s' % (url, str(response.status_code)))
+
+        # TODO: Insert logging here
+
         if response.status_code != requests.codes.ok:
+            # TODO: Should we throw an exception?
             return None
 
-        return cluster
+        cluster_id = 'Test-1234'  # TODO: A UUID or something else may be better...
+        name = 'Test-987'  # TODO: A capture time or user input would be good here...
+
+        return Cluster.create(cluster_id, name, username, password, response.json())

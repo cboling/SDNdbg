@@ -33,6 +33,7 @@ class Switch(ModelNode):
     class Meta:
         app_label = "linux"
         db_table = "linux_switch"
+        verbose_name_plural = 'Switches'
 
     def __str__(self):
         return "TODO: Linux Bridge"

@@ -64,6 +64,7 @@ class ModelNode(ModelBase):
     class Meta:
         app_label = "core"
         db_table = "core_node"
+        ordering = ['name', 'uniqueId']
 
     def __str__(self):
         return self.name

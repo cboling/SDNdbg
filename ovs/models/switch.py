@@ -31,8 +31,9 @@ class Switch(ModelNode):
     # Has flows
 
     class Meta:
-        app_label = "ovs"
-        db_table = "ovs_switch"
+        app_label = 'ovs'
+        db_table = 'ovs_switch'
+        verbose_name_plural = 'Switches'
 
     def __str__(self):
         return "TODO: OVS Switch"

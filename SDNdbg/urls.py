@@ -13,6 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from django.conf.urls import include, url
+from django.contrib import admin
+
 """SDNdbg URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -28,19 +31,22 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import include, url
-from django.contrib import admin
 
 urlpatterns = [
+    # Admin and Authorization
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('home.urls')),
+    url('^', include('django.contrib.auth.urls', namespace='core')),
+
+    # Applications
+    # url(r'^', include('core.urls-home', namespace='core')),
     url(r'^collector/', include('collector.urls')),
+    url(r'^deployment/', include('core.urls-deployment')),
+    url(r'^onos/', include('onos.urls')),
+    url(r'^openstack/', include('openstack.urls')),
 
     # TODO: Enable each of the following below when ready or clean them up if they will not be used
     #
     # url(r'^linux/', include('linux.urls')),
     # url(r'^odl/', include('odl.urls')),
-    url(r'^onos/', include('onos.urls')),
-    # url(r'^openstack/', include('openstack.urls')),
     # url(r'^ovs/', include('ovs.urls')),
 ]

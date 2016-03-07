@@ -13,12 +13,43 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from onos.models.cluster import Cluster
+from onos.models.controller import Controller
+from onos.models.flow import Flow
+from onos.models.link import Link
+from onos.models.port import Port
+from onos.models.switch import Switch
 
-DEFAULT_USERNAME = 'onos'  # Default ONOS username for REST GET operations
-DEFAULT_PASSWORD = 'rocks'  # Default ONOS password for REST GET operations
+__all__ = ['Switch',
+           'Port',
+           'Cluster',
+           'Controller',
+           'Flow',
+           'Link',
+           'ulr_prefix',
+           'get_default_username',
+           'get_default_password',
+           'get_default_rest_port'
+           ]
+
+__DEFAULT_USERNAME = 'onos'  # Default ONOS username for REST GET operations
+__DEFAULT_PASSWORD = 'rocks'  # Default ONOS password for REST GET operations
+__DEFAULT_REST_PORT = 8181  # Default port for ONOS REST commands
 
 
-def ulr_prefix(ip_address, port_number=8181, version=1):
+def get_default_username():
+    return __DEFAULT_USERNAME
+
+
+def get_default_password():
+    return __DEFAULT_PASSWORD
+
+
+def get_default_rest_port():
+    return __DEFAULT_REST_PORT
+
+
+def ulr_prefix(ip_address, port_number=__DEFAULT_REST_PORT, version=1):
     """
     Create the base URL prefix for an ONOS REST interface
     :param ip_address:  IP Address or hostname for ONOS Controller

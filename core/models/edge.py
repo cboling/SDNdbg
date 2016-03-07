@@ -67,6 +67,7 @@ class ModelEdge(ModelBase):
     class Meta:
         app_label = "core"
         db_table = "core_edge"
+        ordering = ['name', 'uniqueId']
 
     def __str__(self):
         return self.name
