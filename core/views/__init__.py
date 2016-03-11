@@ -13,10 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from login import Login
+from home import *
 
-__all__ = ['Login',
-           'Home',
+__all__ = ['Home',
            # 'DeploymentView',
            # 'DeploymentDetailView',
            ]

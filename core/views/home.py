@@ -13,12 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from django.conf import settings
+from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import View
 
 
 class Home(View):
+    """
+    Home page for all uses
+    """
     template_name = 'core/index.html'
+
+    def TODO(self):
+        if not request.user.is_authenticated():
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
@@ -28,3 +37,31 @@ class Home(View):
         # def get_queryset(self):
         #     """Return the last five published questions."""
         #     return Question.objects.order_by('-pub_date')[:5]
+
+# class DetailView(generic.DetailView):
+#     model = Question
+#     template_name = 'polls/detail.html'
+#
+#
+# class ResultsView(generic.DetailView):
+#     model = Question
+#     template_name = 'polls/results.html'
+#
+#
+# def vote(request, question_id):
+#     question = get_object_or_404(Question, pk=question_id)
+#     try:
+#         selected_choice = question.choice_set.get(pk=request.POST['choice'])
+#     except (KeyError, Choice.DoesNotExist):
+#         # Redisplay the question voting form.
+#         return render(request, 'polls/detail.html', {
+#             'question': question,
+#             'error_message': "You didn't select a choice.",
+#         })
+#     else:
+#         selected_choice.votes += 1
+#         selected_choice.save()
+#         # Always return an HttpResponseRedirect after successfully dealing
+#         # with POST data. This prevents data from being posted twice if a
+#         # user hits the Back button.
+#         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
