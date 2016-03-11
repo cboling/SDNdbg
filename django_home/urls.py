@@ -13,17 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-# from core.models.base import ModelBase, BaseUserManager
-from core.models.base import ModelBase
-from core.models.deployment import Deployment
-from core.models.edge import ModelEdge
-from core.models.node import ModelNode
-from core.models.system import System
 
-__all__ = ['Deployment',
-           'System',
-           'ModelBase',
-           'ModelEdge',
-           'ModelNode',
-           # 'BaseUserManager'
-           ]
+from django.conf.urls import url
+
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+]

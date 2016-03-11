@@ -13,17 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-# from core.models.base import ModelBase, BaseUserManager
-from core.models.base import ModelBase
-from core.models.deployment import Deployment
-from core.models.edge import ModelEdge
-from core.models.node import ModelNode
-from core.models.system import System
+from __future__ import unicode_literals
 
-__all__ = ['Deployment',
-           'System',
-           'ModelBase',
-           'ModelEdge',
-           'ModelNode',
-           # 'BaseUserManager'
-           ]
+from django.apps import AppConfig
+
+
+class DjangoHomeConfig(AppConfig):
+    """
+    Home page and authentication support for SDNdbg when ran as a stand-alone django application
+    """
+    name = 'django_home'

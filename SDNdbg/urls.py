@@ -38,7 +38,7 @@ urlpatterns = [
     url('^', include('django.contrib.auth.urls', namespace='core')),
 
     # Applications
-    # url(r'^', include('core.urls-home', namespace='core')),
+    url(r'^', include('django_home.urls')),
     url(r'^collector/', include('collector.urls')),
     url(r'^deployment/', include('core.urls-deployment')),
     url(r'^onos/', include('onos.urls')),

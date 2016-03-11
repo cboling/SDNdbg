@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <!--
   ~ """
   ~ Copyright (c) 2015 - 2016.  Boling Consulting Solutions, BCSW.net
@@ -16,14 +15,9 @@
   ~ limitations under the License.
   ~ """
   -->
+{% extends "core/base_login.html" %}
+{% load i18n %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>SDNdbg Service</title>
-    <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css" media="screen" />-->
-</head>
-<body>
-<p>TODO: This is a placeholder. Provide a 'wizard' for quick setup and also show existing sessions to pick from.</p>
-</body>
-</html>
+{% block title %}{{ title }} | {% trans 'Django site admin' %}{% endblock %}
+
+{% block nav-global %}{% endblock %}

@@ -108,6 +108,8 @@ install_dependencies()
 
 }
 
+# sudo pip install django django-suit
+
 # TODO Complete this
 # TODO Add unit test support as part of 'setup'
 # TODO Support multiple Linux distro's, not just on Ubuntu. Perhaps centos 7 next

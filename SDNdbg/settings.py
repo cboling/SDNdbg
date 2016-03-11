@@ -63,6 +63,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'core.apps.CoreConfig',
+    'django_home.apps.DjangoHomeConfig',
     'onos.apps.OnosConfig',
     'openstack.apps.OpenstackConfig',
     'collector.apps.CollectorConfig',

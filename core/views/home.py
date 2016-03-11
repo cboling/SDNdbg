@@ -13,17 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-# from core.models.base import ModelBase, BaseUserManager
-from core.models.base import ModelBase
-from core.models.deployment import Deployment
-from core.models.edge import ModelEdge
-from core.models.node import ModelNode
-from core.models.system import System
+from django.shortcuts import render
+from django.views.generic import View
 
-__all__ = ['Deployment',
-           'System',
-           'ModelBase',
-           'ModelEdge',
-           'ModelNode',
-           # 'BaseUserManager'
-           ]
+
+class Home(View):
+    template_name = 'core/index.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+        # context_object_name = 'latest_question_list'
+
+        # def get_queryset(self):
+        #     """Return the last five published questions."""
+        #     return Question.objects.order_by('-pub_date')[:5]

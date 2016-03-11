@@ -16,6 +16,7 @@ limitations under the License.
 from login import Login
 
 __all__ = ['Login',
+           'Home',
            # 'DeploymentView',
            # 'DeploymentDetailView',
            ]
