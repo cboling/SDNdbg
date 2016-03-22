@@ -62,6 +62,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # 'django.contrib.sites',
     'core.apps.CoreConfig',
     'django_home.apps.DjangoHomeConfig',
     'onos.apps.OnosConfig',
@@ -71,13 +78,6 @@ INSTALLED_APPS = [
     # 'odl.apps.OdlConfig',
     # 'ovs.apps.OvsConfig',
     # 'linux.apps.LinuxConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # 'django.contrib.sites',
 ]
 
 MIDDLEWARE_CLASSES = [
