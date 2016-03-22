@@ -172,7 +172,7 @@ USE_TZ = True
 LOGIN_URL = '/login/'
 
 # Where users are redirected after logging in
-LOGIN_REDIRECT_URL
+# LOGIN_REDIRECT_URL  # TODO Add this later
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
