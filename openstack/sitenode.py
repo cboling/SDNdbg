@@ -15,15 +15,11 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
-from core.models.base import ModelBase, StrippedCharField
-from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from openstack.consts import *
 
 from .site import Site
 
 
-@python_2_unicode_compatible
 class SiteNode(ModelBase):
     """
     The Site Node class models an OpenStack node (controller, compute, ...) of a site

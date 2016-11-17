@@ -15,11 +15,7 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
-from core.models.node import ModelNode
-from django.utils.encoding import python_2_unicode_compatible
 
-
-@python_2_unicode_compatible
 class Switch(ModelNode):
     """
     OpenVSwitch Switch (bridge) model

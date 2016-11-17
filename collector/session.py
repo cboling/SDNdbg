@@ -15,11 +15,6 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
-from core.models.base import ModelBase, StrippedCharField
-from django.utils.encoding import python_2_unicode_compatible
-
-
-@python_2_unicode_compatible
 class Session(ModelBase):
     """
     The Session class models a single discovery session and is responsible

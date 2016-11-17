@@ -15,11 +15,6 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
-from core.models.edge import ModelEdge
-from django.utils.encoding import python_2_unicode_compatible
-
-
-@python_2_unicode_compatible
 class Link(ModelEdge):
     """
     ONOS Topology Link Model

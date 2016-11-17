@@ -15,13 +15,7 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
-from core.logger import logger
-from core.models.node import ModelNode
-from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
-
-@python_2_unicode_compatible
 class Controller(ModelNode):
     """
     ONOS Controller Model

@@ -15,15 +15,11 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
-from core.models.base import ModelBase
-from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from openstack.consts import *
 
 
 # TODO: As this file gets huge, break it up
 
-@python_2_unicode_compatible
 class SiteCredentials(ModelBase):
     """
     The SiteCredentials class models the values need to authenticate with Keystone

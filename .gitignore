@@ -63,3 +63,5 @@ target/
 
 # Intellij/IDEA
 .idea/
+/vENV/
+vENV/

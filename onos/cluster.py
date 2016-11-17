@@ -16,16 +16,10 @@ limitations under the License.
 from __future__ import unicode_literals
 
 import requests
-
-from core.logger import logger
-from core.models.node import ModelNode
-from django.utils.encoding import python_2_unicode_compatible
 from onos.models import *
 
 from core import json_decode
 
-
-@python_2_unicode_compatible
 class Cluster(ModelNode):
     """
     ONOS Cluster Model
