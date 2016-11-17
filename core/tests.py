@@ -13,20 +13,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from django.test import TestCase
+# from django.test import TestCase
+#
+#
+# class AppTests(TestCase):
+#     """
+#     Application level unit tests
+#
+#     Put model unit tests in the tests subdirectory
+#
+#     """
+#     def todo_some_test_with_descriptive_name_here(self):
+#         """
+#         TODO: describe test case
+#         """
+#         self.assertEqual(True, True)    # TODO Make this real
 
-
-class AppTests(TestCase):
-    """
-    Application level unit tests
-
-    Put model unit tests in the tests subdirectory
-
-    """
-    def todo_some_test_with_descriptive_name_here(self):
-        """
-        TODO: describe test case
-        """
-        self.assertEqual(True, True)    # TODO Make this real
+# TODO: Convert to pytest
 
 # Create your tests here.

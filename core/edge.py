@@ -15,59 +15,63 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
-from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
-from base import ModelBase
-from base import StrippedCharField
-from node import ModelNode
-
-
-@python_2_unicode_compatible
-class ModelEdge(ModelBase):
+class Edge:
     """
-    Base Network Graph Edge (link) Model
-
-    This class provides a simple base class from which other Graph Edge models
-    are derived.  In particular, this class will provide fields for a create
-    and update timestamp as well as some common fields like 'Name', 'UniqueID', ...
-
-    This model uses django Multi-table inheritance where each model in the hierarchy
-    is a model all by itself. Each model corresponds to its own database table and
-    can be queried and created individually. The inheritance relationship introduces
-    links between the child model and each of its parents (via an
-    automatically-created OneToOneField).  This will allow the 'parent' field in this
-    base class to work across applications and data tables.  See the following link
-    for more info: https://docs.djangoproject.com/en/1.9/topics/db/models/#multi-table-inheritance
-
-    Fields / Attributes:
-    uniqueId = (char):   A unique character string to identify the item.  This field is
-                         combined with parent information to provide a unique path from the
-                         highest level object to this item.  The field itself should be
-                         some type of concatenation of the source and target
-    rawData (char):      Raw data used to create item. Often JSON, XML, or CLI screen data. It
-                         is expected that this data is in character format. If not, use an
-                         appropriate binary->ascii conversion such as Base64 and document it
-                         in your derived class
-    name    (char):      Simple human readable name for the node
-    parent  (ModelNode): The parent node (if not Null) of this node.  To get all children, of
-                         a Node, query for it other 'nodes' parent field.
+    The base class for a top level object that represents a connection between two devices
     """
-    uniqueId = StrippedCharField(max_length=255, db_index=True)
-    rawData = models.CharField(max_length=255, blank=True, null=True)
+    json = ''
 
-    name = StrippedCharField(max_length=255)  # TODO Verify max length allowed
-    # TODO For some derived types, the max name may be less, figure out how best to do this
+    def __init__(self, json_data):
+        self.json = json_data
 
-    source = models.ForeignKey(ModelNode, on_delete=models.CASCADE, related_name='+',
-                               help_text='Source Edge')
-    target = models.ForeignKey(ModelNode, on_delete=models.CASCADE, related_name='+',
-                               help_text='Target Edge')
+    def __eq__(self, other):
+        if not isinstance(other, Edge):
+            return False
+        return self.unique_id == other.unique_id
 
-    class Meta:
-        app_label = "core"
-        db_table = "core_edge"
-        ordering = ['name', 'uniqueId']
+    @property
+    def parent(self):
+        """
+        Parent objects
+        :return: parent
+        """
+        return None
 
-    def __str__(self):
-        return self.name
+    @property
+    def unique_id(self):
+        """
+        :return: (string) Globally Unique Name
+        """
+        raise NotImplementedError("Required 'unique_id' property not implemented")
+
+    @property
+    def source(self):
+        """
+        :return: (string) Source Node ID
+        """
+        raise NotImplementedError("Required 'source' property not implemented")
+
+    @property
+    def target(self):
+        """
+        :return: (string) Target Node Id
+        """
+        raise NotImplementedError("Required 'target' property not implemented")
+
+    @property
+    def name(self):
+        """
+        :return: (string) Human readable name for node
+        """
+        raise NotImplementedError("Required 'name' property not implemented")
+
+    @property
+    def to_json(self):
+        """
+        Output information to simple JSON format
+        :return: (list) edge 'data' elements
+        """
+        return '{"edge":{"id": "%s","source": "%s","target": "%s"}}' % (self.unique_id,
+                                                                        self.source,
+                                                                        self.target)

@@ -13,22 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from __future__ import unicode_literals
+from core.node import Node
 
 
-class Node:
+class Site(Node):
     """
-    The base class for a top level object that represents a device, port, computer, vm, container, ...
+    An OpenStack 'Site' represents a collection of OpenStack controllers that share a
+    common geo-location.
     """
-    json = ''
+    my_controllers = None
 
-    def __init__(self, json_data):
-        self.json = json_data
+    def __init__(self, config):
+        Node.__init__(self, '')
 
-    def __eq__(self, other):
-        if not isinstance(other, Node):
-            return False
-        return self.unique_id == other.unique_id
+        self.site_name = 'Site: {}'.format(config.name)
+        self.config = config
 
     @property
     def parent(self):
@@ -41,44 +40,36 @@ class Node:
     @property
     def children(self):
         """
-        Child objects
+        Child objects.  For a site, this is a list of all VIM Controllers
         :return: (list) of children
         """
-        return []
-
-    @property
-    def edges(self):
-        """
-        Edges
-        :return: (list) edges
-        """
-        return []
+        return self.controllers
 
     @property
     def unique_id(self):
         """
         :return: (string) Globally Unique Name
         """
-        raise NotImplementedError("Required 'unique_id' property not implemented")
+        return self.name
 
     @property
     def name(self):
         """
         :return: (string) Human readable name for node
         """
-        raise NotImplementedError("Required 'name' property not implemented")
+        return self.site_name
 
     @property
-    def to_json(self):
+    def controllers(self):
         """
-        Output information to simple JSON format
-        :return: (list) node 'data' elements
+        This property provides all known controllers in the network.  Currently provided
+        by the configuration file
+
+        :return: (list) server objects
         """
-        result = '{ "node" :{ "id": "%s"' % self.unique_id
+        from openstack.controller import Controller
 
-        if self.parent is not None:
-            result += ', "parent": "%s"' % self.parent.unique_id
+        if self.my_controllers is None:
+            self.my_controllers = Controller.controllers(self, self.config)
 
-        result += '} }'
-
-        return result
+        return self.my_controllers

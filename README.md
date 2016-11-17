@@ -1,28 +1,48 @@
 # SDNdbg
 SDN Flow Analyzer - SDN/NFV debugging as a Services  (DBGaaS)
 
-A Django based project to help simplify the analysis and debugging of complex SDN + NFVi
-networks.  This is an active project with the first milestone targeted at providing detailed
-interactive graphical display of Switch, ports, links, and flows within and ONOS SDN Controller
-cluster. It is anticipated that this will be available in early summer of 2016.
+This project attempts to discover the nodes and links within an SDN/NFV network for the purposes
+of debugging connectivity issues. 
 
-The second milestone will be the integration of OVS switch, port, and flow information as
-well as KVM/libvirt and Linux bridging / virtual Ethernet information from a Liberty-based
-OpenStack installation.  The anticipated date for this milestone is late Summer to early
-Fall of 2016.
+Currently OpenStack as the VIM/NFVi and ONOS as the SDN controller will be supported. Future work
+will include OpenDaylight SDN Controller support and perhaps more VIMs.
 
-A third milestone will be the integration of OpenDaylight into the project. No completion date
-is available at this time.
+Initially only the KVM/QEMU compute hypervisors will be supported (primarily via libvirt) but it is
+highly desireable to support container technologies.
 
 # Installation Instructions
 
-This project is currently under construction.  The initial release will target a stand-alone
-Django collection of applications that will be managed through a browser.  Toward the middle
-end of the second milestone, I hope to provide OpenStack Horizon inte
+This project is currently under construction. It is suggested that you create a virtual Python
+environment and work within that environment. The steps to create this environment are:
 
-## Requirements
+## Create Virtual Environment
+```
+    $ pip install virtualenv
+    $ cd SDNdbg                 # This base directory
+    $ virtualenv vENV
+    $ source vENV/bin/activate
+```
+## Install Dependencies
 
-In progress...  I will likely target only Linux (Ubuntu 15.04+ and Fedora 23) initially but all
+```
+    $ cd SDNdbg                 # This base directory
+    $ source vENV/bin/activate
+    $ sudo apt-get install libvirt-dev
+    $ pip install -r requirements.txt
+```
+
+## Running the Application
+
+```
+    $ cd SDNdbg                 # This base directory
+    $ source vENV/bin/activate
+    $ ...TODO...
+```
+
+
+## Platform Requirements
+
+In progress...  I will likely target only Linux (Ubuntu 16.04+ and Centos 7+) initially but all
 code is expected to be in Python, HTML, JS, and CSS.  So Windows is a possibility, just not an
 initial target.
 
