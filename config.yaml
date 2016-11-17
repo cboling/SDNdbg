@@ -1,0 +1,55 @@
+############################################################################################
+# Sample configuration file
+---
+# 'default-credentials' is a list of SSH credentials to use on SSH connections where SSH is the only
+# supported mechanism to retrieve information
+
+default-credentials:   &default-creds-1
+  - {'username': 'ubuntu', 'password': 'ubuntu'}
+  - {'username': 'root',   'password': 'root'}
+
+# OpenStack Credentials support both keystone v2.0 and v3. The determination of which keystone API
+# to use is based on the AUTH URL.
+
+openstack-credentials: &openstack-creds-1
+  'name':                   'OpenStack Example'
+  'type':                   'OpenStack'
+  'OS_AUTH_URL':            'https://localhost:5000/v3'
+  'OS_USERNAME':            'admin'
+  'OS_PASSWORD':            'password'
+  'OS_PROJECT_NAME':        'admin'                               # Project/Tenant name
+  'OS_REGION_NAME':         'RegionOne'
+  'OS_USER_DOMAIN_NAME':    'Default'                             # Only required for Keystone V3
+  'OS_PROJECT_DOMAIN_NAME': 'Default'                             # Only required for Keystone V3
+  'OS_CA_PATH':             '/etc/ssl/certs/ca-certificates.crt'  # Only required if using SSH
+
+# ONOS Credentials are for REST access to one or more openstack clusters
+
+onos-credentials:   &onos-creds
+  'name':     'ONOS Example'
+  'type':     'ONOS'
+  'address':  'localhost'
+  'port':     '8181'
+  'username': 'onos'
+  'password': 'rocks'
+
+############################################################################################
+# Now begin the definition of controllers to map.  Note that in the 'sdn-controllers' section
+# there are actually two controllers defined with the same credentials, you only need to
+# override the name and address to keep it unique  The same could have been done if you
+# hand more than one VIM/NFVi systems to discover
+
+site:
+  'name':             'Example Site'
+  'ssh-credentials':  *default-creds-1
+  'seed-file':        'seed.json'
+
+  'vims':
+    - *openstack-creds-1
+
+  'sdn-controllers':
+    - *onos-creds
+    - 'name':    'ONOS Example 2'
+      'address': '192.168.0.200'
+      <<: *onos-creds
+
