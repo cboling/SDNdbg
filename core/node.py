@@ -15,36 +15,21 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
+from base import Base
 
-class Node:
+
+class Node(Base):
     """
     The base class for a top level object that represents a device, port, computer, vm, container, ...
     """
-    json = ''
 
-    def __init__(self, json_data):
-        self.json = json_data
+    def __init__(self, **kwargs):
+        Base.__init__(self, **kwargs)
 
     def __eq__(self, other):
         if not isinstance(other, Node):
             return False
         return self.unique_id == other.unique_id
-
-    @property
-    def parent(self):
-        """
-        Parent objects
-        :return: parent
-        """
-        return None
-
-    @property
-    def children(self):
-        """
-        Child objects
-        :return: (list) of children
-        """
-        return []
 
     @property
     def edges(self):
@@ -53,20 +38,6 @@ class Node:
         :return: (list) edges
         """
         return []
-
-    @property
-    def unique_id(self):
-        """
-        :return: (string) Globally Unique Name
-        """
-        raise NotImplementedError("Required 'unique_id' property not implemented")
-
-    @property
-    def name(self):
-        """
-        :return: (string) Human readable name for node
-        """
-        raise NotImplementedError("Required 'name' property not implemented")
 
     @property
     def to_json(self):

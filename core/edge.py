@@ -15,35 +15,21 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
+from base import Base
 
-class Edge:
+
+class Edge(Base):
     """
     The base class for a top level object that represents a connection between two devices
     """
-    json = ''
 
-    def __init__(self, json_data):
-        self.json = json_data
+    def __init__(self, **kwargs):
+        Base.__init__(self, **kwargs)
 
     def __eq__(self, other):
         if not isinstance(other, Edge):
             return False
-        return self.unique_id == other.unique_id
-
-    @property
-    def parent(self):
-        """
-        Parent objects
-        :return: parent
-        """
-        return None
-
-    @property
-    def unique_id(self):
-        """
-        :return: (string) Globally Unique Name
-        """
-        raise NotImplementedError("Required 'unique_id' property not implemented")
+        return self.id == other.id
 
     @property
     def source(self):
@@ -58,13 +44,6 @@ class Edge:
         :return: (string) Target Node Id
         """
         raise NotImplementedError("Required 'target' property not implemented")
-
-    @property
-    def name(self):
-        """
-        :return: (string) Human readable name for node
-        """
-        raise NotImplementedError("Required 'name' property not implemented")
 
     @property
     def to_json(self):
