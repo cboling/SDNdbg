@@ -1,0 +1,39 @@
+{
+    "node": [
+        {
+            "unique_id": "Al_Gores_baby",
+            "name": "Internet",
+            "description": "The Internet"
+        }
+    ],
+    "edge": [
+        {
+            "unique_id": "123",
+            "name": "ONOS -> Compute Node",
+            "source": "of:1000000000000001/1",
+            "target": "ovs_port:eth1,2532f3s8-6334-92ab-cafe-2412532d3cab",
+            "description": "Manual link from SDN to NFVi, via seed.json"
+        },
+        {
+            "unique_id": "456",
+            "name": "Compute Node -> ONOS",
+            "source": "ovs_port:eth1,2532f3s8-6334-92ab-cafe-2412532d3cab",
+            "target": "of:1000000000000001/1",
+            "description": "Manual link from NFVi to SDN, via seed.json"
+        },
+        {
+            "unique_id": "abc",
+            "name": "WAN -> Internet",
+            "source": "of:1000000000000001/8",
+            "target": "Al_Gores_baby",
+            "description": "Manual link to the Internet, via seed.json"
+        },
+        {
+            "unique_id": "def",
+            "name": "Internet -> WAN",
+            "source": "Al_Gores_baby",
+            "target": "of:1000000000000001/8",
+            "description": "Manual link from the Internet, via seed.json"
+        }
+    ]
+}
