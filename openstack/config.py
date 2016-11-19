@@ -23,7 +23,11 @@ class Config(object):
     Class used to wrap a set of openstack configuration information
     """
 
-    def __init__(self, input_data):
+    def __init__(self, parent, input_data):
+        self._parent = parent
+        self._seed_file = input_data.get('seed-file', parent.seed_file)
+        self._log_level = input_data.get('logging-level', parent.logging_level)
+
         self._name = input_data.get('name', 'OpenStack')
         self._auth_url = input_data.get('OS_AUTH_URL')
         self._username = input_data.get('OS_USERNAME')
@@ -60,6 +64,14 @@ class Config(object):
     @property
     def type(self):
         return 'OpenStack'
+
+    @property
+    def seed_file(self):
+        return self._seed_file
+
+    @property
+    def logging_level(self):
+        return self._log_level
 
     @property
     def auth_url(self):

@@ -24,7 +24,6 @@ class Config(object):
     """
     Wraps the configuration to read in
     """
-
     def __init__(self, **kwargs):
         """
         Create a configuration object
@@ -40,6 +39,8 @@ class Config(object):
         self._log_level = 'info'
         self._sites = []
 
+        # TODO: Support a global list of username/passwords...
+
         # Continue with loading of the configuration file. If not present, try to load from
         # environment variables
 
@@ -51,7 +52,7 @@ class Config(object):
         if 'sites' not in self._config_data:
             raise KeyError("Unable to locate required key 'sites' in configuration file '{}'".format(filename))
 
-        self._sites = Config._load_site(self._config_data['sites'])
+        self._sites = self._load_site(self._config_data['sites'])
 
     @staticmethod
     def _load_env_vars():
@@ -78,8 +79,7 @@ class Config(object):
 
         return config
 
-    @staticmethod
-    def _load_site(site_configs):
+    def _load_site(self, site_configs):
         """
         Create a collection of Site objects based on the configuration provided
 
@@ -90,10 +90,22 @@ class Config(object):
         from site import Config as SiteConfig
         sites = []
 
-        for site in site_configs:
-            sites.append(SiteConfig.create(site))
+        for site_config in site_configs:
+            sites.append(SiteConfig.create(self, site_config))
 
         return sites
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def seed_file(self):
+        return self._seed_file
+
+    @property
+    def logging_level(self):
+        return self._log_level
 
     @property
     def get_sites(self):

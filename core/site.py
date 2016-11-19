@@ -25,28 +25,26 @@ class Config(object):
     Wraps Site specific configuration
     """
 
-    def __init__(self, site):
+    def __init__(self, site, parent):
+        self._parent = parent
+
         self._name = site.get('name', 'Site.{}'.format(str(uuid.UUID())))
-        self._seed_file = site.get('seed-file', None)
-        self._vims = Config._load_vims(site.get('vims', []))
-        self._sdn = Config._load_sdns(site.get('sdn-controllers', []))
+        self._seed_file = site.get('seed-file', parent.seed_file)
+        self._log_level = site.get('logging-level', parent.logging_level)
+
+        self._vims = self._load_vims(site.get('vims', []))
+        self._sdn = self._load_sdns(site.get('sdn-controllers', []))
         self._ssh = Config._load_ssh(site.get('ssh-credentials', []))
 
-        # TODO Support per-site level overriding of logging-level
-
     @staticmethod
-    def create(config_data=None):
+    def create(parent, config_data):
         """
         Create a site object based on the provided configuration
 
-        :param config_data: (dict) Site Configuration dictionary.  If not provided, the user's environment will
-                                   be searched for common variables that define this site
-
+        :param config_data: (dict) Site Configuration dictionary
         :return: (Config) Site configuration object for the provided data
         """
-        site_config = Config(config_data) if config_data is not None else Config(Config._load_env_vars())
-
-        return site_config
+        return Config(config_data, parent)
 
     @staticmethod
     def load_env_vars():
@@ -97,8 +95,7 @@ class Config(object):
         }
         return config
 
-    @staticmethod
-    def _load_vims(vim_configs):
+    def _load_vims(self, vim_configs):
         from openstack.config import Config as OpenStackConfig
 
         vim_loader = {
@@ -107,12 +104,11 @@ class Config(object):
         vims = []
 
         for config in vim_configs:
-            vims.append(vim_loader[config.get('type', 'unknown').lower()](config))
+            vims.append(vim_loader[config.get('type', 'unknown').lower()](self, config))
 
         return vims
 
-    @staticmethod
-    def _load_sdns(sdn_configs):
+    def _load_sdns(self, sdn_configs):
         from onos.config import Config as OnosConfig
 
         sdn_loader = {
@@ -121,7 +117,7 @@ class Config(object):
         sdn = []
 
         for config in sdn_configs:
-            sdn.append(sdn_loader[config.get('type', 'unknown').lower()](config))
+            sdn.append(sdn_loader[config.get('type', 'unknown').lower()](self, config))
 
         return sdn
 
@@ -156,9 +152,9 @@ class Config(object):
     def seed_file(self):
         return self._seed_file
 
-    @seed_file.setter
-    def seed_file(self, value):
-        self._seed_file = value
+    @property
+    def logging_level(self):
+        return self._log_level
 
 
 class Site(Node):
