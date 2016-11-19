@@ -69,7 +69,12 @@ def main():
     logging.info('Collecting SDN/NFV Elements')
 
     # Load up the site (could be multiple controllers...)
-    site_elements = Site(config)
+    # TODO: Support multiple sites.  Allow global seed file and per-site seed files
+
+    sites = []
+
+    for site_config in config.get_sites():
+        site_elements = Site(site_config)
 
     # TODO: Set up a state machine for the 'nodes' and 'edges' and transition with states such as
     #

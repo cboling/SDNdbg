@@ -13,7 +13,152 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import collections
+import os
+import uuid
+
 from core.node import Node
+
+
+class Config(object):
+    """
+    Wraps Site specific configuration
+    """
+
+    def __init__(self, site):
+        self._name = site.get('name', 'Site.{}'.format(str(uuid.UUID())))
+        self._seed_file = site.get('seed-file', None)
+        self._vims = Config._load_vims(site.get('vims', []))
+        self._sdn = Config._load_sdns(site.get('sdn-controllers', []))
+        self._ssh = Config._load_ssh(site.get('ssh-credentials', []))
+
+        # TODO Support per-site level overriding of logging-level
+
+    @staticmethod
+    def create(config_data=None):
+        """
+        Create a site object based on the provided configuration
+
+        :param config_data: (dict) Site Configuration dictionary.  If not provided, the user's environment will
+                                   be searched for common variables that define this site
+
+        :return: (Config) Site configuration object for the provided data
+        """
+        site_config = Config(config_data) if config_data is not None else Config(Config._load_env_vars())
+
+        return site_config
+
+    @staticmethod
+    def load_env_vars():
+        """
+        Load up our configuration based on common environment variables.
+
+        Obviously can only handle a single Openstack and onos controller
+
+        :return: (dict) Site configuration dictionary constructed from environment variables
+        """
+        # TODO: Move to openstack directory
+
+        openstack_config = {
+            'OS_AUTH_URL'           : os.environ.get('OS_AUTH_URL'),
+            'OS_USERNAME'           : os.environ.get('OS_USERNAME'),
+            'OS_PASSWORD'           : os.environ.get('OS_PASSWORD'),
+            'OS_CA_PATH'            : os.environ.get('OS_CA_PATH'),
+            'OS_PROJECT_DOMAIN_NAME': os.environ.get('OS_PROJECT_DOMAIN_NAME'),
+            'OS_PROJECT_NAME'       : os.environ.get('OS_PROJECT_NAME',
+                                                     os.environ.get('OS_TENANT_NAME')),
+            'OS_REGION_NAME'        : os.environ.get('OS_REGION_NAME'),
+            'OS_USER_DOMAIN_NAME'   : os.environ.get('OS_USER_DOMAIN_NAME'),
+            'name'                  : 'OpenStack',
+            'type'                  : 'OpenStack'
+        }
+        ssh = [
+            {'username': os.environ.get('OS_USERNAME'),
+             'password': os.environ.get('OS_PASSWORD')}
+        ]
+        # TODO: Move to ONOS directory
+        sdn = []
+        cnt = 1
+        while os.environ.get('OC{}'.format(cnt)) is not None:
+            item = {'type'    : 'ONOS',
+                    'name'    : '{}-{}'.format(os.environ.get('ONOS_CELL'), cnt),
+                    'username': os.environ.get('ONOS_USER'),
+                    'password': os.environ.get('ONOS_WEB_PASS'),
+                    'address' : os.environ.get('OC{}'.format(cnt)),
+                    'port'    : 8181}
+            sdn.append(item)
+            cnt += 1
+
+        config = {
+            'name'           : os.environ.get('USER'),
+            'sdn-controllers': sdn,
+            'vims'           : [openstack_config],
+            'ssh-credentials': ssh
+        }
+        return config
+
+    @staticmethod
+    def _load_vims(vim_configs):
+        from openstack.config import Config as OpenStackConfig
+
+        vim_loader = {
+            'openstack': OpenStackConfig.create
+        }
+        vims = []
+
+        for config in vim_configs:
+            vims.append(vim_loader[config.get('type', 'unknown').lower()](config))
+
+        return vims
+
+    @staticmethod
+    def _load_sdns(sdn_configs):
+        from onos.config import Config as OnosConfig
+
+        sdn_loader = {
+            'onos': OnosConfig.create
+        }
+        sdn = []
+
+        for config in sdn_configs:
+            sdn.append(sdn_loader[config.get('type', 'unknown').lower()](config))
+
+        return sdn
+
+    @staticmethod
+    def _load_ssh(ssh_configs):
+        # TODO: Also support per machine/address credentials, not just a bunch to try
+        ssh_username_and_passwords = collections.OrderedDict()
+
+        for up_dict in ssh_configs:
+            if 'username' in up_dict:
+                ssh_username_and_passwords.update({up_dict['username']: up_dict.get('password', '')})
+
+        return ssh_username_and_passwords
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def vims(self):
+        return self._vims
+
+    @property
+    def sdn_controllers(self):
+        return self._sdn
+
+    @property
+    def ssh_username_and_passwords(self):
+        return self._ssh
+
+    @property
+    def seed_file(self):
+        return self._seed_file
+
+    @seed_file.setter
+    def seed_file(self, value):
+        self._seed_file = value
 
 
 class Site(Node):
@@ -21,13 +166,15 @@ class Site(Node):
     An OpenStack 'Site' represents a collection of OpenStack controllers that share a
     common geo-location.
     """
-    my_controllers = None
-
     def __init__(self, config):
         Node.__init__(self, '')
 
         self.site_name = 'Site: {}'.format(config.name)
         self.config = config
+
+    @staticmethod
+    def default_site():
+        return Site()
 
     @property
     def parent(self):

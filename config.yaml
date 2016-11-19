@@ -14,14 +14,15 @@ default-credentials:   &default-creds-1
 openstack-credentials: &openstack-creds-1
   'name':                   'OpenStack Example'
   'type':                   'OpenStack'
-  'OS_AUTH_URL':            'https://localhost:5000/v3'
-  'OS_USERNAME':            'admin'
-  'OS_PASSWORD':            'password'
+  # 'OS_AUTH_URL':            'https://192.168.1.121:5000/v3'
+  'OS_AUTH_URL':            'http://192.168.1.121:5000/v3'
+  'OS_USERNAME':            'stack'
+  'OS_PASSWORD':            'devstack'
   'OS_PROJECT_NAME':        'admin'                               # Project/Tenant name
   'OS_REGION_NAME':         'RegionOne'
   'OS_USER_DOMAIN_NAME':    'Default'                             # Only required for Keystone V3
   'OS_PROJECT_DOMAIN_NAME': 'Default'                             # Only required for Keystone V3
-  'OS_CA_PATH':             '/etc/ssl/certs/ca-certificates.crt'  # Only required if using SSH
+  # 'OS_CA_PATH':             '/etc/ssl/certs/ca-certificates.crt'  # Only required if using SSH
 
 # ONOS Credentials are for REST access to one or more openstack clusters
 
@@ -34,12 +35,17 @@ onos-credentials:   &onos-creds
   'password': 'rocks'
 
 ############################################################################################
+# Some global settings
+
+logging-level: 'info'
+
+############################################################################################
 # Now begin the definition of controllers to map.  Note that in the 'sdn-controllers' section
 # there are actually two controllers defined with the same credentials, you only need to
 # override the name and address to keep it unique  The same could have been done if you
 # hand more than one VIM/NFVi systems to discover
 
-site:
+example-site:   &example-site
   'name':             'Example Site'
   'ssh-credentials':  *default-creds-1
   'seed-file':        'seed.json'
@@ -53,3 +59,8 @@ site:
       'address': '192.168.0.200'
       <<: *onos-creds
 
+############################################################################################
+# Finally, collect all the sites you have defined and provide a list of them
+
+sites:
+  - *example-site
