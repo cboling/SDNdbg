@@ -39,6 +39,9 @@ class Config(object):
         self.logging_level = 'info'
         self.cache_client = False
         self.sites = []
+        self.type = 'Global'
+        self.config = self
+        self.config_parent = None
 
         # TODO: Support a global list of username/passwords...
 

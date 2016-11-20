@@ -14,17 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import collections
-import novaclient.client as nova_client
 import os.path
+
+import novaclient.client as nova_client
 from keystoneauth1 import session
 from keystoneauth1.identity import v2, v3
 from keystoneclient.v2_0 import client as keystone_client_v2
 from keystoneclient.v3 import client as keystone_client_v3
 
-from core.credentials import Credentials
+from core.credentials import Credentials as CoreCredentials
 
 
-class OpenStackCredentials(Credentials):
+class Credentials(CoreCredentials):
     """
     OpenStack Credentials Class
 
@@ -40,7 +41,7 @@ class OpenStackCredentials(Credentials):
                  user_domain_name=None,
                  project_domain_name=None,
                  ca_path=None):
-        Credentials.__init__(self, collections.OrderedDict({username: password}))
+        CoreCredentials.__init__(self, collections.OrderedDict({username: password}))
 
         self.auth_url = auth_url
         self.project_name = project_name

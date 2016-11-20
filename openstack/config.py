@@ -19,7 +19,7 @@ from os import path
 import urllib3.util as urlutil
 
 from core.utils import get_uuid, levelname_to_level
-from credentials import OpenStackCredentials
+from credentials import Credentials
 
 
 class Config(object):
@@ -29,6 +29,8 @@ class Config(object):
 
     def __init__(self, config_data, parent):
         self.type = 'OpenStack'
+        self.config = self
+        self.config_parent = parent
 
         self.name = config_data.get('name', '{}OpenStack.{}'.format(parent.name, str(get_uuid())))
         self.seed_file = config_data.get('seed-file', parent.seed_file)
@@ -61,13 +63,13 @@ class Config(object):
         return Config(config_data, parent)
 
     def to_credentials(self):
-        return OpenStackCredentials(self.username,
-                                    self.password,
-                                    self.auth_url,
-                                    self.project,
-                                    user_domain_name=self.user_domain_name,
-                                    project_domain_name=self.project_domain_name,
-                                    ca_path=self.certificate_path)
+        return Credentials(self.username,
+                           self.password,
+                           self.auth_url,
+                           self.project,
+                           user_domain_name=self.user_domain_name,
+                           project_domain_name=self.project_domain_name,
+                           ca_path=self.certificate_path)
 
     def get_address(self):
         return urlutil.parse_url(self.auth_url).host

@@ -27,6 +27,8 @@ class Config(object):
 
     def __init__(self, config_data, parent):
         self.type = 'ONOS'
+        self.config = self
+        self.config_parent = parent
 
         self.name = config_data.get('name', '{}.ONOS.{}'.format(parent.name, str(get_uuid())))
         self.seed_file = config_data.get('seed-file', parent.seed_file)

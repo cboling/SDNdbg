@@ -15,8 +15,13 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
+import logging
+import pprint
 
-class Controller(ModelNode):
+from core.node import Node
+
+
+class Controller(Node):
     """
     ONOS Controller Model
 
@@ -37,52 +42,61 @@ class Controller(ModelNode):
     TODO: Where & how to best store login credentials
     """
 
-    ipAddress = models.GenericIPAddressField()
-    tcpPort = models.IntegerField()  # TODO Place bounds 0-65535 possible?
+    def __init__(self, **kwargs):
+        logging.info('onos.Controller.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        Node.__init__(self, **kwargs)
 
-    # TODO: Username/password is cluster-wide
-    # TODO: Each node in a cluster has a unique NodeId
-    username = models.CharField(max_length=100)
-    password = models.CharField(max_length=50)  # TODO Remember to use forms.PasswordInput() in the forms.py
+    @staticmethod
+    def create(**kwargs):
+        logging.info('onos.Controller.Create: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        return Controller(**kwargs)
 
-    ACTIVE = 'A'  # Signifies that the instance is active and operating normally
-    INACTIVE = 'I'  # Signifies that the instance is inactive, which means either down or up, but not operational
-
-    SUPPORTED_STATUS_IN_CLUSTER = (
-        (ACTIVE, 'Active'),
-        (INACTIVE, 'Inactive'),
-    )
-    __valid_controller_status = (ACTIVE, INACTIVE)
-
-    status_in_cluster = models.CharField(max_length=2, choices=SUPPORTED_STATUS_IN_CLUSTER, default=ACTIVE)
-
-    class Meta:
-        app_label = 'onos'
-        db_table = 'onos_controller'
-
-    @classmethod
-    def create(cls, name, address, port, username, password, status=ACTIVE, parent=None):
-        """
-        TODO:    Fill this out...
-        :param name:
-        :param address:
-        :param port:
-        :param username:
-        :param password:
-        :param status:
-        :param parent:
-        :return:
-        """
-        logger.debug('Controller.create(%s, %s, %d, %s, %s, %s)' % (name, address, port, username,
-                                                                    password, str(status)))
-        return cls(name=name, address=address, port=port, username=username, password=password,
-                   status_in_cluster=status, parent=parent)
-
-    def __str__(self):
-        return 'ONOS Controller: %s (%s)' % (self.name, self.address)
-
-    def is_cluster_status_valid(self):
-        """ Is this a valid state for a controller to be in
-        :return: (bool) True if valid, False otherwise.
-        """
-        return self.status_in_cluster in self.__valid_controller_status
+        # ipAddress = models.GenericIPAddressField()
+        # tcpPort = models.IntegerField()  # TODO Place bounds 0-65535 possible?
+        #
+        # # TODO: Username/password is cluster-wide
+        # # TODO: Each node in a cluster has a unique NodeId
+        # username = models.CharField(max_length=100)
+        # password = models.CharField(max_length=50)  # TODO Remember to use forms.PasswordInput() in the forms.py
+        #
+        # ACTIVE = 'A'  # Signifies that the instance is active and operating normally
+        # INACTIVE = 'I'  # Signifies that the instance is inactive, which means either down or up, but not operational
+        #
+        # SUPPORTED_STATUS_IN_CLUSTER = (
+        #     (ACTIVE, 'Active'),
+        #     (INACTIVE, 'Inactive'),
+        # )
+        # __valid_controller_status = (ACTIVE, INACTIVE)
+        #
+        # status_in_cluster = models.CharField(max_length=2, choices=SUPPORTED_STATUS_IN_CLUSTER, default=ACTIVE)
+        #
+        # class Meta:
+        #     app_label = 'onos'
+        #     db_table = 'onos_controller'
+        #
+        # @classmethod
+        # def create(cls, name, address, port, username, password, status=ACTIVE, parent=None):
+        #     """
+        #     TODO:    Fill this out...
+        #     :param name:
+        #     :param address:
+        #     :param port:
+        #     :param username:
+        #     :param password:
+        #     :param status:
+        #     :param parent:
+        #     :return:
+        #     """
+        #     logger.debug('Controller.create(%s, %s, %d, %s, %s, %s)' % (name, address, port, username,
+        #                                                                 password, str(status)))
+        #     return cls(name=name, address=address, port=port, username=username, password=password,
+        #                status_in_cluster=status, parent=parent)
+        #
+        # def __str__(self):
+        #     return 'ONOS Controller: %s (%s)' % (self.name, self.address)
+        #
+        # def is_cluster_status_valid(self):
+        #     """ Is this a valid state for a controller to be in
+        #     :return: (bool) True if valid, False otherwise.
+        #     """
+        #     return self.status_in_cluster in self.__valid_controller_status

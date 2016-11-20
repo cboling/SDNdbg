@@ -18,8 +18,9 @@ import logging
 import os
 import pprint
 
-from core.node import Node
-from core.utils import get_uuid
+from controller import Controller
+from node import Node
+from utils import get_uuid
 
 
 class Config(object):
@@ -28,6 +29,10 @@ class Config(object):
     """
 
     def __init__(self, config_data, parent):
+        self.type = 'Site'
+        self.config = self
+        self.config_parent = parent
+
         self.name = config_data.get('name', '{}.Site.{}'.format(parent.name, str(get_uuid())))
         self.seed_file = config_data.get('seed-file', parent.seed_file)
         self.logging_level = config_data.get('logging-level', parent.logging_level)
@@ -143,45 +148,48 @@ class Site(Node):
     An OpenStack 'Site' represents a collection of OpenStack controllers that share a
     common geo-location.
     """
-
     def __init__(self, **kwargs):
         logging.info('Site.__init__: args:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         # No VIMs/NFV infrastructure or SDN controllers yet.  Will populate during discovery
-        # TODO: Do we want to keep these separate, or just all in the children base property/list
-
-        self._vims = []
-        self._sdn_controllers = []
 
         Node.__init__(self, **kwargs)
 
-    @property
-    def unique_id(self):
-        """
-        :return: (string) Globally Unique Name
-        """
-        return self.name
-
-    @property
-    def nfv_controllers(self):
-        """
-        This property provides all known VIM/NFV controllers in the network
-
-        :return: (list) NFV Controller objects
-        """
-        return self._vims
-
-    @property
-    def sdn_controllers(self):
-        """
-        This property provides all known SDN controllers in the network
-
-        :return: (list) SDN Controller objects
-        """
-        return self._sdn_controllers
-
     def connect(self):
         """
+        A site is made up of a collection of NFV VIMs and SDN Controllers.  No actual client connection is made
+        at this level in the hierarchy. Just return a non-None item so we pass the 'is connected' test.
 
-        :return:
+        :return: Always success
         """
+        return 'Success: No client object required'
+
+    def perform_sync(self):
+        """
+        A site is made up of a collection of NFV VIMs and SDN Controllers.  Currently these are all
+        available from the input configuration file.  If we have not created the appropriate controller
+        objects for any items, do so now
+
+        :return: True if synchronization was successful, False otherwise
+        """
+        if len(self.children) == 0:
+            self._sync_vim_controllers()
+            self._sync_sdn_controllers()
+
+        return True
+
+    def _sync_vim_controllers(self):
+        """
+        Go through VIM configurations and create controller objects
+        """
+        for vim in self.config.vims:
+            controller = Controller.create(self, **vim.__dict__)
+            self.children.append(controller)
+
+    def _sync_sdn_controllers(self):
+        """
+        Go through SDN configurations and create controller objects
+        """
+        for sdn in self.config.sdn_controllers:
+            controller = Controller.create(self, **sdn.__dict__)
+            self.children.append(controller)

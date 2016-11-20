@@ -94,6 +94,7 @@ class Base(object):
         now = datetime.datetime.utcnow()
         self._create_time = now
         self._last_update_time = None
+        self._config = kwargs.pop('config', None)
 
         self._last_synced_time = None
         self._last_unsynced_time = now
@@ -184,6 +185,14 @@ class Base(object):
         return self._children
 
     @property
+    def config(self):
+        """
+        Configuration object
+        :return: (Config) Configuration, None if item was fully discovered
+        """
+        return self._config
+
+    @property
     def enabled(self):
         """
         Flag indicating that this object is enabled
@@ -213,7 +222,10 @@ class Base(object):
             raise ValueError('Delete Pending for an object can only be set to True')
 
         if self._delete_pending != value:
-            self._enabled = value
+            self._delete_pending = value
+            if value:
+                self.delete()
+
             self.modified = True
 
     @property
@@ -521,17 +533,22 @@ class Base(object):
         Leaving the UPDATING state. Drop client if we do not cache it
         """
         logging.info('on_exit_updating: entry. {}'.format(self.name))
+
         if not self.cache_client:
             self.client = None
 
     def on_enter_deleted(self):
         """
-        TODO: Implement this
-        :return:
+        Entering the DELETED state.  Drop any client connections and signal all decedent
+        children to delete as well.
         """
         logging.info('on_enter_deleted: entry. {}'.format(self.name))
         self.client = None
-        raise NotImplementedError('TODO: Get this working....')
+
+        # Force all child objects into the deleted state as well
+
+        for child in self.children:
+            child.delete_pending = True
 
     def sync(self):
         """
@@ -539,7 +556,7 @@ class Base(object):
         """
         logging.info('Sync: {} entry: no sync: {}, deleted: {}'.format(self, self.no_sync, self.is_deleted))
 
-        if self.no_sync or self.is_deleted():
+        if self.no_sync or self.is_deleted() or self.delete_pending:
             return
 
         try:
@@ -558,13 +575,14 @@ class Base(object):
         if self.is_in_sync():
             logging.info('Sync: {}, {} children'.format(self, len(self._children)))
 
-            for child in self._children:
+            for child in self.children:
                 # Do not recurse into children that are marked as a root for synchronization by
                 # another sync thread
 
-                if child.sync_thread is None:
+                if child.sync_thread is None and not self.delete_pending:
                     try:
                         child.sync()
+
                     except Exception as e:
                         message = "Unhandled Exception while attempting to sync '{}': {}".format(self, e.message)
                         logging.error(message)
