@@ -26,11 +26,6 @@ class Node(Base):
     def __init__(self, **kwargs):
         Base.__init__(self, **kwargs)
 
-    def __eq__(self, other):
-        if not isinstance(other, Node):
-            return False
-        return self.unique_id == other.unique_id
-
     @property
     def edges(self):
         """

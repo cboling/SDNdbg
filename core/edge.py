@@ -23,13 +23,8 @@ class Edge(Base):
     The base class for a top level object that represents a connection between two devices
     """
 
-    def __init__(self, **kwargs):
-        Base.__init__(self, **kwargs)
-
-    def __eq__(self, other):
-        if not isinstance(other, Edge):
-            return False
-        return self.id == other.id
+    def __init__(self, parent=None, **kwargs):
+        Base.__init__(self, parent, **kwargs)
 
     @property
     def source(self):

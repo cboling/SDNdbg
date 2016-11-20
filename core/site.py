@@ -14,10 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import collections
+import logging
 import os
-import uuid
+import pprint
 
 from core.node import Node
+from core.utils import get_uuid
 
 
 class Config(object):
@@ -25,23 +27,26 @@ class Config(object):
     Wraps Site specific configuration
     """
 
-    def __init__(self, site, parent):
-        self._parent = parent
+    def __init__(self, config_data, parent):
+        self.name = config_data.get('name', '{}.Site.{}'.format(parent.name, str(get_uuid())))
+        self.seed_file = config_data.get('seed-file', parent.seed_file)
+        self.logging_level = config_data.get('logging-level', parent.logging_level)
+        self.cache_client = config_data.get('cache-client', parent.cache_client)
 
-        self._name = site.get('name', 'Site.{}'.format(str(uuid.UUID())))
-        self._seed_file = site.get('seed-file', parent.seed_file)
-        self._log_level = site.get('logging-level', parent.logging_level)
-
-        self._vims = self._load_vims(site.get('vims', []))
-        self._sdn = self._load_sdns(site.get('sdn-controllers', []))
-        self._ssh = Config._load_ssh(site.get('ssh-credentials', []))
+        self.vims = self._load_vims(config_data.get('vims', []))
+        self.sdn_controllers = self._load_sdns(config_data.get('sdn-controllers', []))
+        self.ssh_username_and_passwords = Config._load_ssh(config_data.get('ssh-credentials', []))
 
     @staticmethod
-    def create(parent, config_data):
+    def create(config_data, parent):
         """
-        Create a site object based on the provided configuration
+        Create a site object configuration object.  This call will recurse into any defined VIMS or
+        SDN controller configs and parse those configs as well.
 
         :param config_data: (dict) Site Configuration dictionary
+        :param parent: (Base) Higher level object that contains this site.  This parameter allows some
+                              default values such as logging-level to default to same level as the parent
+                              config if not explicitly overridden.
         :return: (Config) Site configuration object for the provided data
         """
         return Config(config_data, parent)
@@ -104,7 +109,7 @@ class Config(object):
         vims = []
 
         for config in vim_configs:
-            vims.append(vim_loader[config.get('type', 'unknown').lower()](self, config))
+            vims.append(vim_loader[config.get('type', 'unknown').lower()](config, self))
 
         return vims
 
@@ -117,7 +122,7 @@ class Config(object):
         sdn = []
 
         for config in sdn_configs:
-            sdn.append(sdn_loader[config.get('type', 'unknown').lower()](self, config))
+            sdn.append(sdn_loader[config.get('type', 'unknown').lower()](config, self))
 
         return sdn
 
@@ -132,61 +137,23 @@ class Config(object):
 
         return ssh_username_and_passwords
 
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def vims(self):
-        return self._vims
-
-    @property
-    def sdn_controllers(self):
-        return self._sdn
-
-    @property
-    def ssh_username_and_passwords(self):
-        return self._ssh
-
-    @property
-    def seed_file(self):
-        return self._seed_file
-
-    @property
-    def logging_level(self):
-        return self._log_level
-
 
 class Site(Node):
     """
     An OpenStack 'Site' represents a collection of OpenStack controllers that share a
     common geo-location.
     """
-    def __init__(self, config):
-        Node.__init__(self, '')
 
-        self.site_name = 'Site: {}'.format(config.name)
-        self.config = config
+    def __init__(self, **kwargs):
+        logging.info('Site.__init__: args:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
-    @staticmethod
-    def default_site():
-        return Site()
+        # No VIMs/NFV infrastructure or SDN controllers yet.  Will populate during discovery
+        # TODO: Do we want to keep these separate, or just all in the children base property/list
 
-    @property
-    def parent(self):
-        """
-        Parent objects
-        :return: parent
-        """
-        return None
+        self._vims = []
+        self._sdn_controllers = []
 
-    @property
-    def children(self):
-        """
-        Child objects.  For a site, this is a list of all VIM Controllers
-        :return: (list) of children
-        """
-        return self.controllers
+        Node.__init__(self, **kwargs)
 
     @property
     def unique_id(self):
@@ -196,23 +163,25 @@ class Site(Node):
         return self.name
 
     @property
-    def name(self):
+    def nfv_controllers(self):
         """
-        :return: (string) Human readable name for node
+        This property provides all known VIM/NFV controllers in the network
+
+        :return: (list) NFV Controller objects
         """
-        return self.site_name
+        return self._vims
 
     @property
-    def controllers(self):
+    def sdn_controllers(self):
         """
-        This property provides all known controllers in the network.  Currently provided
-        by the configuration file
+        This property provides all known SDN controllers in the network
 
-        :return: (list) server objects
+        :return: (list) SDN Controller objects
         """
-        from openstack.controller import Controller
+        return self._sdn_controllers
 
-        if self.my_controllers is None:
-            self.my_controllers = Controller.controllers(self, self.config)
+    def connect(self):
+        """
 
-        return self.my_controllers
+        :return:
+        """

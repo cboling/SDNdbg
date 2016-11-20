@@ -93,16 +93,25 @@ class SyncThread(object):
 
         logging.info('Sync:Thread: {} Exiting'.format(root.name))
 
-    def start(self):
+    def start(self, signal_notify=True):
         """
         Start up a background thread to keep site synchronized
+
+        :param signal_notify: (boolean) Call the 'notify' method immediately instead of waiting for
+                                        and initial tick_interval before first running the thread
         """
         if not self.running:
             logging.info('Starting up synchronization thread for {}'.format(self._root.name))
             self._thread = threading.Thread(name=self._root.name, target=SyncThread._thread_main,
                                             kwargs={'root': self._root})
+            if signal_notify:
+                self._consecutive_runs = 0
+
             self._thread.start()
             _allThreads.append(self)
+
+            if signal_notify:
+                self.notify()
 
     def stop(self, wait_delay=0):
         """

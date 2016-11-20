@@ -24,15 +24,16 @@ openstack-credentials: &openstack-creds-1
   'OS_PROJECT_DOMAIN_NAME': 'Default'                             # Only required for Keystone V3
   # 'OS_CA_PATH':             '/etc/ssl/certs/ca-certificates.crt'  # Only required if using SSH
 
-# ONOS Credentials are for REST access to one or more openstack clusters
+# ONOS Credentials are for REST access to one or more ONOS clusters
 
 onos-credentials:   &onos-creds
-  'name':     'ONOS Example'
-  'type':     'ONOS'
-  'address':  'localhost'
-  'port':     '8181'
-  'username': 'onos'
-  'password': 'rocks'
+  'name':        'ONOS Example'
+  'type':        'ONOS'
+  'address':     'localhost'
+  'port':        '8181'
+  'username':    'onos'
+  'password':    'rocks'
+  'cache-client': True
 
 ############################################################################################
 # Some global settings

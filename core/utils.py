@@ -15,10 +15,45 @@ limitations under the License.
 """
 # Some various utilities
 
-import libvirt
 import logging
 import netifaces as ni
 import socket
+import uuid
+
+import libvirt
+
+_log_levels = {
+    'DEBUG'   : logging.DEBUG,
+    'INFO'    : logging.INFO,
+    'WARNING' : logging.WARNING,
+    'WARN'    : logging.WARN,
+    'ERROR'   : logging.ERROR,
+    'CRITICAL': logging.CRITICAL
+}
+
+
+def get_uuid():
+    """
+    Simplified program to return UUID (format=1) but with node hard-coded to improve response
+    and decrease file descriptors that may be left open
+
+    :return: (UUID) New UUID
+    """
+    return uuid.uuid1(node=0xb8ca3ab44c0c)
+
+
+def levelname_to_level(name):
+    """
+    Convert logging level string to logging level
+
+    :param name: (string) Level to convert
+
+    :return: Logging level
+    """
+    level = _log_levels.get(name.upper(), None)
+    if level is None:
+        raise ValueError("Invalid logging level '{}'".format(name))
+    return level
 
 
 def is_same_host(address_1, address_2):

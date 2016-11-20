@@ -18,6 +18,7 @@ import argparse
 import logging
 import os
 import sys
+import time
 
 from core.config import Config
 from core.site import Site
@@ -44,9 +45,19 @@ def make_sure_path_exists(path):
 if make_sure_path_exists(log_path):
     from logging.handlers import RotatingFileHandler
 
-    fileHandler = RotatingFileHandler("{0}/{1}.log".format(log_path, app_name), maxBytes=1048576, backupCount=5)
+    fileHandler = RotatingFileHandler("{0}/{1}.log".format(log_path, app_name), maxBytes=1048576, backupCount=10)
     fileHandler.setFormatter(logging.Formatter(FORMAT))
     logging.getLogger().addHandler(fileHandler)
+
+
+def shutdown(wait_delay):
+    """
+    Halt any running threads
+    """
+    from core.sync import SyncThread
+
+    logging.info('Signaling Shutdown')
+    SyncThread.stop_all_threads(wait_delay)
 
 
 def main():
@@ -56,6 +67,9 @@ def main():
 
     parser.add_argument('--config', '-c', action='store', default=None,
                         help='Configuration file to use (use environment variables otherwise)')
+
+    parser.add_argument('--output', '-o', action='store', default=None,
+                        help='Output file for JSON dump, default is stdout')
 
     args = parser.parse_args()
 
@@ -68,33 +82,49 @@ def main():
 
     logging.info('Collecting SDN/NFV Elements')
 
-    # Load up the site (could be multiple controllers...)
+    # Create our Site wrapper objects
     # TODO: Support multiple sites.  Allow global seed file and per-site seed files
+    # TODO: Need an outermost NODE to hold the sites. It should be each Site's parent
 
     sites = []
 
-    for site_config in config.get_sites():
-        site_elements = Site(site_config)
+    try:
+        for site_config in config.sites:
+            from core.sync import SyncThread
 
-    # TODO: Set up a state machine for the 'nodes' and 'edges' and transition with states such as
-    #
-    #  Initial, discovery, refreshing, synchronized, deleting, deleted, ...
-    #
-    ########################################################################
-    # TODO: Move the SDN controllers into the Site (core) class
+            new_site = Site(parent=None, **site_config.__dict__)
+            sites.append(new_site)
 
-    # TODO: Support more than one SDN Controller
-    # onos_elements = Controller(config.sdn_controllers[0])
+            # Start a thread up to discover the site contents
 
-    #######################################################################
+            new_site.sync_thread = SyncThread(new_site)
+            new_site.sync_thread.start(signal_notify=True)
 
-    if args.output is not None:
-        sys.stdout = open(args.output, 'w')
+        # TODO Pause to allow all information to be gathered
 
-    json_data = site_elements.to_json
+        print 'Currently entering forever-loop until we get all this working'
+        while True:
+            time.sleep(3)
 
-    print json_data
+        # TODO Dump information out
 
+        if args.output is not None:
+            sys.stdout = open(args.output, 'w')
+
+            # json_data = site_elements.to_json
+            # print json_data
+
+    except KeyboardInterrupt:
+        logging.info('^C from keyboard captured, shutting down gracefully')
+        shutdown(5.0)
+
+    except Exception as e:
+        logging.exception('Unhandled Exception Encountered')
+        shutdown(0.0)
+        raise e
+
+    finally:
+        shutdown(10.0)
 
 if __name__ == "__main__":
     main()

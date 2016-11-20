@@ -13,34 +13,52 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import logging
+from os import path
+
 import urllib3.util as urlutil
 
+from core.utils import get_uuid, levelname_to_level
 from credentials import OpenStackCredentials
 
 
 class Config(object):
     """
-    Class used to wrap a set of openstack configuration information
+    Class used to wrap a set of OpenStack configuration information
     """
 
-    def __init__(self, parent, input_data):
-        self._parent = parent
-        self._seed_file = input_data.get('seed-file', parent.seed_file)
-        self._log_level = input_data.get('logging-level', parent.logging_level)
+    def __init__(self, config_data, parent):
+        self.type = 'OpenStack'
 
-        self._name = input_data.get('name', 'OpenStack')
-        self._auth_url = input_data.get('OS_AUTH_URL')
-        self._username = input_data.get('OS_USERNAME')
-        self._password = input_data.get('OS_PASSWORD')
-        self._project = input_data.get('OS_PROJECT_NAME')
-        self._region_name = input_data.get('OS_REGION_NAME')
-        self._user_domain_name = input_data.get('OS_USER_DOMAIN_NAME')
-        self._project_domain_name = input_data.get('OS_PROJECT_DOMAIN_NAME')
-        self._certificate_path = input_data.get('OS_CA_PATH')
+        self.name = config_data.get('name', '{}OpenStack.{}'.format(parent.name, str(get_uuid())))
+        self.seed_file = config_data.get('seed-file', parent.seed_file)
+        self.logging_level = config_data.get('logging-level', parent.logging_level)
+        self.cache_client = config_data.get('cache-client', parent.cache_client)
+
+        base_module_name = __name__[:-len(path.splitext(path.basename(__file__))[0]) - 1]
+        logging.getLogger(base_module_name).setLevel(levelname_to_level(self.logging_level))
+
+        self.auth_url = config_data.get('OS_AUTH_URL')
+        self.username = config_data.get('OS_USERNAME')
+        self.password = config_data.get('OS_PASSWORD')
+        self.project = config_data.get('OS_PROJECT_NAME')
+        self.region_name = config_data.get('OS_REGION_NAME')
+        self.user_domain_name = config_data.get('OS_USER_DOMAIN_NAME')
+        self.project_domain_name = config_data.get('OS_PROJECT_DOMAIN_NAME')
+        self.certificate_path = config_data.get('OS_CA_PATH')
 
     @staticmethod
-    def create(data):
-        return Config(data)
+    def create(config_data, parent):
+        """
+        Create an OpenStack configuration object
+
+        :param config_data: (dict) Site Configuration dictionary
+        :param parent: (Base) Higher level object that contains this site.  This parameter allows some
+                              default values such as logging-level to default to same level as the parent
+                              config if not explicitly overridden.
+        :return: (Config) Site configuration object for the provided data
+        """
+        return Config(config_data, parent)
 
     def to_credentials(self):
         return OpenStackCredentials(self.username,
@@ -56,51 +74,3 @@ class Config(object):
 
     def get_port(self):
         return urlutil.parse_url(self.auth_url).port
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def type(self):
-        return 'OpenStack'
-
-    @property
-    def seed_file(self):
-        return self._seed_file
-
-    @property
-    def logging_level(self):
-        return self._log_level
-
-    @property
-    def auth_url(self):
-        return self._auth_url
-
-    @property
-    def username(self):
-        return self._username
-
-    @property
-    def password(self):
-        return self._password
-
-    @property
-    def project(self):
-        return self._project
-
-    @property
-    def region_name(self):
-        return self._region_name
-
-    @property
-    def user_domain_name(self):
-        return self._user_domain_name
-
-    @property
-    def project_domain_name(self):
-        return self._project_domain_name
-
-    @property
-    def certificate_path(self):
-        return self._certificate_path

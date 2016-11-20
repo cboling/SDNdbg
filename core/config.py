@@ -15,9 +15,10 @@ limitations under the License.
 """
 import logging
 import pprint
-import uuid
 
 import ruamel.yaml as yaml
+
+from core.utils import get_uuid
 
 
 class Config(object):
@@ -33,11 +34,11 @@ class Config(object):
         :param kwargs: (dict) configuration parameters
         """
         # A few defaults
-
-        self._name = 'SDNdbg.{}'.format(str(uuid.UUID()))
-        self._seed_file = None
-        self._log_level = 'info'
-        self._sites = []
+        self.name = 'SDNdbg.{}'.format(str(get_uuid()))
+        self.seed_file = None
+        self.logging_level = 'info'
+        self.cache_client = False
+        self.sites = []
 
         # TODO: Support a global list of username/passwords...
 
@@ -52,7 +53,7 @@ class Config(object):
         if 'sites' not in self._config_data:
             raise KeyError("Unable to locate required key 'sites' in configuration file '{}'".format(filename))
 
-        self._sites = self._load_site(self._config_data['sites'])
+        self.sites = self._load_site(self._config_data['sites'])
 
     @staticmethod
     def _load_env_vars():
@@ -70,12 +71,13 @@ class Config(object):
         with open(filename, 'r') as f:
             config = yaml.load(f.read())
 
-        self._log_level = config.get('logging-level', self._log_level)
+        self.logging_level = config.get('logging-level', self.logging_level)
 
         logging.info('Configuration File: {} contains:\n{}'.format(filename,
                                                                    pprint.PrettyPrinter(indent=2).pformat(config)))
-        self._name = config.get('name', self._name)
-        self._seed_file = config.get('seed-file', self._seed_file)
+        self.name = config.get('name', self.name)
+        self.seed_file = config.get('seed-file', self.seed_file)
+        self.cache_client = config.get('cache-client', self.cache_client)
 
         return config
 
@@ -91,27 +93,7 @@ class Config(object):
         sites = []
 
         for site_config in site_configs:
-            sites.append(SiteConfig.create(self, site_config))
+            sites.append(SiteConfig.create(site_config, self))
 
         return sites
 
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def seed_file(self):
-        return self._seed_file
-
-    @property
-    def logging_level(self):
-        return self._log_level
-
-    @property
-    def get_sites(self):
-        """
-        Configuration data of all sites
-
-        :return: (list) Site configuration objects
-        """
-        return self._sites

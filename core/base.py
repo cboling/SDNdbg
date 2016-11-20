@@ -16,8 +16,11 @@ limitations under the License.
 import datetime
 import logging
 import random
+from uuid import UUID
+
 from transitions import Machine
-from uuid import uuid1, UUID
+
+from utils import get_uuid
 
 # Some constants
 DEFAULT_UPDATE_INTERVAL_SECS = 60  # When in sync, default 'update with VIM' delta in seconds
@@ -99,11 +102,12 @@ class Base(object):
         self._update_interval = kwargs.pop('update_interval', DEFAULT_UPDATE_INTERVAL_SECS)
         self._update_message = ['Initial discovery has not yet occured']
         self._no_sync = kwargs.pop('no_sync', False)
+        self._cache_client = kwargs.pop('cache_client', False)
 
         self._name = kwargs.get('name')
-        self._id = UUID(kwargs.pop('id', str(uuid1())))
+        self._id = UUID(kwargs.pop('id', str(get_uuid())))
 
-        self._parent = kwargs.get('parent')
+        self._parent = kwargs.get('parent', None)
         self._children = kwargs.get('children', [])
 
         self._enabled = kwargs.get('enabled', True)
@@ -111,6 +115,8 @@ class Base(object):
         self._modified = False
 
         self._meta_data = {}
+
+        self._client = None
 
         # Validate parameters
 
@@ -141,6 +147,9 @@ class Base(object):
     def __str__(self):
         return '{} [{}]'.format(self.name, self.id)
 
+    def __eq__(self, other):
+        return isinstance(other, Base) and self.id == other.id
+
     @property
     def id(self):
         """
@@ -164,7 +173,7 @@ class Base(object):
         Parent objects
         :return: parent
         """
-        return None
+        return self._parent
 
     @property
     def children(self):
@@ -172,7 +181,7 @@ class Base(object):
         Child objects
         :return: (list) of children
         """
-        return []
+        return self._children
 
     @property
     def enabled(self):
@@ -214,6 +223,22 @@ class Base(object):
     @metadata.setter
     def metadata(self, value):
         self._meta_data = value
+
+    @property
+    def cache_client(self):
+        return self._cache_client
+
+    @cache_client.setter
+    def cache_client(self, value):
+        self._cache_client = value
+
+    @property
+    def client(self):
+        return self._client
+
+    @client.setter
+    def client(self, value):
+        self._client = value
 
     @property
     def modified(self):
@@ -423,13 +448,32 @@ class Base(object):
 
             self.modified = False
 
-    def connect_to_object(self):
+    def connect(self):
         """
-        TODO: Object specific methods to connect to what we need to update/sync this object
-        :return:
+        Each derived class should override this method and provide a method that attempts
+        to connect to the proper server, library, or stub that can retrieve information
+        on this object.  If no 'real' connection is required, just return anything but 'None'
+
+        When the object's sync_object method is called, it can make use of this object by
+        accessing the 'client' property.
+
+        If the 'cache_client' property is False (default) the 'client' property is set back
+        to 'None' on exiting of the 'updating' state
+
+        :return: Client connection object/stub
         """
-        logging.info('connect_to_object: entry. {}'.format(self.name))
-        return False
+        raise NotImplementedError("Required 'connect' method not implemented")
+
+    def perform_sync(self):
+        """
+        Each derived class should override this method as needed and make use of the 'client'
+        property (created during 'connect') to update the object.
+
+        You should discover any child nodes/links during this time and update as appropriate
+
+        :return: True if synchronization was successful, False otherwise
+        """
+        return True
 
     def sync_object(self):
         """
@@ -438,10 +482,12 @@ class Base(object):
         """
         logging.info('sync_object: entry. {}'.format(self.name))
 
-        connected = self.connect_to_object()
+        if self.client is None:
+            self.client = self.connect()
 
-        # TODO
-        success = self.update_object() if connected else False
+        # Attempt the synchronization
+
+        success = self.perform_sync() if self.client is not None else False
 
         if success:
             self._last_synced_time = datetime.datetime.utcnow()
@@ -453,7 +499,7 @@ class Base(object):
         """
         This method is called upon entering the out_of_sync step.
         """
-        logging.info('connect_to_object: on_enter_out_of_sync. {}'.format(self.name))
+        logging.info('on_enter_out_of_sync: entry. {}'.format(self.name))
 
         # Attempt a lookup.  If not found, need to create
 
@@ -464,16 +510,27 @@ class Base(object):
             self.sync_object()
 
     def on_enter_updating(self):
-        logging.info('connect_to_object: on_enter_updating. {}'.format(self.name))
+        """
+        Entering the UPDATING state. Try and sync with the actual object
+        """
+        logging.info('on_enter_updating: entry. {}'.format(self.name))
         self.sync_object()
+
+    def on_exit_updating(self):
+        """
+        Leaving the UPDATING state. Drop client if we do not cache it
+        """
+        logging.info('on_exit_updating: entry. {}'.format(self.name))
+        if not self.cache_client:
+            self.client = None
 
     def on_enter_deleted(self):
         """
         TODO: Implement this
         :return:
         """
-        logging.info('connect_to_object: on_enter_deleted. {}'.format(self.name))
-
+        logging.info('on_enter_deleted: entry. {}'.format(self.name))
+        self.client = None
         raise NotImplementedError('TODO: Get this working....')
 
     def sync(self):
@@ -482,7 +539,7 @@ class Base(object):
         """
         logging.info('Sync: {} entry: no sync: {}, deleted: {}'.format(self, self.no_sync, self.is_deleted))
 
-        if self.no_sync or self.is_deleted:
+        if self.no_sync or self.is_deleted():
             return
 
         try:
