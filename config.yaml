@@ -5,6 +5,7 @@
 # supported mechanism to retrieve information
 
 default-credentials:   &default-creds-1
+  - {'username': 'stack', 'password': 'stack'}
   - {'username': 'ubuntu', 'password': 'ubuntu'}
   - {'username': 'root',   'password': 'root'}
 
@@ -16,7 +17,7 @@ openstack-credentials: &openstack-creds-1
   'type':                   'OpenStack'
   # 'OS_AUTH_URL':            'https://192.168.1.121:5000/v3'
   'OS_AUTH_URL':            'http://192.168.1.121:5000/v3'
-  'OS_USERNAME':            'stack'
+  'OS_USERNAME':            'admin'
   'OS_PASSWORD':            'devstack'
   'OS_PROJECT_NAME':        'admin'                               # Project/Tenant name
   'OS_REGION_NAME':         'RegionOne'

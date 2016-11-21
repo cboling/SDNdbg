@@ -51,6 +51,26 @@ class Controller(Node):
         logging.info('onos.Controller.Create: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
         return Controller(**kwargs)
 
+    def connect(self):
+        """
+        Create credentials for accessing and ONOS Controller
+
+        :return: (
+        """
+        return "TODO: Not yet implemented"
+
+    def perform_sync(self):
+        """
+        A controller is made up of one or more machines running services that we care about.  There are
+        a large number of OpenStack services, but we currently only care about a few.
+
+        :return: True if synchronization was successful, False otherwise
+        """
+        if self.client is None:
+            return False
+
+        return True  # TODO: Not yet implemented
+
         # ipAddress = models.GenericIPAddressField()
         # tcpPort = models.IntegerField()  # TODO Place bounds 0-65535 possible?
         #

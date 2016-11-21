@@ -564,7 +564,7 @@ class Base(object):
 
         except Exception as e:
             message = "Unhandled Exception while attempting to sync '{}': {}".format(self, e.message)
-            logging.error(message)
+            logging.exception(message)
             messages = self.sync_message
             messages.append(message)
             self.sync_message = messages
