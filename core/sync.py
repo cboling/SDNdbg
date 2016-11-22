@@ -93,7 +93,7 @@ class SyncThread(object):
             if root.sync_thread.running:
                 root.sync()
 
-        logging.info('Sync:Thread: {} Exiting'.format(root.name))
+        logging.info('Sync:Thread: {} thread exiting'.format(root.name))
 
     def start(self, signal_notify=True):
         """

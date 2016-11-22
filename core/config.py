@@ -17,6 +17,7 @@ from __future__ import unicode_literals
 
 import logging
 import pprint
+
 import ruamel.yaml as yaml
 
 from core.utils import get_uuid
@@ -51,11 +52,12 @@ class Config(object):
 
         if 'config_file' in kwargs:
             self._config_data = self._load_file(kwargs['config_file'])
+
+            if 'sites' not in self._config_data:
+                raise KeyError("Unable to locate required key 'sites' in configuration file '{}'".
+                               format(kwargs['config_file']))
         else:
             self._config_data = Config._load_env_vars()
-
-        if 'sites' not in self._config_data:
-            raise KeyError("Unable to locate required key 'sites' in configuration file '{}'".format(filename))
 
         self.sites = self._load_site(self._config_data['sites'])
 

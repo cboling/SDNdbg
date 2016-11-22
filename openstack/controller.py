@@ -126,10 +126,12 @@ class Controller(CoreController):
         dgb_endpoints = [endpt for endpt in endpoints if endpt.service_id in dbg_ids and
                          endpt.interface.lower() == 'public']
 
+        logging.info('OpenStack Controller: DBG Endpoints:\n{}'.format(pprint.PrettyPrinter().
+                                                                       pformat(dgb_endpoints)))
         # Now create a list of tuples that have our service name and url
 
         servers = []
 
-        for endpt in dbgE
+        # for endpt in dbgE
 
         raise NotImplementedError('TODO: Implement this')
