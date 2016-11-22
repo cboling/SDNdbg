@@ -13,12 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from core.controller import Controller as CoreController
-from config import Config
-import pprint
+from __future__ import unicode_literals
+
 import logging
-from credentials import Credentials
+import pprint
+
 from keystoneclient.exceptions import ConnectionError, ConnectionRefused, Unauthorized
+
+from core.controller import Controller as CoreController
 
 _services_of_interest = [
     {'type': 'identity', 'names': ['keystone']},
