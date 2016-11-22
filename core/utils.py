@@ -15,12 +15,13 @@ limitations under the License.
 """
 # Some various utilities
 
+from __future__ import unicode_literals
+
+import libvirt
 import logging
 import netifaces as ni
 import socket
 import uuid
-
-import libvirt
 
 _log_levels = {
     'DEBUG'   : logging.DEBUG,

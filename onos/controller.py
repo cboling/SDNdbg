@@ -25,7 +25,7 @@ class Controller(Node):
     """
     ONOS Controller Model
 
-    A unique controller.  Multiple controllers in a culster will have the same cluster ID
+    A unique controller.  Multiple controllers in a cluster will have the same cluster ID
 
     Fields / Attributes:
     uniqueId = (char):   A unique character string to identify the item.  This field is

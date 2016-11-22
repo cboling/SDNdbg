@@ -13,12 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from __future__ import unicode_literals
+
 import datetime
 import logging
 import random
-from uuid import UUID
-
 from transitions import Machine
+from uuid import UUID
 
 from utils import get_uuid
 

@@ -1,11 +1,10 @@
 #
 # For scratchpad work...
 #
-services_have = ['__weakref__', '_add_details', '_info', '_loaded', 'delete',
+services_have = ['delete',
                  'description', 'enabled', 'get',
                  'human_id', 'id', 'is_loaded', 'links', 'manager',
-                 'name', ''
-                         'set_loaded', 'to_dict', 'type']
+                 'name', 'set_loaded', 'to_dict', 'type']
 services = [
     {u'description': u'Heat CloudFormation Service',
      u'enabled'    : True,
@@ -68,7 +67,7 @@ services = [
      u'type'   : u'identity'}
 
 ]
-Endpoints_have = ['_info', '_loaded', 'delete', 'enabled', 'get',
+Endpoints_have = ['delete', 'enabled', 'get',
                   'human_id', 'id', 'interface', 'is_loaded', 'links',
                   'manager', 'region', 'region_id', 'service_id',
                   'set_loaded', 'to_dict', 'url']
@@ -113,7 +112,7 @@ endpoints = [
      u'region'    : u'RegionOne',
      u'region_id' : u'RegionOne',
      u'service_id': u'8c52643aa0024040852d244357094043',
-     u'url'       : u'http://192.168.1.121:8776/v2/$(tenant_id)s',
+     u'url': u'http://192.168.1.121:8776/v2/$(tenant_id)s'},
      {u'enabled'   : True,
       u'id'        : u'360c6ddb3a584705aff792a6571dd884',
       u'interface' : u'admin',

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Copyright (c) 2015 - 2016.  Boling Consulting Solutions , BCSW.net
 
@@ -13,7 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-# !/usr/bin/env python
+from __future__ import unicode_literals
+
 import argparse
 import logging
 import os
@@ -102,7 +104,7 @@ def main():
 
         # TODO Pause to allow all information to be gathered
 
-        print 'Currently entering forever-loop until we get all this working'
+        print('Currently entering forever-loop until we get all this working')
         while True:
             time.sleep(3)
 

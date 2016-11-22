@@ -39,12 +39,39 @@ environment and work within that environment. The steps to create this environme
     $ ...TODO...
 ```
 
-
 ## Platform Requirements
 
 In progress...  I will likely target only Linux (Ubuntu 16.04+ and Centos 7+) initially but all
 code is expected to be in Python, HTML, JS, and CSS.  So Windows is a possibility, just not an
 initial target.
+
+# Setting up a python virtual environment if your python is <2.7.9
+
+If you run across issues installing the requirements, your verison of Python may be too old. To create
+a virtual environment with a personal newer python version, perform the following steps
+
+```
+    mkdir ~/python      
+    cd ~/python
+    wget https://www.python.org/ftp/python/2.7.12/Python-2.7.12.tgz
+    tar zxfv Python-2.7.12.tgz
+    find ~/python -type d | xargs chmod 0755
+    cd Python-2.7.12
+```
+You then need to compile the new version of Python (may need to install development tools such as Make, gcc, ...)
+```
+    configure --prefix=$HOME/python
+    make && make install
+```
+And then create your virtual environment that uses the newly compiled python.
+```
+    cd SDNdbg
+    virtualenv -p /home/cboling/python/bin/python2.7 venv
+    source venv/bin/activate
+
+    pip install -U pip 
+    pip install -r requirements.txt
+```
 
 # TODO List
 
