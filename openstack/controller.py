@@ -123,8 +123,13 @@ class Controller(CoreController):
         # For these services, collect endpoint information to see if they are local or are running
         # in a container/vm/server elsewhere
 
-        dgb_endpoints = [endpt for endpt in endpoints if endpt.id in dbg_ids and
+        dgb_endpoints = [endpt for endpt in endpoints if endpt.service_id in dbg_ids and
                          endpt.interface.lower() == 'public']
 
+        # Now create a list of tuples that have our service name and url
+
+        servers = []
+
+        for endpt in dbgE
 
         raise NotImplementedError('TODO: Implement this')
