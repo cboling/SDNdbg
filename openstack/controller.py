@@ -22,12 +22,14 @@ from keystoneclient.exceptions import ConnectionError, ConnectionRefused, Unauth
 
 from core.controller import Controller as CoreController
 
-_services_of_interest = [
-    {'type': 'identity', 'names': ['keystone']},
-    {'type': 'compute', 'names': ['nova']},
-    {'type': 'orchestration', 'names': ['heat', 'tacker']},
-    {'type': 'network', 'names': ['neutron']}
-]
+# Service name to type
+_services_of_interest = {
+    'keystone': 'identity',
+    'nova'    : 'compute',
+    'neutron' : 'network',
+    # 'heat': 'orchestration',      # TODO: Heat/Tacker support is future
+    # 'tacker': 'orchestration'
+}
 # TODO: Look into following services: heat-cfg, nova_legacy
 # TODO: Any need to support the following: glance, cinder, switch, ceilometer, ...
 
@@ -120,5 +122,7 @@ class Controller(CoreController):
             logging.info('  Endpoint: {}'.format(pprint.PrettyPrinter().pformat(endpoint.to_dict())))
 
         # Collect information on services of interest
+
+        dbg_services = [srv for srv in services if srv.name.lower() in _services_of_interest]
 
         raise NotImplementedError('TODO: Implement this')
