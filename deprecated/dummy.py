@@ -226,3 +226,9 @@ endpoints = [
      u'service_id': u'009f75deb1884bd2968ef1b45df8fec6',
      u'url'       : u'http://192.168.1.121:8000/v1'}
 ]
+
+# Output of Openstack endpoint list when running as distinct docker containters
+# The 'interface' will be 'admin', 'internal', or 'public' and perhaps public may
+# be the best to use (for IP address). Really is the IP we are going after but may
+# need to resolve the URL !!!!  But this address may not be visible from where we are running
+# this APP from.  Good thing to add to README !!!

@@ -115,14 +115,16 @@ class Controller(CoreController):
                 logging.exception('Error accessing keystone endpoint services')
                 return None
 
-        for service in services:
-            logging.info('  Service: {}'.format(pprint.PrettyPrinter().pformat(service.to_dict())))
-
-        for endpoint in endpoints:
-            logging.info('  Endpoint: {}'.format(pprint.PrettyPrinter().pformat(endpoint.to_dict())))
-
         # Collect information on services of interest
 
         dbg_services = [srv for srv in services if srv.name.lower() in _services_of_interest]
+        dbg_ids = [srv.id for srv in dbg_services]
+
+        # For these services, collect endpoint information to see if they are local or are running
+        # in a container/vm/server elsewhere
+
+        dgb_endpoints = [endpt for endpt in endpoints if endpt.id in dbg_ids and
+                         endpt.interface.lower() == 'public']
+
 
         raise NotImplementedError('TODO: Implement this')
