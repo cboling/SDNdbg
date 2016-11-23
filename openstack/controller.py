@@ -118,20 +118,30 @@ class Controller(CoreController):
         # Collect information on services of interest
 
         dbg_services = [srv for srv in services if srv.name.lower() in _services_of_interest]
-        dbg_ids = [srv.id for srv in dbg_services]
+
+        logging.info('OpenStack Controller: DBG Services:\n{}'.format(pprint.PrettyPrinter().
+                                                                      pformat(dbg_services)))
+        dbg_ids = {srv.id: {'name'       : srv.name,
+                            'type'       : srv.type,
+                            'srv-enabled': srv.enabled} for srv in dbg_services}
 
         # For these services, collect endpoint information to see if they are local or are running
         # in a container/vm/server elsewhere
 
-        dgb_endpoints = [endpt for endpt in endpoints if endpt.service_id in dbg_ids and
-                         endpt.interface.lower() == 'public']
+        # dgb_endpoints = [endpt for endpt in endpoints if endpt.service_id in dbg_ids and
+        #                 endpt.interface.lower() == 'public']
+
+        dbg_endpoints = {
+            endpt.service_id: {'url': endpt.url, 'endpt-enabled': endpt.enabled} for endpt in endpoints if
+            endpt.service_id in dbg_ids and endpt.interface.lower() == 'public'}
+
+        # logging.info('OpenStack Controller: DBG Endpoints:\n{}'.format(pprint.PrettyPrinter().
+        #                                                                pformat(dbg_endpoints)))
+
+        for k, _ in dbg_endpoints.items():
+            dbg_endpoints[k].update(dbg_ids[k])
 
         logging.info('OpenStack Controller: DBG Endpoints:\n{}'.format(pprint.PrettyPrinter().
-                                                                       pformat(dgb_endpoints)))
-        # Now create a list of tuples that have our service name and url
-
-        servers = []
-
-        # for endpt in dbgE
+                                                                       pformat(dbg_endpoints)))
 
         raise NotImplementedError('TODO: Implement this')
