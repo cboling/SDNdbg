@@ -18,13 +18,13 @@ from __future__ import unicode_literals
 import logging
 import pprint
 
-from keystoneclient.exceptions import ConnectionError, ConnectionRefused, Unauthorized
+from keystoneclient.exceptions import ConnectionError, Unauthorized
 
 from core.controller import Controller as CoreController
 
 # Service name to type
 _services_of_interest = {
-    'keystone': 'identity',
+    'keystone': 'identity',  # TODO: Add method to create/select node
     'nova'    : 'compute',
     'neutron' : 'network',
     # 'heat': 'orchestration',      # TODO: Heat/Tacker support is future
@@ -85,6 +85,11 @@ class Controller(CoreController):
 
         servers = self.get_openstack_servers()
 
+        if servers is not None:
+            self.metadata['services'] = servers
+
+            # Select ones we care about
+
         return False
 
     def get_openstack_servers(self):
@@ -95,15 +100,11 @@ class Controller(CoreController):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             try:
-                services = keystone_client.services.list()
-                endpoints = keystone_client.endpoints.list()
+                service_list = keystone_client.services.list()
+                endpoint_list = keystone_client.endpoints.list()
 
             except ConnectionError as ex:
                 logging.warning('OpenStack.get_openstack_servers[{}]: Connection Error: {}'.format(self, ex.message))
-                return None
-
-            except ConnectionRefused as ex:
-                logging.warning('OpenStack.get_openstack_servers[{}]: Connection Refused: {}'.format(self, ex.message))
                 return None
 
             except Unauthorized as ex:
@@ -115,33 +116,32 @@ class Controller(CoreController):
                 logging.exception('Error accessing keystone endpoint services')
                 return None
 
-        # Collect information on services of interest
+        # Collect information on services all services (for metadata).  Note that 'description'
+        # may not be available in all service items
 
-        dbg_services = [srv for srv in services if srv.name.lower() in _services_of_interest]
+        services = {srv.name.lower(): {'enabled'    : srv.enabled,
+                                       'description': srv.to_dict().get('description', ''),
+                                       'id'         : srv.id.lower(),
+                                       'type'       : srv.type.lower()} for srv in service_list}
 
         logging.info('OpenStack Controller: DBG Services:\n{}'.format(pprint.PrettyPrinter().
-                                                                      pformat(dbg_services)))
-        dbg_ids = {srv.id: {'name'       : srv.name,
-                            'type'       : srv.type,
-                            'srv-enabled': srv.enabled} for srv in dbg_services}
+                                                                      pformat(services)))
 
         # For these services, collect endpoint information to see if they are local or are running
         # in a container/vm/server elsewhere
 
-        # dgb_endpoints = [endpt for endpt in endpoints if endpt.service_id in dbg_ids and
-        #                 endpt.interface.lower() == 'public']
-
         dbg_endpoints = {
-            endpt.service_id: {'url': endpt.url, 'endpt-enabled': endpt.enabled} for endpt in endpoints if
-            endpt.service_id in dbg_ids and endpt.interface.lower() == 'public'}
-
-        # logging.info('OpenStack Controller: DBG Endpoints:\n{}'.format(pprint.PrettyPrinter().
-        #                                                                pformat(dbg_endpoints)))
-
-        for k, _ in dbg_endpoints.items():
-            dbg_endpoints[k].update(dbg_ids[k])
+            endpt.service_id.lower(): {'url'          : endpt.url,
+                                       'endpt-enabled': endpt.enabled} for endpt in endpoint_list
+            if endpt.interface.lower() == 'public'}
 
         logging.info('OpenStack Controller: DBG Endpoints:\n{}'.format(pprint.PrettyPrinter().
                                                                        pformat(dbg_endpoints)))
 
-        raise NotImplementedError('TODO: Implement this')
+        for srv, val in services.items():
+            if val['id'] in dbg_endpoints:
+                val.update(dbg_endpoints[val['id']])
+
+        logging.info('OpenStack Controller: Final DBG Services:\n{}'.format(pprint.PrettyPrinter().
+                                                                            pformat(services)))
+        return services

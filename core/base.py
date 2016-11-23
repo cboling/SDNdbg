@@ -18,8 +18,9 @@ from __future__ import unicode_literals
 import datetime
 import logging
 import random
-from transitions import Machine
 from uuid import UUID
+
+from transitions import Machine
 
 from utils import get_uuid
 
@@ -116,7 +117,7 @@ class Base(object):
         self._delete_pending = False
         self._modified = False
 
-        self._meta_data = {}
+        self._metadata = {}
 
         self._client = None
 
@@ -231,11 +232,11 @@ class Base(object):
 
     @property
     def metadata(self):
-        return self._meta_data
+        return self._metadata
 
     @metadata.setter
     def metadata(self, value):
-        self._meta_data = value
+        self._metadata = value
 
     @property
     def cache_client(self):
