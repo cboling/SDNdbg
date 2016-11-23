@@ -2,6 +2,7 @@ Babel>=2.3.4
 cffi>=1.9.1
 cryptography>=1.5.3
 debtcollector>=1.9.0
+deepdiff >=2.5.1
 enum34>=1.1.6
 funcsigs>=1.0.2
 idna>=2.1
