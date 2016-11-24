@@ -24,11 +24,11 @@ from keystoneclient.exceptions import ConnectionError, Unauthorized
 from core.controller import Controller as CoreController
 from openstacknode import OpenStackNode
 
-# Service name to type
+# Service name and type
 _services_of_interest = {
-    'keystone': 'identity',  # TODO: Add method to create/select node
-    'neutron' : 'network',
-    'nova'    : 'compute',
+    'keystone': 'identity',  # Provides tenants/projects
+    'neutron' : 'network',  # Provides networking info
+    'nova'    : 'compute',  # Provides failed instances (if nova cell). Actual compute nodes handled differently
     # 'heat':   'orchestration',      # TODO: Heat/Tacker support is future
     # 'tacker': 'orchestration'
 }
@@ -160,13 +160,13 @@ class Controller(CoreController):
         :return: True if synchronization was successful, False otherwise
         """
         logging.debug('OpenStack.controller: process_initial_servers:')
-        logging.info('     Services\n{}'.format(pprint.PrettyPrinter().pformat(services)))
-        logging.info('     Computes\n{}'.format(pprint.PrettyPrinter().pformat(compute_nodes)))
+        logging.debug('     Services\n{}'.format(pprint.PrettyPrinter().pformat(services)))
+        logging.debug('     Computes\n{}'.format(pprint.PrettyPrinter().pformat(compute_nodes)))
 
         self.metadata['services'] = services
         self.metadata['compute_nodes'] = compute_nodes
 
-        services_of_interest = [service for service in services if service.type in _services_of_interest]
+        services_of_interest = [service for service in services if service.name in _services_of_interest]
 
         logging.debug('OpenStack.controller: interesting services:\n{}'.
                       format(pprint.PrettyPrinter().pformat(services_of_interest)))
@@ -175,13 +175,13 @@ class Controller(CoreController):
 
         service_ips = {}
 
-        for item in list(services_of_interest).append(compute_nodes):
+        for item in services_of_interest + compute_nodes:
             if str(item.ip) not in service_ips:
                 service_ips[str(item.ip)] = [(str(item.type), item)]
             else:
-                service_ips[str(item.ip)].append([(str(item.type), item)])
+                service_ips[str(item.ip)].append((str(item.type), item))
 
-        logging.info('IP rollup is:\n{}'.format(pprint.PrettyPrinter(indent=2).pformat(service_ips)))
+        logging.debug('IP rollup is:\n{}'.format(pprint.PrettyPrinter(indent=2).pformat(service_ips)))
         self._topology = 'all-in-one' if len(service_ips) == 1 else 'multi-node'
 
         for ip, info in service_ips.items():

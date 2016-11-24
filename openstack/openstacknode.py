@@ -64,12 +64,17 @@ class OpenStackNode(Node):
         logging.info('openstack.node.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         Node.__init__(self, **kwargs)
+        self._service_info = kwargs.get('service_info')
 
     @staticmethod
     def create(parent, **kwargs):
         logging.info('openstack.node.Create: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         kwargs['parent'] = parent
+        kwargs['name'] = '{} - {}'.format(kwargs['service_info'].ip,
+                                          OpenStackNode.service_names(kwargs['service_info']))
+        kwargs['config'] = parent.config
+
         return OpenStackNode(**kwargs)
 
     @property
@@ -89,6 +94,25 @@ class OpenStackNode(Node):
         :return: (Credentials) OpenStack admin access credentials
         """
         return self.config.to_credentials()
+
+    @staticmethod
+    def service_names(services):
+        """
+        Convert service types to names
+        :param services: (list or inst) NodeInfo objects
+        :return: (unicode) Service types converted to names
+        """
+
+        if isinstance(services, list):
+            output = ''
+
+            for srv in list:
+                output += '{}{}'.format('' if len(output) == 0 else ' - ',
+                                        OpenStackNode.service_names(srv))
+            return output
+
+        else:
+            return '{}/{}'.format(services.name, services.type)
 
     def connect(self):
         """
@@ -126,13 +150,16 @@ class NodeInfo(object):
     """
     Class to wrap an OpenStack node (service and/or compute) information
     """
-
     def __init__(self, info):
         """
         Initialization
         :param info: OpenStack (Service/Hypervisor) Object to wrap
         """
         self.id = str(info.id).lower()
+
+    def __repr__(self):
+        return '%s.(%s, type: %s, ip: %s, descr: %s, %r)' % (self.__class__, self.name, self.type,
+                                                             self.ip, self.description, self.__dict__)
 
     @staticmethod
     def create(service, **kwargs):
@@ -151,6 +178,26 @@ class NodeInfo(object):
             }
             return _info_ctors.get(type(service))(service, **kwargs)
 
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def description(self):
+        return self._description
+
+    @property
+    def enabled(self):
+        return self._enabled
+
+    @property
+    def ip(self):
+        return self._ip
+
     def to_dict(self):
         return self.__dict__
 
@@ -159,18 +206,14 @@ class ServiceInfo(NodeInfo):
     """
     Base class to wrap some common OpenStack service/compute-node information
     """
-
     def __init__(self, srv_info, **kwargs):
-        logging.info('openstack.ServiceInfo.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(srv_info)))
-
         NodeInfo.__init__(self, srv_info)
 
-        self.name = srv_info.name.lower()
-        self.type = srv_info.type.lower()
-        # self.id = srv_info.id.lower()
-        self.description = srv_info.to_dict().get('description', '')
-        self.enabled = srv_info.enabled
-        self.ip = '0.0.0.0'
+        self._name = srv_info.name.lower()
+        self._type = srv_info.type.lower()
+        self._description = srv_info.to_dict().get('description', '')
+        self._enabled = srv_info.enabled
+        self._ip = '0.0.0.0'
         self.endpoints = {}
 
         if 'endpoints' in kwargs:
@@ -202,14 +245,15 @@ class ComputeInfo(NodeInfo):
 
         # Pull common properties from object itself
 
-        # self.id = compute_info.id.lower()
-        self.name = compute_info.hypervisor_hostname
+        self._name = compute_info.hypervisor_hostname
+        self._description = 'Compute Node at {}'.format(self.name)
+        self._type = 'compute-{}'.format(self.id)
         self.status = compute_info.status
         self.state = compute_info.state
 
         # Pull less common properties from dictionary version
         cd = compute_info.to_dict()
-        self.ip = cd.get('host_ip')
+        self._ip = cd.get('host_ip')
         self.service = cd.get('service')
 
         self.cpu_info = {'info'            : cd.get('cpu_info'),
@@ -227,3 +271,7 @@ class ComputeInfo(NodeInfo):
                             'memory_mb'     : cd.get('memory_mb'),
                             'memory_mb_used': cd.get('memory_mb_used')
                             }
+
+    @property
+    def enabled(self):
+        return self.status.lower() == 'enabled'

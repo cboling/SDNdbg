@@ -150,6 +150,9 @@ class Base(object):
     def __str__(self):
         return '{} [{}]'.format(self.name, self.id)
 
+    def __repr__(self):
+        return '%s.(%r)' % (self.__class__, self.__dict__)
+
     def __eq__(self, other):
         return isinstance(other, Base) and self.id == other.id
 
