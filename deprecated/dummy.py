@@ -227,88 +227,28 @@ endpoints = [
      u'url'       : u'http://192.168.1.121:8000/v1'}
 ]
 
-# Output of Openstack endpoint list when running as distinct docker containters
-# The 'interface' will be 'admin', 'internal', or 'public' and perhaps public may
-# be the best to use (for IP address). Really is the IP we are going after but may
-# need to resolve the URL !!!!  But this address may not be visible from where we are running
-# this APP from.  Good thing to add to README !!!
-# D
-# 2016 - 11 - 22
-# 16:28:27, 228
-# INFO:SDNdbg:sync_object: entry.OpenCORD
-# 2016 - 11 - 22
-# 16:28:27, 681
-# INFO:SDNdbg:OpenStack
-# Controller: DBG
-# Endpoints:
-# [ < Endpoint
-# enabled = True, id = 043
-# eb0e22e094d1193e595f7e3179d38, interface = public, links = {
-#                                                             u'self': u'https://keystone.cord.lab:5000/v3/endpoints/043eb0e22e094d1193e595f7e3179d38'}, region = RegionOne, region_id = RegionOne, service_id = 10
-# b253c6d6d94eb4a7406c3cdb597c3e, url = https: // keystone.cord.lab:5000 / v2
-# .0 >,
-# < Endpoint
-# enabled = True, id = 89
-# c879bac0c1428080d5bc977e896ea3, interface = public, links = {
-#                                                              u'self': u'https://keystone.cord.lab:5000/v3/endpoints/89c879bac0c1428080d5bc977e896ea3'}, region = RegionOne, region_id = RegionOne, service_id = b10d50746b334de3a15914e42476cfff, url = https: // neutron - api.cord.lab:9696 >,
-# < Endpoint
-# enabled = True, id = fa2a8656e1754bc9bdfc1041b464ace8, interface = public, links = {
-#                                                                                     u'self': u'https://keystone.cord.lab:5000/v3/endpoints/fa2a8656e1754bc9bdfc1041b464ace8'}, region = RegionOne, region_id = RegionOne, service_id = 29
-# b3ee5f2a994f2ba62fcfb5e752dd04, url = https: // nova - cloud - controller.cord.lab:8774 / v2 /$(tenant_id)
-# s >]
-# 2016 - 11 - 22
-# 16:28:27, 681
-# ERROR:SDNdbg:Unhandled
-# Exception
-# while attempting to sync 'OpenCORD [fce38719-b102-11e6-ba8f-b8ca3ab44c0c]': TODO: Implement
-# this
-# openstack
-# endpoint
-# list - -long
-# +----------------------------------+-----------+--------------+--------------+---------------------------------------+---------------------------------------+----------------------------------------+
-# | ID | Region | Service
-# Name | Service
-# Type | PublicURL | AdminURL | InternalURL |
-# +----------------------------------+-----------+--------------+--------------+---------------------------------------+---------------------------------------+----------------------------------------+
-# | 0
-# db97c2830204907905c53afa645874c | RegionOne | neutron | network | https: // neutron - api.cord.lab:9696 | https: // neutron - api.cord.lab:9696 | https: // neutron - api.cord.lab:9696 |
-# | 1
-# d718fd59ee741f182e4082cdf66061f | RegionOne | keystone | identity | https: // keystone.cord.lab:5000 / v2
-# .0 | https: // keystone.cord.lab:35357 / v2
-# .0 | https: // keystone.cord.lab:5000 / v2
-# .0 |
-# | 68318969
-# fc6a450eade97d88064f9aea | RegionOne | ceilometer | metering | https: // ceilometer.cord.lab:8777 | https: // ceilometer.cord.lab:8777 | https: // ceilometer.cord.lab:8777 |
-# | ee95303d7b4f40b785713abc174d0d85 | RegionOne | glance | image | https: // glance.cord.lab:9292 | https: // glance.cord.lab:9292 | https: // glance.cord.lab:9292 |
-# | 5
-# b1040a81c1e4fd681be8c54a5114f30 | RegionOne | nova | compute | https: // nova - cloud - controller.cord.la | https: // nova - cloud - controller.cord.la | https: // nova - cloud - controller.cord.lab |
-# | | | | | b:8774 / v2 /$(tenant_id)
-# s | b:8774 / v2 /$(tenant_id)
-# s |:8774 / v2 /$(tenant_id)
-# s |
-# +----------------------------------+-----------+--------------+--------------+---------------------------------------+---------------------------------------+----------------------------------------+
 hv_info = {
-    valid - basin.cord.lab:
+    'devstack':
         {
-            u'cpu_info': u'{"vendor": "Intel", "model": "SandyBridge", "arch": "x86_64", "features": ["pge", "avx", "clflush", "sep", "syscall", "vme", "dtes64", "invpcid", "tsc", "fsgsbase", "xsave", "vmx", "erms", "xtpr", "cmov", "smep", "ssse3", "est", "pat", "monitor", "smx", "pcid", "lm", "msr", "nx", "fxsr", "tm", "sse4.1", "pae", "sse4.2", "pclmuldq", "acpi", "fma", "tsc-deadline", "mmx", "osxsave", "cx8", "mce", "de", "tm2", "ht", "dca", "lahf_lm", "abm", "popcnt", "mca", "pdpe1gb", "apic", "sse", "f16c", "pse", "ds", "invtsc", "pni", "rdtscp", "avx2", "aes", "sse2", "ss", "ds_cpl", "bmi1", "bmi2", "pbe", "fpu", "cx16", "pse36", "mtrr", "movbe", "pdcm", "rdrand", "x2apic"], "topology": {"cores": 12, "threads": 1, "sockets": 1}}',
-            u'current_workload': 0,
+            u'cpu_info'            : u'{"vendor": "Intel", "model": "SandyBridge", "arch": "x86_64", "features": ["pge", "avx", "clflush", "sep", "syscall", "vme", "dtes64", "invpcid", "tsc", "fsgsbase", "xsave", "vmx", "erms", "xtpr", "cmov", "smep", "ssse3", "est", "pat", "monitor", "smx", "pcid", "lm", "msr", "nx", "fxsr", "tm", "sse4.1", "pae", "sse4.2", "pclmuldq", "acpi", "fma", "tsc-deadline", "mmx", "osxsave", "cx8", "mce", "de", "tm2", "ht", "dca", "lahf_lm", "abm", "popcnt", "mca", "pdpe1gb", "apic", "sse", "f16c", "pse", "ds", "invtsc", "pni", "rdtscp", "avx2", "aes", "sse2", "ss", "ds_cpl", "bmi1", "bmi2", "pbe", "fpu", "cx16", "pse36", "mtrr", "movbe", "pdcm", "rdrand", "x2apic"], "topology": {"cores": 12, "threads": 1, "sockets": 1}}',
+            u'current_workload'    : 0,
             u'disk_available_least': 837,
-            u'free_disk_gb': 896,
-            u'free_ram_mb': 61765,
-            u'host_ip': u'10.6.0.21',
-            u'hypervisor_hostname': u'valid-basin.cord.lab',
-            u'hypervisor_type': u'QEMU',
-            u'hypervisor_version': 2002000,
-            u'id': 2,
-            u'local_gb': 916,
-            u'local_gb_used': 20,
-            u'memory_mb': 64325,
-            u'memory_mb_used': 2560,
-            u'running_vms': 1,
-            u'service': {u'disabled_reason': None, u'host': u'valid-basin', u'id': 9},
-            u'state': u'up',
-            u'status': u'enabled',
-            u'vcpus': 12,
-            u'vcpus_used': 1}
+            u'free_disk_gb'        : 896,
+            u'free_ram_mb'         : 61765,
+            u'host_ip'             : u'192.168.1.121',
+            u'hypervisor_hostname' : u'devstack.bcsw.net',
+            u'hypervisor_type'     : u'QEMU',
+            u'hypervisor_version'  : 2002000,
+            u'id'                  : 2,
+            u'local_gb'            : 916,
+            u'local_gb_used'       : 20,
+            u'memory_mb'           : 64325,
+            u'memory_mb_used'      : 2560,
+            u'running_vms'         : 1,
+            u'service'             : {u'disabled_reason': None, u'host': u'devstack', u'id': 9},
+            u'state'               : u'up',
+            u'status'              : u'enabled',
+            u'vcpus'               : 12,
+            u'vcpus_used'          : 1}
 
 }

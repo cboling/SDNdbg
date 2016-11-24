@@ -17,6 +17,11 @@ from __future__ import unicode_literals
 
 import logging
 import pprint
+import socket
+
+from keystoneclient.v3.services import Service
+from novaclient.v2.hypervisors import Hypervisor
+from urllib3.util import parse_url
 
 from core.node import Node
 
@@ -110,3 +115,115 @@ class OpenStackNode(Node):
         # TODO: Need to implement
 
         return False
+
+
+# ########################################################################################################3
+# Support classes to wrap OpenStack information related to Service and Compute nodes
+# ########################################################################################################3
+
+
+class NodeInfo(object):
+    """
+    Class to wrap an OpenStack node (service and/or compute) information
+    """
+
+    def __init__(self, info):
+        """
+        Initialization
+        :param info: OpenStack (Service/Hypervisor) Object to wrap
+        """
+        self.id = str(info.id).lower()
+
+    @staticmethod
+    def create(service, **kwargs):
+        """
+        Create the appropriate Service or Compute Node wrappers for each item in the list
+
+        :param service: (OpenStack objects) List of OpenStack Service/Compute nodes to wrap
+        :return: (ComputeInfo or ServiceInfo)
+        """
+        if isinstance(service, list):
+            return [ServiceInfo.create(srv, **kwargs) for srv in service]
+        else:
+            _info_ctors = {
+                Service   : ServiceInfo,
+                Hypervisor: ComputeInfo
+            }
+            return _info_ctors.get(type(service))(service, **kwargs)
+
+    def to_dict(self):
+        return self.__dict__
+
+
+class ServiceInfo(NodeInfo):
+    """
+    Base class to wrap some common OpenStack service/compute-node information
+    """
+
+    def __init__(self, srv_info, **kwargs):
+        logging.info('openstack.ServiceInfo.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(srv_info)))
+
+        NodeInfo.__init__(self, srv_info)
+
+        self.name = srv_info.name.lower()
+        self.type = srv_info.type.lower()
+        # self.id = srv_info.id.lower()
+        self.description = srv_info.to_dict().get('description', '')
+        self.enabled = srv_info.enabled
+        self.ip = '0.0.0.0'
+        self.endpoints = {}
+
+        if 'endpoints' in kwargs:
+            self.endpoints = {endpt.interface.lower(): {'url'    : endpt.url,
+                                                        'id'     : endpt.id.lower(),
+                                                        'enabled': endpt.enabled}
+                              for endpt in kwargs['endpoints'] if endpt.service_id.lower() == self.id}
+
+            # Attempt to get an ip address for one of the endpoint
+            for endpt_type in ['admin', 'public', 'internal']:
+                try:
+                    if endpt_type in self.endpoints:
+                        self.ip = socket.gethostbyname(parse_url(self.endpoints[endpt_type]['url']).host)
+                        break
+                except Exception:
+                    pass
+
+
+class ComputeInfo(NodeInfo):
+    """
+    Class to wrap Compute-Node specific information
+    """
+
+    def __init__(self, compute_info):
+        """
+        Initialization
+        """
+        NodeInfo.__init__(self, compute_info)
+
+        # Pull common properties from object itself
+
+        # self.id = compute_info.id.lower()
+        self.name = compute_info.hypervisor_hostname
+        self.status = compute_info.status
+        self.state = compute_info.state
+
+        # Pull less common properties from dictionary version
+        cd = compute_info.to_dict()
+        self.ip = cd.get('host_ip')
+        self.service = cd.get('service')
+
+        self.cpu_info = {'info'            : cd.get('cpu_info'),
+                         'type'            : cd.get('hypervisor_type'),
+                         'current_workload': cd.get('current_workload'),
+                         'vcpus'           : cd.get('vcpus'),
+                         'vcpus_used'      : cd.get('vcpus_used'),
+                         }
+        self.disk_info = {'disk_available_least': cd.get('disk_available_least'),
+                          'free_disk_gb'        : cd.get('free_disk_gb'),
+                          'local_gb'            : cd.get('local_gb'),
+                          'local_gb_used'       : cd.get('local_gb_used')
+                          }
+        self.memory_info = {'free_ram_mb'   : cd.get('free_ram_mb'),
+                            'memory_mb'     : cd.get('memory_mb'),
+                            'memory_mb_used': cd.get('memory_mb_used')
+                            }

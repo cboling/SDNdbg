@@ -17,11 +17,9 @@ from __future__ import unicode_literals
 
 import logging
 import pprint
-import socket
 
 from deepdiff import DeepDiff
 from keystoneclient.exceptions import ConnectionError, Unauthorized
-from urllib3.util import parse_url
 
 from core.controller import Controller as CoreController
 from openstacknode import OpenStackNode
@@ -29,8 +27,8 @@ from openstacknode import OpenStackNode
 # Service name to type
 _services_of_interest = {
     'keystone': 'identity',  # TODO: Add method to create/select node
-    'neutron': 'network',
-    # 'nova':   'compute',            # Compute nodes handled separately
+    'neutron' : 'network',
+    'nova'    : 'compute',
     # 'heat':   'orchestration',      # TODO: Heat/Tacker support is future
     # 'tacker': 'orchestration'
 }
@@ -114,6 +112,8 @@ class Controller(CoreController):
 
         :return: (dict) Dictionary of services with service name as key.
         """
+        from openstacknode import NodeInfo
+
         keystone_client = self.client['keystone']
         nova_client = self.client['nova']
 
@@ -142,57 +142,11 @@ class Controller(CoreController):
         # Collect information on services all services (for metadata).  Note that 'description'
         # may not be available in all service items
 
-        services = {srv.name.lower(): {'enabled': srv.enabled,
-                                       'description': srv.to_dict().get('description', ''),
-                                       'id': srv.id.lower(),
-                                       'type': srv.type.lower(),
-                                       'endpoints': {}
-                                       } for srv in service_list}
-
-        logging.debug('OpenStack Controller: DBG Services:\n{}'.format(pprint.PrettyPrinter().
-                                                                       pformat(services)))
-
-        # For these services, collect endpoint information to see if they are local or are running
-        # in a container/vm/server elsewhere
-
-        for key, val in services.items():
-            services[key]['endpoints'] = {endpt.interface.lower(): {'url': endpt.url,
-                                                                    'id': endpt.id.lower(),
-                                                                    'enabled': endpt.enabled}
-                                          for endpt in endpoint_list if endpt.service_id.lower() == val['id']}
-
-        logging.debug('OpenStack Controller: Final DBG Services:\n{}'.format(pprint.PrettyPrinter().
-                                                                             pformat(services)))
+        services = NodeInfo.create(service_list, endpoints=endpoint_list)
 
         # Mix in compute nodes (hypervisors) as well
 
-        compute_nodes = {}
-        for hv in hypervisor_list:
-            cd = hv.to_dict()
-            compute_nodes['compute-{}'.format(cd['id'])] = {
-                'name': cd.get('hypervisor_hostname'),
-                'ip': cd.get('host_ip'),
-                'status': cd.get('status'),
-                'state': cd.get('state'),
-                'cpu_info': cd.get('cpu_info'),
-                'current_workload': cd.get('current_workload'),
-                'type': cd.get('hypervisor_type'),
-
-                'free_disk_gb': cd.get('free_disk_gb'),
-                'free_ram_mb': cd.get('free_ram_mb'),
-                'memory_mb': cd.get('memory_mb'),
-                'memory_mb_used': cd.get('memory_mb_used'),
-
-                'disk_available_least': cd.get('disk_available_least'),
-                'local_gb': cd.get('local_gb'),
-                'local_gb_used': cd.get('local_gb_used'),
-
-                'service': cd.get('service'),
-                'vcpus': cd.get('vcpus'),
-                'vcpus_used': cd.get('vcpus_used')
-            }
-            logging.debug('Hypervisor: {}:\n{}'.format(hv.hypervisor_hostname,
-                                                       pprint.PrettyPrinter(indent=2).pformat(hv.to_dict())))
+        compute_nodes = NodeInfo.create(hypervisor_list)
 
         return services, compute_nodes
 
@@ -206,31 +160,32 @@ class Controller(CoreController):
         :return: True if synchronization was successful, False otherwise
         """
         logging.debug('OpenStack.controller: process_initial_servers:')
-        logging.debug('     Services\n{}'.format(pprint.PrettyPrinter().pformat(services)))
-        logging.debug('     Computes\n{}'.format(pprint.PrettyPrinter().pformat(compute_nodes)))
+        logging.info('     Services\n{}'.format(pprint.PrettyPrinter().pformat(services)))
+        logging.info('     Computes\n{}'.format(pprint.PrettyPrinter().pformat(compute_nodes)))
 
         self.metadata['services'] = services
         self.metadata['compute_nodes'] = compute_nodes
 
-        services_of_interest = {srv: val for srv, val in services.items() if srv in _services_of_interest}
+        services_of_interest = [service for service in services if service.type in _services_of_interest]
+
         logging.debug('OpenStack.controller: interesting services:\n{}'.
                       format(pprint.PrettyPrinter().pformat(services_of_interest)))
 
         # Collect IP Addresses of each service and compute node
 
-        service_ips = Controller.get_services_and_ips(services_of_interest, compute_nodes)
+        service_ips = {}
 
-        rollup = {}
-        for name, ip in service_ips.items():
-            if str(ip) not in rollup:
-                rollup[str(ip)] = []
-                rollup[str(ip)].append(services[name] if name in services else compute_nodes[name])
+        for item in list(services_of_interest).append(compute_nodes):
+            if str(item.ip) not in service_ips:
+                service_ips[str(item.ip)] = [(str(item.type), item)]
+            else:
+                service_ips[str(item.ip)].append([(str(item.type), item)])
 
-        logging.info('IP rollup is:\n{}'.format(pprint.PrettyPrinter(indent=2).pformat(rollup)))
-        self._topology = 'all-in-one' if len(rollup) == 1 else 'multi-node'
+        logging.info('IP rollup is:\n{}'.format(pprint.PrettyPrinter(indent=2).pformat(service_ips)))
+        self._topology = 'all-in-one' if len(service_ips) == 1 else 'multi-node'
 
-        for ip, item in rollup.items():
-            os_node = OpenStackNode.create(self, **{ip: item})
+        for ip, info in service_ips.items():
+            os_node = OpenStackNode.create(self, credentials=self.credentials, service_info=info)
             self.children.append(os_node)
 
         # TODO: Implement this
@@ -273,20 +228,6 @@ class Controller(CoreController):
         # TODO: Process differences in ones that match existing entries but important values may have changed
 
         return True
-
-    @staticmethod
-    def get_services_and_ips(services, compute_nodes):
-        service_ips = {}
-
-        for name, data in services.items():
-            url = data['endpoints']['admin']['url'] if 'admin' in data['endpoints'] \
-                else data['endpoints']['public']['url'] if 'public' in data['endpoints'] \
-                else data['endpoints']['internal']['url']
-
-            service_ips[name] = socket.gethostbyname(parse_url(url).host) if url is not None else '0.0.0.0'
-
-        for name, data in compute_nodes.items():
-            service_ips[name] = data['ip'] if data['ip'] is not None else socket.gethostbyname(data['name'])
 
         logging.info('Service IPs:\n{}'.format(pprint.PrettyPrinter(2).pformat(service_ips)))
 
