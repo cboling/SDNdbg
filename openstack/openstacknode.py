@@ -24,6 +24,7 @@ from novaclient.v2.hypervisors import Hypervisor
 from urllib3.util import parse_url
 
 from core.node import Node
+from core.switch import Switch
 
 
 class OpenStackNode(Node):
@@ -42,11 +43,12 @@ class OpenStackNode(Node):
     Ports       Physical ports as well as virtual ports (vEths). Some could be part of the OS or created
                 by Neutron or another package.  Note that not all may be part of the SDN/NFV environment
 
+    Links
+
     Keystone Servers have the following unique properties:
     Property    Description
     --------    -----------------------------------------------------------------------------------
     Tenants     Project Tenants
-    Instances   VM Instances running
 
     Neutron Servers have the following unique properties:
     Property    Description
@@ -57,7 +59,7 @@ class OpenStackNode(Node):
 
     Property    Description
     --------    -----------------------------------------------------------------------------------
-
+    Instances   VM Instances running
     """
 
     def __init__(self, **kwargs):
@@ -65,6 +67,12 @@ class OpenStackNode(Node):
 
         Node.__init__(self, **kwargs)
         self._service_info = kwargs.get('service_info')
+        self._ip = self._service_info[0].ip
+        self._bridges = None
+        self._ports = None
+        self._links = None
+        self._projects = None
+        self._instances = None
 
     @staticmethod
     def create(parent, **kwargs):
@@ -72,7 +80,7 @@ class OpenStackNode(Node):
 
         kwargs['parent'] = parent
         kwargs['name'] = '{} - {}'.format(kwargs['service_info'].ip,
-                                          OpenStackNode.service_names(kwargs['service_info']))
+                                          NodeInfo.service_names(kwargs['service_info']))
         kwargs['config'] = parent.config
 
         return OpenStackNode(**kwargs)
@@ -87,6 +95,15 @@ class OpenStackNode(Node):
         return self.config.get_address()
 
     @property
+    def edges(self):
+        """
+        Get all edges (links) associated with this node
+
+        :return: (list) Links
+        """
+        return self.get_links()
+
+    @property
     def credentials(self):
         """
         Get OpenStack Credentials object
@@ -95,24 +112,102 @@ class OpenStackNode(Node):
         """
         return self.config.to_credentials()
 
-    @staticmethod
-    def service_names(services):
+    def get_switches(self, refresh=False):
         """
-        Convert service types to names
-        :param services: (list or inst) NodeInfo objects
-        :return: (unicode) Service types converted to names
+        Get all bridges (OVS & Linux) for this node.
+        All nodes will have zero or more bridges associated to them
+
+        :param refresh: (boolean) If true, force refresh of all items
+        :return: (list) of bridge nodes
         """
+        if not refresh and self._bridges is not None:
+            return self._bridges
 
-        if isinstance(services, list):
-            output = ''
+        if 'ssh' not in self.client or self.client['ssh'] is None:
+            return None  # TODO: Probably best to throw an exception
 
-            for srv in list:
-                output += '{}{}'.format('' if len(output) == 0 else ' - ',
-                                        OpenStackNode.service_names(srv))
-            return output
+        self._bridges = Switch.get_switches(self._ip, self.client['ssh'])
 
-        else:
-            return '{}/{}'.format(services.name, services.type)
+        return self._bridges
+
+    def get_ports(self, refresh=False):
+        """
+        Get all networking ports (physical and veths) for this node.
+        All nodes will have one or more ports associated to them
+
+        :param refresh: (boolean) If true, force refresh of all items
+        :return: (list) of port nodes
+        """
+        if not refresh and self._ports is not None:
+            return self._ports
+
+        self._ports = []  # TODO: Need to implement
+
+        return self._ports
+
+    def get_links(self, refresh=False):
+        """
+        Get all networking links (physical and veths) for this node.
+        All nodes will have one or more links associated to them
+
+        :param refresh: (boolean) If true, force refresh of all items
+        :return: (list) of link nodes
+        """
+        if not refresh and self._links is not None:
+            return self._links
+
+        self._links = []  # TODO: Need to implement
+
+        return self._links
+
+    def get_projects(self, refresh=False):
+        """
+        Get all projects/tenants for this node.
+        Available on KeyStone nodes only
+
+        :param refresh: (boolean) If true, force refresh of all items
+        :return: (list) of project nodes
+        """
+        if (not refresh and self._projects is not None) or not self.supports_service('keystone'):
+            return self._projects
+
+        self._projects = []  # TODO: Need to implement
+
+        return self._projects
+
+    def get_instances(self, refresh=False):
+        """
+        Get all VM instances for this node.
+        Nova API and Nova compute nodes support VM instances
+
+        :param refresh: (boolean) If true, force refresh of all items
+        :return: (list) of instance nodes
+        """
+        if not refresh and self._instances is not None:
+            return self._instances
+
+        # TODO: Need to experiment with Nova Cells v2 and instances that fail to launch
+
+        if not self.supports_service('compute'):
+            return None
+
+        self._instances = []  # TODO: Need to implement
+
+        return self._instances
+
+    def supports_service(self, service):
+        """
+        Search through service list and return true if given service is supported
+
+        :param service: (unicode) Service to match (case-insensitive)
+        :return: True if the services list has the requested service
+        """
+        for srv in self._service_info:
+            if srv.name.lower() == service.lower():
+                return True
+            if isinstance(srv, ComputeInfo) and service.lower() == 'compute':
+                return True
+        return False
 
     def connect(self):
         """
@@ -122,9 +217,11 @@ class OpenStackNode(Node):
 
         :return: (dict) Keystone Client and/or Nova Client
         """
-        # TODO: Need to implement
+        keystone = self.credentials.keystone_client if self.supports_service('keystone') else None
+        nova = self.credentials.nova_client if self.supports_service('compute') else None
+        ssh = self.credentials.ssh_client
 
-        return None  # {'keystone': keystone, 'nova': nova} if keystone is not None and nova is not None else None
+        return {'keystone': keystone, 'nova': nova, 'ssh': ssh}
 
     def perform_sync(self):
         """
@@ -136,10 +233,13 @@ class OpenStackNode(Node):
         if self.client is None:
             return False
 
+        # Load switches/bridges
+
+        bridges = self.get_switches(refresh=True)
+
         # TODO: Need to implement
 
         return False
-
 
 # ########################################################################################################3
 # Support classes to wrap OpenStack information related to Service and Compute nodes
@@ -177,6 +277,24 @@ class NodeInfo(object):
                 Hypervisor: ComputeInfo
             }
             return _info_ctors.get(type(service))(service, **kwargs)
+
+    @staticmethod
+    def service_names(services):
+        """
+        Convert service types to names
+        :param services: (list or inst) NodeInfo objects
+        :return: (unicode) Service types converted to names
+        """
+
+        if isinstance(services, list):
+            output = ''
+            for srv in list:
+                output += '{}{}'.format('' if len(output) == 0 else ' - ',
+                                        NodeInfo.service_names(srv))
+            return output
+
+        else:
+            return '{}/{}'.format(services.name, services.type)
 
     @property
     def name(self):

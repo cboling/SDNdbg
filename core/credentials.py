@@ -17,8 +17,9 @@ from __future__ import unicode_literals
 
 import collections
 import logging
-import paramiko
 import subprocess
+
+import paramiko
 
 _cached_creds = {}
 
@@ -95,12 +96,11 @@ class Credentials:
 
         return None
 
-    def ssh_client(self, address, function):
+    def ssh_client(self, address):
         """
         Get an SSH Client connection to the following URL
 
         :param address: (string) address to open connection to
-        :param function: (function) function to call with client that performs the needed operations
         """
         items = self.get_ssh_credentials(address)
 
@@ -111,11 +111,23 @@ class Credentials:
 
             try:
                 logging.info("Attempting ssh connection: {}@{}, password: '{}'".format(username, address, password))
-
                 ssh.connect(address, username=username, password=password)
-                function(ssh)
-                break
+                return ssh
 
             except paramiko.BadAuthenticationType as e:
                 logging.warning('OpenStack.linux_bridges: SSH Bad Authentication Exception: {}@{}: {}'.
                                 format(username, address, e.message))
+        return None
+
+    def ssh_exec(self, client, function):
+        """
+        Execute an SSH command
+
+        :param client: (parmico.SSHClient) Client
+        :param function: (function) function to call with client that performs the needed operations
+        """
+        try:
+            function(client)
+
+        except Exception as e:
+            logging.exception('OpenStack.ssh_exec')

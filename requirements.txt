@@ -39,3 +39,4 @@ transitions>=0.4.2
 typing>=3.5.2.2
 urllib3>=1.19.1
 wrapt>=1.10.8
+ovs>=2.6.1

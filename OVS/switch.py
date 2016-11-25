@@ -18,16 +18,18 @@ from __future__ import unicode_literals
 import logging
 import pprint
 
+from ovs.jsonrpc import Connection, Session
+
 from core.switch import Switch as CoreSwitch
 
 
 class Switch(CoreSwitch):
     """
-    Linux Bridge
+    Base class for nodes that support bridging functionality
     """
 
     def __init__(self, **kwargs):
-        logging.info('Linux.Switch.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.info('OVS.Bridge.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         CoreSwitch.__init__(self, **kwargs)
 
@@ -40,4 +42,6 @@ class Switch(CoreSwitch):
         :param credentials:
         :return:
         """
+        session = Session.open()
+        connection = Connection(stream)
         return []  # TODO: Implement this
