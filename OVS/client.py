@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 import json
 import logging
 import pprint
+import uuid
 
 import paramiko
 
@@ -73,7 +74,7 @@ class Client(object):
         available_tables = ['Open_vSwitch', 'Bridge', 'Port', 'Interface',
                             'Flow_Table', 'QoS', 'Queue', 'Mirror', 'Controller',
                             'Manager', 'Netflow', 'SSL', 'sFlow', 'IPFIX',
-                            'Flow_Sample_Collector_Set', 'AutoAttach']
+                            'Flow_Sample_Collector_Set']
         need_sudo = False
 
         try:
@@ -94,24 +95,81 @@ class Client(object):
                                                                                     format(command, table)))
                     error = ssh_stderr.read()
                     output = ssh_stdout.read()
-                    need_sudo = (error is None or 'Permission denied' not in error) and len(output) > 0
+                    need_sudo = (error is None or 'permission denied' not in error.lower()) and len(output) > 0
 
                 logging.debug('Table: {}, STDOUT: {}'.format(table, pprint.PrettyPrinter(indent=2).pformat(output)))
-                logging.error('Table: {}, STDERR: {}'.format(table, pprint.PrettyPrinter(indent=2).pformat(error)))
+                logging.debug('Table: {}, STDERR: {}'.format(table, pprint.PrettyPrinter(indent=2).pformat(error)))
 
-                json_data = json.loads(output)
+                try:
+                    self.table_info[table] = self._table_json_to_dict(json.loads(output))
 
-                self.table_info[table] = []
-                for dataset in json_data['data']:
-                    self.table_info[table].append(zip(json_data['headings'], dataset))
-
-                logging.debug('Table: {}, output: {}'.format(table, pprint.PrettyPrinter(indent=2).
-                                                             pformat(self.table_info[table])))
+                    logging.debug('Table: {}, output: {}'.format(table, pprint.PrettyPrinter(indent=2).
+                                                                 pformat(self.table_info[table])))
+                except ValueError as e:
+                    logging.exception('Value error converting OVS table {}'.format(table))
 
         except Exception as e:
             logging.exception('Client.get_tables')
 
-        logging.info('Table: {}, output: {}'.format(table, pprint.PrettyPrinter(indent=2).
-                                                    pformat(self.table_info)))
+        logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(self.table_info)))
 
         pass
+
+    def _table_json_to_dict(self, json_data):
+        # Get as tuples
+
+        list_of_tuples = [zip(json_data['headings'], dataset) for dataset in json_data['data']]
+
+        def to_self(val):
+            return val
+
+        def to_dict(val):
+            """
+            Convert to a dictionary.  The input 'val' is a list that contains zero or more
+            lists composed of two values. T
+            """
+            result = {}
+            for item in val:
+                assert (len(item) == 2)
+                assert (not isinstance(item[1], list))
+                k = item[0]
+                val_type = item[1][0] if isinstance(item[1], list) else 'literal'
+                v = item[1][1] if isinstance(item[1], list) else item[1]
+                result[k] = convert_it(val_type, v)
+
+            return result
+
+        def to_set(val):
+            result = set()
+            for item in val:
+                val_type = val[0][0] if isinstance(val[0], list) else 'literal'
+                v = val[0][1] if isinstance(val[0], list) else item
+                result.add(convert_it(val_type, v))
+
+            return result
+
+        def to_uuid(val):
+            return uuid.UUID(val)
+
+        def convert_it(val_type, val):
+            convert_method = {
+                'literal': to_self,
+                'map'    : to_dict,
+                'set'    : to_set,
+                'uuid'   : to_uuid
+            }
+            return convert_method.get(val_type, to_self)(val)
+
+        # Now convert to list of dicts with conversions as needed
+
+        info = []
+        for tbl in list_of_tuples:
+            data = {}
+            for tpl in tbl:
+                key = tpl[0]
+                value_type = tpl[1][0].lower() if isinstance(tpl[1], list) else 'literal'
+                value = tpl[1][1] if isinstance(tpl[1], list) else tpl[1]
+                data[key] = convert_it(value_type, value)
+
+            info.append(data)
+        return info
