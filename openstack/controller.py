@@ -185,7 +185,11 @@ class Controller(CoreController):
         self._topology = 'all-in-one' if len(service_ips) == 1 else 'multi-node'
 
         for ip, info in service_ips.items():
-            os_node = OpenStackNode.create(self, credentials=self.credentials, service_info=info)
+            os_node = OpenStackNode.create(self,
+                                           credentials=self.credentials,
+                                           ssh_credentials=self.ssh_credentials,
+                                           ip_address=ip,
+                                           service_info=info)
             self.children.append(os_node)
 
         # TODO: Implement this

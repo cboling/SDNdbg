@@ -35,11 +35,11 @@ class Controller(Node):
         # TODO: Do we want to support per-VIM/SDN sets of credentials?
         # TODO: How about global SSH user/passwords to try as well?
 
-        self.ssh_credentials = None
+        self._ssh_credentials = None
         config = kwargs.get('config')
         while config is not None:
             if config.type.lower() == 'site':
-                self.ssh_credentials = Credentials(config.ssh_username_and_passwords)
+                self._ssh_credentials = Credentials(config.ssh_username_and_passwords)
                 break
             config = config.config_parent
 
@@ -63,3 +63,7 @@ class Controller(Node):
         kwargs['parent'] = parent
 
         return create_method(**kwargs)
+
+    @property
+    def ssh_credentials(self):
+        return self._ssh_credentials

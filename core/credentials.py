@@ -96,7 +96,31 @@ class Credentials:
 
         return None
 
-    def ssh_client(self, address):
+    def ssh_client(self, address, username, password, timeout=10.0):
+        """
+        Get an SSH Client connection to the following URL
+
+        :param address: (string) address to open connection to
+        """
+        items = self.get_ssh_credentials(address)
+
+        ssh = paramiko.SSHClient()
+        ssh.load_system_host_keys()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        try:
+            logging.info("Attempting ssh connection: {}@{}, password: '{}'".format(username, address, password))
+            ssh.connect(address, username=username, password=password, timeout=timeout,
+                        look_for_keys=False)
+            return ssh
+
+        except paramiko.AuthenticationException as e:
+            logging.warning('OpenStack.linux_bridges: SSH Authentication Exception: {}@{}: {}'.
+                            format(username, address, e.message))
+
+        return None
+
+    def ssh_get_client(self, address, timeout=10):
         """
         Get an SSH Client connection to the following URL
 
@@ -105,13 +129,12 @@ class Credentials:
         items = self.get_ssh_credentials(address)
 
         for username, password in items.iteritems():
-
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
             try:
                 logging.info("Attempting ssh connection: {}@{}, password: '{}'".format(username, address, password))
-                ssh.connect(address, username=username, password=password)
+                ssh.connect(address, username=username, password=password, timeout=timeout)
                 return ssh
 
             except paramiko.BadAuthenticationType as e:

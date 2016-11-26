@@ -79,8 +79,8 @@ class Config(object):
 
         self.logging_level = config.get('logging-level', self.logging_level)
 
-        logging.info('Configuration File: {} contains:\n{}'.format(filename,
-                                                                   pprint.PrettyPrinter(indent=2).pformat(config)))
+        logging.debug('Configuration File: {} contains:\n{}'.format(filename,
+                                                                    pprint.PrettyPrinter(indent=2).pformat(config)))
         self.name = config.get('name', self.name)
         self.seed_file = config.get('seed-file', self.seed_file)
         self.cache_client = config.get('cache-client', self.cache_client)

@@ -23,6 +23,7 @@ from keystoneclient.v3.services import Service
 from novaclient.v2.hypervisors import Hypervisor
 from urllib3.util import parse_url
 
+from OVS.client import Client as OvsClient
 from core.node import Node
 from core.switch import Switch
 
@@ -66,8 +67,12 @@ class OpenStackNode(Node):
         logging.info('openstack.node.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         Node.__init__(self, **kwargs)
-        self._service_info = kwargs.get('service_info')
-        self._ip = self._service_info[0].ip
+        self._service_info = kwargs.get('service_info')  # A List of tuples -> (service-type, NodeInfo obj)
+        self._ip = kwargs.get('ip_address')
+        self._openstack_credentials = kwargs.get('credentials')
+        self._ssh_credentials = kwargs.get('ssh_credentials')
+        self._ssh_valid = False
+        self._ovs_topology = None
         self._bridges = None
         self._ports = None
         self._links = None
@@ -79,7 +84,7 @@ class OpenStackNode(Node):
         logging.info('openstack.node.Create: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         kwargs['parent'] = parent
-        kwargs['name'] = '{} - {}'.format(kwargs['service_info'].ip,
+        kwargs['name'] = '{} - {}'.format(kwargs['ip_address'],
                                           NodeInfo.service_names(kwargs['service_info']))
         kwargs['config'] = parent.config
 
@@ -87,12 +92,15 @@ class OpenStackNode(Node):
 
     @property
     def ssh_address(self):
-        """
-        Get address/target for SSH commands
+        return self._ip
 
-        :return: (String) IP or hostname
-        """
-        return self.config.get_address()
+    @property
+    def ssh_username(self):
+        return self._ssh_credentials.username
+
+    @property
+    def ssh_password(self):
+        return self._ssh_credentials.password
 
     @property
     def edges(self):
@@ -110,7 +118,23 @@ class OpenStackNode(Node):
 
         :return: (Credentials) OpenStack admin access credentials
         """
-        return self.config.to_credentials()
+        return self._openstack_credentials
+
+    def get_ovs_topology(self, refresh=False):
+        """
+        Get all the entire OVS databipase of interest for this node
+
+        :param refresh: (boolean) If true, force refresh of all items
+        :return: (list) of bridge nodes
+        """
+        if not refresh and self._ovs_topology is not None:
+            return self._ovs_topology
+
+        if 'ssh' not in self.client or self.client['ssh'] is None:
+            return None  # TODO: Probably best to throw an exception
+
+        self._ovs_topology = OvsClient.get_topology(self.ssh_address, self.ssh_username, self.ssh_password)
+        return self._ovs_topology
 
     def get_switches(self, refresh=False):
         """
@@ -203,11 +227,29 @@ class OpenStackNode(Node):
         :return: True if the services list has the requested service
         """
         for srv in self._service_info:
-            if srv.name.lower() == service.lower():
+            if srv[1].name.lower() == service.lower():
                 return True
-            if isinstance(srv, ComputeInfo) and service.lower() == 'compute':
+            if isinstance(srv[1], ComputeInfo) and service.lower() == 'compute':
                 return True
         return False
+
+    def set_ssh_credentials(self):
+        # For SSH, determine find a matching username password
+        if self._ssh_valid:
+            return
+
+        user_pwd_list = self._ssh_credentials.get_ssh_credentials(self.ssh_address)
+
+        for username, password in user_pwd_list.items():
+            ssh_client = self._ssh_credentials.ssh_client(self.ssh_address, username, password)
+
+            if ssh_client is not None:
+                ssh_client.close()
+
+                # Cached the last ones we used successfully
+                self._ssh_credentials.save_ssh_creds(self.ssh_address, username, password)
+                self._ssh_valid = True
+                return
 
     def connect(self):
         """
@@ -219,7 +261,9 @@ class OpenStackNode(Node):
         """
         keystone = self.credentials.keystone_client if self.supports_service('keystone') else None
         nova = self.credentials.nova_client if self.supports_service('compute') else None
-        ssh = self.credentials.ssh_client
+
+        self.set_ssh_credentials()
+        ssh = {'username': self.ssh_username, 'password': self.ssh_password}
 
         return {'keystone': keystone, 'nova': nova, 'ssh': ssh}
 
@@ -231,6 +275,12 @@ class OpenStackNode(Node):
         :return: True if synchronization was successful, False otherwise
         """
         if self.client is None:
+            return False
+
+        # Snapshot the OVS subsystem. Should always have one?
+
+        ovs_topology = self.get_ovs_topology(refresh=True)
+        if ovs_topology is None:
             return False
 
         # Load switches/bridges
@@ -282,19 +332,19 @@ class NodeInfo(object):
     def service_names(services):
         """
         Convert service types to names
-        :param services: (list or inst) NodeInfo objects
+        :param services: (list or inst) Each instances is a tuple composed of (Service Type, NodeInfo object)
         :return: (unicode) Service types converted to names
         """
 
         if isinstance(services, list):
             output = ''
-            for srv in list:
+            for srv in services:
                 output += '{}{}'.format('' if len(output) == 0 else ' - ',
                                         NodeInfo.service_names(srv))
             return output
 
         else:
-            return '{}/{}'.format(services.name, services.type)
+            return '{}/{}'.format(services[1].name, services[1].type)
 
     @property
     def name(self):
@@ -344,7 +394,7 @@ class ServiceInfo(NodeInfo):
             for endpt_type in ['admin', 'public', 'internal']:
                 try:
                     if endpt_type in self.endpoints:
-                        self.ip = socket.gethostbyname(parse_url(self.endpoints[endpt_type]['url']).host)
+                        self._ip = socket.gethostbyname(parse_url(self.endpoints[endpt_type]['url']).host)
                         break
                 except Exception:
                     pass

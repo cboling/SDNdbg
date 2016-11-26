@@ -15,7 +15,6 @@ limitations under the License.
 """
 from __future__ import unicode_literals
 
-import collections
 import os.path
 
 import novaclient.client as nova_client
@@ -24,10 +23,8 @@ from keystoneauth1.identity import v2, v3
 from keystoneclient.v2_0 import client as keystone_client_v2
 from keystoneclient.v3 import client as keystone_client_v3
 
-from core.credentials import Credentials as CoreCredentials
 
-
-class Credentials(CoreCredentials):
+class Credentials(object):
     """
     OpenStack Credentials Class
 
@@ -43,8 +40,9 @@ class Credentials(CoreCredentials):
                  user_domain_name=None,
                  project_domain_name=None,
                  ca_path=None):
-        CoreCredentials.__init__(self, collections.OrderedDict({username: password}))
 
+        self.username = username
+        self.password = password
         self.auth_url = auth_url
         self.project_name = project_name
         self.user_domain_name = user_domain_name
