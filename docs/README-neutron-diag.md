@@ -56,7 +56,7 @@ This output is then used to create the 'dev' name for edges output. Sample outpu
 for **instance-00000001** on my test system is shown below.
 
 ```xml
-<domain type='qemu' id='2'>
+    <domain type='qemu' id='2'>
   <name>instance-00000001</name>
   <uuid>8c1aedc3-d016-44a0-bfc5-43fef5d5fff3</uuid>
   <metadata>

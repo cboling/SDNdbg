@@ -26,6 +26,7 @@ from urllib3.util import parse_url
 from OVS.client import Client as OvsClient
 from core.node import Node
 from core.switch import Switch
+from linux.client import Client as BrctlClient
 
 
 class OpenStackNode(Node):
@@ -73,6 +74,7 @@ class OpenStackNode(Node):
         self._ssh_credentials = kwargs.get('ssh_credentials')
         self._ssh_valid = False
         self._ovs_topology = None
+        self._brctl_topology = None
         self._switches = None
         self._ports = None
         self._links = None
@@ -137,6 +139,23 @@ class OpenStackNode(Node):
         self._ovs_topology = OvsClient.get_topology(self.ssh_address, self.ssh_username, self.ssh_password)
         return self._ovs_topology
 
+    def get_brctl_topology(self, refresh=False):
+        """
+        Get all the entire linux bridge configuration.  Centralized here since
+        it is the focal point for the local system
+
+        :param refresh: (boolean) If true, force refresh of all items
+        :return: (list) of bridge nodes
+        """
+        if not refresh and self._brctl_topology is not None:
+            return self._brctl_topology
+
+        if 'ssh' not in self.client or self.client['ssh'] is None:
+            return None  # TODO: Probably best to throw an exception
+
+        self._brctl_topology = BrctlClient.get_topology(self.ssh_address, self.ssh_username, self.ssh_password)
+        return self._brctl_topology
+
     def get_switches(self, refresh=False):
         """
         Get all bridges (OVS & Linux) for this node.
@@ -154,7 +173,8 @@ class OpenStackNode(Node):
         self._switches = Switch.get_switches(parent=self,
                                              address=self.ssh_address,
                                              ssh_credentials=self._ssh_credentials,
-                                             ovs_topology=self._ovs_topology)
+                                             ovs_topology=self._ovs_topology,
+                                             brctl_topology=self._brctl_topology)
         return self._switches
 
     def get_ports(self, refresh=False):
@@ -283,6 +303,10 @@ class OpenStackNode(Node):
             return False
 
         # Snapshot the OVS subsystem. Should always have one?
+
+        brctl_topology = self.get_brctl_topology(refresh=True)
+        if brctl_topology is None:
+            return False
 
         ovs_topology = self.get_ovs_topology(refresh=True)
         if ovs_topology is None:

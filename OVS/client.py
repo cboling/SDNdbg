@@ -61,6 +61,8 @@ class Client(object):
         except paramiko.BadAuthenticationType as e:
             logging.warning('OpenStack.linux_bridges: SSH Bad Authentication Exception: {}@{}: {}'.
                             format(username, address, e.message))
+            ssh_client = None
+
         return ssh_client
 
     @staticmethod
@@ -69,14 +71,16 @@ class Client(object):
         Updates the entire topology of the OVS database on a node
         """
         client = Client(address, username, password)
-        return client.get_tables()
+        return client._get_tables() if client is not None else None
 
-    def get_tables(self):
+    def _get_tables(self):
         available_tables = ['Open_vSwitch', 'Bridge', 'Port', 'Interface',
                             'Flow_Table', 'QoS', 'Queue', 'Mirror', 'Controller',
                             'Manager', 'Netflow', 'SSL', 'sFlow', 'IPFIX',
                             'Flow_Sample_Collector_Set']
+        # TODO make 'need_sudo' persistent
         need_sudo = False
+        connection = None
 
         try:
             connection = self.connect(self.address, self.username, self.password)
@@ -94,7 +98,7 @@ class Client(object):
                 error = ssh_stderr.read()
                 output = ssh_stdout.read()
 
-                if error is not None and 'Permission denied' in error:
+                if error is not None and 'permission denied' in error.lower():
                     # Try with sudo
 
                     ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(str('sudo {} {}'.
@@ -118,6 +122,10 @@ class Client(object):
 
         except Exception as e:
             logging.exception('Client.get_tables')
+
+        finally:
+            if connection is not None:
+                connection.close()
 
         all_tables_delta_time = time.clock() - all_tables_start_time
         logging.info('OVS Table parsing took {} seconds.  Individual table delta times follow:\n{}'.
