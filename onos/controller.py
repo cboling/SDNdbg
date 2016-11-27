@@ -43,12 +43,12 @@ class Controller(Node):
     """
 
     def __init__(self, **kwargs):
-        logging.info('onos.Controller.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.debug('onos.Controller.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
         Node.__init__(self, **kwargs)
 
     @staticmethod
     def create(**kwargs):
-        logging.info('onos.Controller.Create: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.debug('onos.Controller.Create: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
         return Controller(**kwargs)
 
     def connect(self):

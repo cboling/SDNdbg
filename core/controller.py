@@ -27,7 +27,7 @@ class Controller(Node):
     Base class for an NFV/VIM or SDN Contoller
     """
     def __init__(self, **kwargs):
-        logging.info('core.Controller.__init__: {}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.debug('core.Controller.__init__: {}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         Node.__init__(self, **kwargs)
 
@@ -52,7 +52,7 @@ class Controller(Node):
             'openstack': OpenStackController.create,
             'onos': ONOSController.create
         }
-        logging.info('core.Controller.create: {}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.debug('core.Controller.create: {}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         config = kwargs.get('config')
         create_method = _supported_vims.get(config.type.lower())

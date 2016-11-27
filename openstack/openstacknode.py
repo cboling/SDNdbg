@@ -298,19 +298,19 @@ class OpenStackNode(Node):
 
     def perform_sync_switches(self):
         # Load switches/bridges
-        bridges = self.get_switches(refresh=True)
+        switches = self.get_switches(refresh=True)
 
         # TODO: Remove old children not in new list first
 
-        for bridge in bridges:
+        for switch in switches:
             # TODO: Add if needed, also need to remove if no longer there
 
-            if bridge in self.children:
+            if switch in self.children:
                 # Existing child
                 pass
             else:
                 # New child
-                self.children.append(bridge)
+                self.children.append(switch)
 
         return True
 

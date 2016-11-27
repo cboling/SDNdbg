@@ -38,7 +38,7 @@ _services_of_interest = {
 
 class Controller(CoreController):
     def __init__(self, **kwargs):
-        logging.info('openstack.Controller.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.debug('openstack.Controller.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         CoreController.__init__(self, **kwargs)
 
@@ -47,7 +47,7 @@ class Controller(CoreController):
 
     @staticmethod
     def create(**kwargs):
-        logging.info('openstack.Controller.Create: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.debug('openstack.Controller.Create: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
         return Controller(**kwargs)
 
     @property

@@ -151,7 +151,7 @@ class Site(Node):
     common geo-location.
     """
     def __init__(self, **kwargs):
-        logging.info('Site.__init__: args:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.debug('Site.__init__: args:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         # No VIMs/NFV infrastructure or SDN controllers yet.  Will populate during discovery
 

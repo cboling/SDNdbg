@@ -520,7 +520,7 @@ class Base(object):
 
         # Attempt a lookup.  If not found, need to create
 
-        def stub_am_i_connected():  # Really, do I know enough to do anyting
+        def stub_am_i_connected():  # Really, do I know enough to do anything
             return False
 
         if not stub_am_i_connected():

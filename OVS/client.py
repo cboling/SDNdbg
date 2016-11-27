@@ -69,7 +69,7 @@ class Client(object):
         Updates the entire topology of the OVS database on a node
         """
         client = Client(address, username, password)
-        client.get_tables()
+        return client.get_tables()
 
     def get_tables(self):
         available_tables = ['Open_vSwitch', 'Bridge', 'Port', 'Interface',
@@ -124,6 +124,8 @@ class Client(object):
                      format(all_tables_delta_time, pprint.PrettyPrinter(indent=2).pformat(delta_times)))
 
         logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(self.table_info)))
+
+        return self.table_info
 
     def _table_json_to_dict(self, json_data):
         # Get as tuples
