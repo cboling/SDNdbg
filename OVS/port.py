@@ -30,7 +30,7 @@ class Port(Node):
     def __init__(self, **kwargs):
         logging.info('OVS.Port.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
-        port_data = kwargs.get('port_data')
+        port_data = kwargs.pop('port_data')
 
         kwargs['name'] = port_data['name']
         kwargs['id'] = str(port_data['_uuid'])
@@ -67,7 +67,7 @@ class Port(Node):
         Get all ports for the node identified by the ssh credentials
         """
         ports = kwargs.get('ovs_topology').get('port', [])
-        port_ids = kwargs.get('port_ids', [])
+        port_ids = kwargs.pop('port_ids', [])
 
         return [Port(port_data=port, **kwargs) for port in ports if port['_uuid'] in port_ids]
 
@@ -113,14 +113,14 @@ class Port(Node):
         """
         # Snapshot the OVS subsystem. Should always have one?
 
-        ovs_topology = None  # TODO self.get_ovs_topology(refresh=True)
-        if ovs_topology is None:
-            return False
+        # ovs_topology = None  # TODO self.get_ovs_topology(refresh=True)
+        # if ovs_topology is None:
+        #    return False
 
         # Process all the ports on this switch
 
-        # status = self.perform_sync_interface()
-        status = False  # TODO Implement this
+        status = self.perform_sync_interface()
+
         # TODO: Anything else?
 
         return status

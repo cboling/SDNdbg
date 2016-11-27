@@ -29,7 +29,7 @@ class Interface(Node):
     def __init__(self, **kwargs):
         logging.info('OVS.Interface.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
-        intf_data = kwargs.get('interface_data')
+        intf_data = kwargs.pop('interface_data')
 
         kwargs['name'] = intf_data['name']
         kwargs['id'] = intf_data['_uuid']
@@ -40,6 +40,7 @@ class Interface(Node):
         self._ssh_credentials = kwargs.get('ssh_credentials')
         self._ip = str(kwargs.get('ssh_address'))
         self._type = self.metadata['type']
+        self._ifindex = self.metadata.get('ifindex', None)
 
     # {'_uuid'                 : UUID('4512037a-3b23-498a-a7be-c87297601b56'),
     #  'admin_state'           : 'up',
@@ -101,6 +102,10 @@ class Interface(Node):
         return self._type
 
     @property
+    def ifindex(self):
+        return self._ifindex
+
+    @property
     def ovs_topology(self):
         return self.parent.ovs_topology
 
@@ -128,14 +133,12 @@ class Interface(Node):
         """
         # Snapshot the OVS subsystem. Should always have one?
 
-        ovs_topology = None  # TODO self.get_ovs_topology(refresh=True)
-        if ovs_topology is None:
-            return False
+        # ovs_topology = None  # TODO self.get_ovs_topology(refresh=True)
+        # if ovs_topology is None:
+        #    return False
 
-        # Process all the ports on this switch
-
-        # status = self.perform_sync_interface()
-        status = False  # TODO Implement this
         # TODO: Anything else?
+
+        status = True  # TODO Implement this
 
         return status

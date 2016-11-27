@@ -30,7 +30,7 @@ class Switch(CoreSwitch):
     def __init__(self, **kwargs):
         logging.info('OVS.Bridge.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
-        bridge_data = kwargs.get('bridge_data')
+        bridge_data = kwargs.pop('bridge_data')
 
         kwargs['name'] = bridge_data['name']
         kwargs['id'] = str(bridge_data['_uuid'])
@@ -108,9 +108,9 @@ class Switch(CoreSwitch):
         """
         # Snapshot the OVS subsystem. Should always have one?
 
-        ovs_topology = None  # TODO self.get_ovs_topology(refresh=True)
-        if ovs_topology is None:
-            return False
+        # ovs_topology = None  # TODO self.get_ovs_topology(refresh=True)
+        # if ovs_topology is None:
+        #    return False
 
         # Process all the ports on this switch
 
