@@ -159,22 +159,42 @@ class Client(object):
     @staticmethod
     def _get_interface_table(connection):
 
+        # First get a list of all network devices we care about
+
+        devices = Client._get_interface_devices(connection)
+        intf_info = []
+
+        return intf_info
+
+    @staticmethod
+    def _get_interface_devices(connection):
+        """
+        Get a list of network devices
+
+        :param connection:
+        :return:
+        """
+        ignore = ['lo', 'ovs-system']
         command = '/bin/ls /sys/class/net'
+
         # Get something like -> br-ex br-ext br-int  br-mgmt0 br-tun docker0 eth0 eth1  lo  ovs-system  virbr0
 
-        # executes the **ls /sys/class/net** command and pipes the output into a
-        # while loop and treats each output as a _device_.  Within this loop, if the _device_ equals either **lo**
-        # or **ovs-system**, it skips that _device_.  For my test system, the full output of the **ls** command
-        # above is:
-        #
-        # ```
-        # br-ext    docker0     qbr35e8a35a-d9  qbrb6b21e98-ab  qvb8b99fe12-76  qvo35e8a35a-d9  qvob6b21e98-ab  tap8b99fe12-76  virbr0
-        # br-int    eth0        qbr5f3fe3d7-73  qbrdd8cc769-de  qvbabc73b14-34  qvo5f3fe3d7-73  qvodd8cc769-de  tapabc73b14-34
-        # br-mgmt0  lo          qbr8b99fe12-76  qvb35e8a35a-d9  qvbb6b21e98-ab  qvo8b99fe12-76  tap35e8a35a-d9  tapb6b21e98-ab
-        # br-tun    ovs-system  qbrabc73b14-34  qvb5f3fe3d7-73  qvbdd8cc769-de  qvoabc73b14-34  tap5f3fe3d7-73  tapdd8cc769-de
-        # ```
+        devices = []
 
-        return []
+        try:
+            output, error = Client._exec_command(connection, command)
+
+            for line in output.split(str('\n')):
+                for dev in str.split(line):
+                    if dev not in ignore:
+                        devices.append(dev)
+
+        except Exception as e:
+            logging.exception('Client._get_interface_devices')
+
+        logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(devices)))
+
+        return devices
 
     @staticmethod
     def _get_namespace_table(connection):
