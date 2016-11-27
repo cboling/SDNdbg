@@ -30,15 +30,17 @@ class Switch(CoreSwitch):
     def __init__(self, **kwargs):
         logging.info('OVS.Bridge.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
-        self._bridge_data = kwargs.get('bridge_data')
+        bridge_data = kwargs.get('bridge_data')
 
-        kwargs['name'] = self._bridge_data['name']
-        kwargs['id'] = self._bridge_data['_uuid']
+        kwargs['name'] = bridge_data['name']
+        kwargs['id'] = str(bridge_data['_uuid'])
+        kwargs['metadata'] = bridge_data
 
         CoreSwitch.__init__(self, **kwargs)
 
         self._ovs_topology = kwargs.get('ovs_topology')
         self._ports = None
+        self._dpid = 'of:{}'.format(kwargs.get('datapath_id')) if 'datapath_id' in kwargs else None
 
         # {'_uuid'                : UUID('be01ca55-ed5d-4dcf-8899-db082e3bc2b2'),
         #  'controller'           : UUID('96edd47c-1275-4355-b5e5-b075860cfa0e'),
@@ -64,7 +66,6 @@ class Switch(CoreSwitch):
     def get_switches(**kwargs):
         """
         Get all OVS bridges for the node identified by the ssh credentials
-        :return:
         """
         bridges = kwargs.get('ovs_topology').get('bridge', [])
 
@@ -85,7 +86,7 @@ class Switch(CoreSwitch):
             return self._ports
 
         self._ports = Port.get_ports(parent=self,
-                                     port_ids=self._bridge_data['ports'],
+                                     port_ids=self.metadata['ports'],
                                      address=self.ssh_address,
                                      ssh_credentials=self._ssh_credentials,
                                      ovs_topology=self.ovs_topology)

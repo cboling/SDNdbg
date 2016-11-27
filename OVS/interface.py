@@ -19,7 +19,6 @@ import logging
 import pprint
 
 from core.node import Node
-from interface import Interface
 
 
 class Interface(Node):
@@ -30,16 +29,17 @@ class Interface(Node):
     def __init__(self, **kwargs):
         logging.info('OVS.Interface.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
-        self._intf_data = kwargs.get('interface_data')
+        intf_data = kwargs.get('interface_data')
 
-        kwargs['name'] = self._bridge_data['name']
-        kwargs['id'] = self._bridge_data['_uuid']
+        kwargs['name'] = intf_data['name']
+        kwargs['id'] = intf_data['_uuid']
+        kwargs['metadata'] = intf_data
 
         Node.__init__(self, **kwargs)
 
         self._ssh_credentials = kwargs.get('ssh_credentials')
-        self._ip = kwargs.get('ssh_address')
-        self._type = self._intf_data['type']
+        self._ip = str(kwargs.get('ssh_address'))
+        self._type = self.metadata['type']
 
     # {'_uuid'                 : UUID('4512037a-3b23-498a-a7be-c87297601b56'),
     #  'admin_state'           : 'up',
@@ -94,7 +94,7 @@ class Interface(Node):
         interfaces = kwargs.get('ovs_topology').get('interface', [])
         intf_ids = kwargs['parent'].ports
 
-        return [Interface(interface_data=port, **kwargs) for port in ports if port['_uuid'] in port_ids]
+        return [Interface(interface_data=intf, **kwargs) for intf in interfaces if intf['_uuid'] in intf_ids]
 
     @property
     def type(self):

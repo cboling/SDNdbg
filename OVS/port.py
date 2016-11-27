@@ -30,10 +30,11 @@ class Port(Node):
     def __init__(self, **kwargs):
         logging.info('OVS.Port.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
-        self._port_data = kwargs.get('port_data')
+        port_data = kwargs.get('port_data')
 
-        kwargs['name'] = self._port_data['name']
-        kwargs['id'] = self._port_data['_uuid']
+        kwargs['name'] = port_data['name']
+        kwargs['id'] = str(port_data['_uuid'])
+        kwargs['metadata'] = port_data
 
         Node.__init__(self, **kwargs)
 
@@ -90,7 +91,7 @@ class Port(Node):
             return self._interfaces
 
         self._interfaces = Interface.get_interfaces(parent=self,
-                                                    interface_ids=self._port_data['interfaces'],
+                                                    interface_ids=self.metadata['interfaces'],
                                                     address=self.ssh_address,
                                                     ssh_credentials=self._ssh_credentials,
                                                     ovs_topology=self.ovs_topology)

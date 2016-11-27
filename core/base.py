@@ -117,7 +117,7 @@ class Base(object):
         self._delete_pending = False
         self._modified = False
 
-        self._metadata = {}
+        self._metadata = kwargs.pop('metadata', {})
 
         self._client = None
 

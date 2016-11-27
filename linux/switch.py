@@ -31,13 +31,9 @@ class Switch(CoreSwitch):
         CoreSwitch.__init__(self, **kwargs)
 
     @staticmethod
-    def get_switches(address, credentials):
+    def get_switches(**kwargs):
         """
         Get all bridges for the node identified by the ssh credentials
-
-        :param address:
-        :param credentials:
-        :return:
         """
         # parent=self,
         # address=self.ssh_address,
