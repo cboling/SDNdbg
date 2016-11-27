@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 import json
 import logging
 import pprint
+import time
 import uuid
 
 import paramiko
@@ -81,7 +82,12 @@ class Client(object):
             connection = self.connect(self.address, self.username, self.password)
             command = 'ovs-vsctl --format=json --timeout=20 list'
 
+            all_tables_start_time = time.clock()
+            delta_times = {}
+
             for table in available_tables:
+                delta_start = time.clock()
+
                 ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(str('{}{} {}'.
                                                                                 format('sudo ' if need_sudo else '',
                                                                                        command, table)))
@@ -100,20 +106,24 @@ class Client(object):
                 logging.debug('Table: {}, STDOUT: {}'.format(table, pprint.PrettyPrinter(indent=2).pformat(output)))
                 logging.debug('Table: {}, STDERR: {}'.format(table, pprint.PrettyPrinter(indent=2).pformat(error)))
 
+                delta_times[table.lower()] = time.clock() - delta_start
+
                 try:
-                    self.table_info[table] = self._table_json_to_dict(json.loads(output))
+                    self.table_info[table.lower()] = self._table_json_to_dict(json.loads(output))
 
                     logging.debug('Table: {}, output: {}'.format(table, pprint.PrettyPrinter(indent=2).
-                                                                 pformat(self.table_info[table])))
+                                                                 pformat(self.table_info[table.lower()])))
                 except ValueError as e:
                     logging.exception('Value error converting OVS table {}'.format(table))
 
         except Exception as e:
             logging.exception('Client.get_tables')
 
-        logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(self.table_info)))
+        all_tables_delta_time = time.clock() - all_tables_start_time
+        logging.info('OVS Table parsing took {} seconds.  Individual table delta times follow:\n{}'.
+                     format(all_tables_delta_time, pprint.PrettyPrinter(indent=2).pformat(delta_times)))
 
-        pass
+        logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(self.table_info)))
 
     def _table_json_to_dict(self, json_data):
         # Get as tuples

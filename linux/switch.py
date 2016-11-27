@@ -25,7 +25,6 @@ class Switch(CoreSwitch):
     """
     Linux Bridge
     """
-
     def __init__(self, **kwargs):
         logging.info('Linux.Switch.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
@@ -40,4 +39,8 @@ class Switch(CoreSwitch):
         :param credentials:
         :return:
         """
+        # parent=self,
+        # address=self.ssh_address,
+        # ssh_credentials=self._ssh_credentials,
+        # ovs_topology=self._ovs_topology
         return []  # TODO: Implement this

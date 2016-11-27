@@ -167,7 +167,7 @@ class Base(object):
     @property
     def name(self):
         """
-        Unique name of this object
+        Name of this object
 
         :return: (string) Name
         """

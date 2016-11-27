@@ -73,7 +73,7 @@ class OpenStackNode(Node):
         self._ssh_credentials = kwargs.get('ssh_credentials')
         self._ssh_valid = False
         self._ovs_topology = None
-        self._bridges = None
+        self._switches = None
         self._ports = None
         self._links = None
         self._projects = None
@@ -122,7 +122,8 @@ class OpenStackNode(Node):
 
     def get_ovs_topology(self, refresh=False):
         """
-        Get all the entire OVS databipase of interest for this node
+        Get all the entire OVS database of interest for this node.  Centralized here since
+        it is the focal point for the local system
 
         :param refresh: (boolean) If true, force refresh of all items
         :return: (list) of bridge nodes
@@ -144,15 +145,17 @@ class OpenStackNode(Node):
         :param refresh: (boolean) If true, force refresh of all items
         :return: (list) of bridge nodes
         """
-        if not refresh and self._bridges is not None:
-            return self._bridges
+        if not refresh and self._switches is not None:
+            return self._switches
 
         if 'ssh' not in self.client or self.client['ssh'] is None:
             return None  # TODO: Probably best to throw an exception
 
-        self._bridges = Switch.get_switches(self._ip, self.client['ssh'])
-
-        return self._bridges
+        self._switches = Switch.get_switches(parent=self,
+                                             address=self.ssh_address,
+                                             ssh_credentials=self._ssh_credentials,
+                                             ovs_topology=self._ovs_topology)
+        return self._switches
 
     def get_ports(self, refresh=False):
         """
@@ -181,6 +184,8 @@ class OpenStackNode(Node):
             return self._links
 
         self._links = []  # TODO: Need to implement
+
+        # TODO: Once SDN controllers supported, check OVS and other flows for duplicates
 
         return self._links
 
@@ -283,13 +288,31 @@ class OpenStackNode(Node):
         if ovs_topology is None:
             return False
 
-        # Load switches/bridges
+        # First all bridges and switches
 
+        status = self.perform_sync_switches()
+
+        # TODO: Need to implement lots more !!!
+
+        return status
+
+    def perform_sync_switches(self):
+        # Load switches/bridges
         bridges = self.get_switches(refresh=True)
 
-        # TODO: Need to implement
+        # TODO: Remove old children not in new list first
 
-        return False
+        for bridge in bridges:
+            # TODO: Add if needed, also need to remove if no longer there
+
+            if bridge in self.children:
+                # Existing child
+                pass
+            else:
+                # New child
+                self.children.append(bridge)
+
+        return True
 
 # ########################################################################################################3
 # Support classes to wrap OpenStack information related to Service and Compute nodes
