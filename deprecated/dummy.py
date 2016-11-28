@@ -1512,3 +1512,192 @@ ovs_tables = {
     'Queue'                    : [],
     'SSL'                      : [],
     'sFlow'                    : []}
+
+# ethtool_output = driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+#
+# 2016-11-27 21:54:09,518 INFO:SDNdbg:detail: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:40,835 INFO:SDNdbg:output: { }
+# 2016-11-27 21:56:40,856 INFO:SDNdbg:STDOUT: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:40,856 INFO:SDNdbg:detail: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:40,857 INFO:SDNdbg:output: { }
+# 2016-11-27 21:56:40,934 INFO:SDNdbg:STDOUT: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:40,935 INFO:SDNdbg:detail: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:40,935 INFO:SDNdbg:output: { }
+# 2016-11-27 21:56:41,007 INFO:SDNdbg:STDOUT: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,008 INFO:SDNdbg:detail: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,008 INFO:SDNdbg:output: { }
+# 2016-11-27 21:56:41,080 INFO:SDNdbg:STDOUT: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,081 INFO:SDNdbg:detail: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,081 INFO:SDNdbg:output: { }
+# 2016-11-27 21:56:41,157 INFO:SDNdbg:STDOUT: driver: bridge
+# version: 2.3
+# firmware-version: N/A
+# bus-info: N/A
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,157 INFO:SDNdbg:detail: driver: bridge
+# version: 2.3
+# firmware-version: N/A
+# bus-info: N/A
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,158 INFO:SDNdbg:output: { }
+# 2016-11-27 21:56:41,230 INFO:SDNdbg:STDOUT: driver: e1000
+# version: 7.3.21-k8-NAPI
+# firmware-version:
+# bus-info: 0000:00:03.0
+# supports-statistics: yes
+# supports-test: yes
+# supports-eeprom-access: yes
+# supports-register-dump: yes
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,231 INFO:SDNdbg:detail: driver: e1000
+# version: 7.3.21-k8-NAPI
+# firmware-version:
+# bus-info: 0000:00:03.0
+# supports-statistics: yes
+# supports-test: yes
+# supports-eeprom-access: yes
+# supports-register-dump: yes
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,231 INFO:SDNdbg:output: { }
+# 2016-11-27 21:56:41,306 INFO:SDNdbg:STDOUT: driver: e1000
+# version: 7.3.21-k8-NAPI
+# firmware-version:
+# bus-info: 0000:00:08.0
+# supports-statistics: yes
+# supports-test: yes
+# supports-eeprom-access: yes
+# supports-register-dump: yes
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,308 INFO:SDNdbg:detail: driver: e1000
+# version: 7.3.21-k8-NAPI
+# firmware-version:
+# bus-info: 0000:00:08.0
+# supports-statistics: yes
+# supports-test: yes
+# supports-eeprom-access: yes
+# supports-register-dump: yes
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,308 INFO:SDNdbg:output: { }
+# 2016-11-27 21:56:41,389 INFO:SDNdbg:STDOUT: driver: bridge
+# version: 2.3
+# firmware-version: N/A
+# bus-info: N/A
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-27 21:56:41,390 INFO:SDNdbg:detail: driver: bridge
+# version: 2.3
+# firmware-version: N/A
+# bus-info: N/A
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no

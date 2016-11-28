@@ -162,6 +162,10 @@ class Client(object):
         # First get a list of all network devices we care about
 
         devices = Client._get_interface_devices(connection)
+
+        for device in devices:
+            detail = Client._get_device_detail(connection, device)
+
         intf_info = []
 
         return intf_info
@@ -195,6 +199,45 @@ class Client(object):
         logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(devices)))
 
         return devices
+
+    @staticmethod
+    def _get_device_detail(connection, device):
+
+        command = 'ethtool -i {}'.format(device)
+
+        detail = {}
+
+        # Use ethtool t get more information on the interface
+        # For each **dev** _device_ above, it will execute the following command to extract out
+        # the driver involved:
+        #
+        # ```
+        # driver=$(ethtool -i $dev | awk '/driver:/ {print $2}' 2> /dev/null)
+        # ```
+        # The output for a sample number of devices above (ignoring the __awk__ filter) are:
+        #
+        # ```
+        # root@onos-sfc:/home/cboling/neutron-diag# ethtool -i br-ext
+        # driver: openvswitch
+        # version:
+        # firmware-version:
+        # bus-info:
+        # supports-statistics: no
+        # supports-test: no
+        # supports-eeprom-access: no
+        # supports-register-dump: no
+        # supports-priv-flags: no
+        try:
+            output, error = Client._exec_command(connection, command)
+
+            logging.info('detail: {}'.format(output))
+
+        except Exception as e:
+            logging.exception('Client._get_interface_devices')
+
+        logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(detail)))
+
+        return detail
 
     @staticmethod
     def _get_namespace_table(connection):
