@@ -1523,7 +1523,6 @@ ovs_tables = {
 # supports-register-dump: no
 # supports-priv-flags: no
 #
-#
 # 2016-11-27 21:54:09,518 INFO:SDNdbg:detail: driver: openvswitch
 # version:
 # firmware-version:
