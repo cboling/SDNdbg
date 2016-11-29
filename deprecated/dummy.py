@@ -1700,3 +1700,6 @@ ovs_tables = {
 # supports-eeprom-access: no
 # supports-register-dump: no
 # supports-priv-flags: no
+
+# ip netns output
+#

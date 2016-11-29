@@ -32,6 +32,7 @@ class Client(object):
         self._password = password
         self.raw_table_info = {}
         self.table_info = {}
+        self.use_sudo = False
 
     @property
     def address(self):
@@ -93,20 +94,27 @@ class Client(object):
         return self.table_info
 
     @staticmethod
-    def _exec_command(connection, command):
+    def _exec_command(connection, command, use_sudo=False):
+
+        if use_sudo:
+            command = 'sudo {}'.command
+
         ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(command)
         error = ssh_stderr.read()
         output = ssh_stdout.read()
 
-        if error is not None and 'permission denied' in error.lower():
-            # Try with sudo
-            ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(str('sudo {}'.format(command)))
-            error = ssh_stderr.read()
-            output = ssh_stdout.read()
+        permission_errors = ['permission denied', 'operation not permitted']
 
-        logging.info('STDOUT: {}'.format(output))
+        if error is not None and not use_sudo:
+            for msg in permission_errors:
+                if msg in error.lower():
+                    # Try with sudo
+                    return Client._exec_command(connection, command, use_sudo=True)
+
+        logging.info("Command: '{}', STDOUT: {}".format(command, output))
+
         if len(error) > 0:
-            logging.warning('STDERR: {}'.format(error))
+            logging.warning("Command: '{}', STDERR: {}".format(command, error))
 
         return output, error
 
@@ -174,9 +182,6 @@ class Client(object):
     def _get_interface_devices(connection):
         """
         Get a list of network devices
-
-        :param connection:
-        :return:
         """
         ignore = ['lo', 'ovs-system']
         command = '/bin/ls /sys/class/net'
@@ -196,7 +201,7 @@ class Client(object):
         except Exception as e:
             logging.exception('Client._get_interface_devices')
 
-        logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(devices)))
+        logging.info('_get_interface_devices: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(devices)))
 
         return devices
 
@@ -235,10 +240,32 @@ class Client(object):
         except Exception as e:
             logging.exception('Client._get_interface_devices')
 
-        logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(detail)))
+        logging.info('_get_device_detail: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(detail)))
 
         return detail
 
     @staticmethod
     def _get_namespace_table(connection):
-        return []
+        """
+        Get a list of network namespaces and their contents
+        """
+        namespaces = []
+
+        try:
+            # First a list of namespaces
+
+            command = 'ip netns list'
+            output, error = Client._exec_command(connection, command)
+
+            for line in output.split(str('\n')):
+                for ns in str.split(line):
+                    namespaces.append({'name': ns})
+
+                    # Second, get a list of each interface in the NS
+
+        except Exception as e:
+            logging.exception('Client._get_namespace_table')
+
+        logging.info('_get_namespace_table: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(namespaces)))
+
+        return namespaces
