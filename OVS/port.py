@@ -119,7 +119,7 @@ class Port(Node):
 
         # Process all the ports on this switch
 
-        status = self.perform_sync_interface()
+        status = True  # TODO self.perform_sync_interface()
 
         # TODO: Anything else?
 

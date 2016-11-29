@@ -84,6 +84,10 @@ class Client(object):
 
         try:
             connection = self.connect(self.address, self.username, self.password)
+            if connection is None:
+                logging.error('OVS.client: Could not open a connection to {}'.format(self.address))
+                return self.table_info
+
             command = 'ovs-vsctl --format=json --timeout=20 list'
 
             all_tables_start_time = time.clock()
@@ -118,7 +122,10 @@ class Client(object):
                     logging.debug('Table: {}, output: {}'.format(table, pprint.PrettyPrinter(indent=2).
                                                                  pformat(self.table_info[table.lower()])))
                 except ValueError as e:
-                    logging.exception('Value error converting OVS table {}'.format(table))
+                    # May not have any data in the table but often this may mean that ovs may not even be
+                    # installed (such as a VM or container only running Keystone, glance, ...)
+                    logging.debug('Value error converting OVS table {}'.format(table))
+                    self.table_info[table.lower()] = {}
 
         except Exception as e:
             logging.exception('Client.get_tables')

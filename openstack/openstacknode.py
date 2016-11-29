@@ -65,7 +65,7 @@ class OpenStackNode(Node):
     """
 
     def __init__(self, **kwargs):
-        logging.info('openstack.node.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+        logging.debug('openstack.node.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
 
         Node.__init__(self, **kwargs)
         self._service_info = kwargs.get('service_info')  # A List of tuples -> (service-type, NodeInfo obj)

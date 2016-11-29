@@ -76,7 +76,7 @@ class Client(object):
         available_tables = ['bridge', 'interface', 'namespace']
 
         get_funcs = {
-            'bridge'   : Client._get_bridge_table,
+            'bridge': Client._get_bridge_table,
             'interface': Client._get_interface_table,
             'namespace': Client._get_namespace_table
         }
@@ -84,8 +84,11 @@ class Client(object):
         try:
             connection = self.connect(self.address, self.username, self.password)
 
-            for table in available_tables:
-                self.table_info[table] = get_funcs.get(table)(connection)
+            if connection is not None:
+                for table in available_tables:
+                    self.table_info[table] = get_funcs.get(table)(connection)
+            else:
+                logging.error('Linux.client: Could not open a connection to {}'.format(self.address))
 
         finally:
             if connection is not None:
@@ -97,7 +100,7 @@ class Client(object):
     def _exec_command(connection, command, use_sudo=False):
 
         if use_sudo:
-            command = 'sudo {}'.command
+            command = 'sudo {}'.format(command)
 
         ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(command)
         error = ssh_stderr.read()
@@ -236,6 +239,10 @@ class Client(object):
             output, error = Client._exec_command(connection, command)
 
             logging.info('detail: {}'.format(output))
+
+            # The script then looks for, and processes only the _veth_, _openvswitch_, and _bridge_
+            # driver types.  Each driver type device is saved off as in the **node** file.
+            # TODO: look into driver type 'bonding' to see how we may want to represent this
 
         except Exception as e:
             logging.exception('Client._get_interface_devices')

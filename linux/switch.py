@@ -20,12 +20,19 @@ import pprint
 
 from core.switch import Switch as CoreSwitch
 
+
 class Switch(CoreSwitch):
     """
     Linux Bridge
     """
     def __init__(self, **kwargs):
         logging.info('Linux.Switch.__init__: entry:\n{}'.format(pprint.PrettyPrinter().pformat(kwargs)))
+
+        bridge_data = kwargs.pop('bridge_data')
+
+        kwargs['name'] = bridge_data['name']
+        kwargs['bridge_id'] = bridge_data['id']  # Not a UUID like OVS
+        kwargs['metadata'] = bridge_data
 
         CoreSwitch.__init__(self, **kwargs)
 
@@ -34,8 +41,8 @@ class Switch(CoreSwitch):
         """
         Get all bridges for the node identified by the ssh credentials
         """
-        bridges = kwargs.get('ovs_topology').get('bridge', [])
-        return [Switch(brctl_topology=bridge, **kwargs) for bridge in bridges]
+        bridges = kwargs.get('brctl_topology').get('bridge', [])
+        return [Switch(bridge_data=bridge, **kwargs) for bridge in bridges]
 
     def connect(self):
         """

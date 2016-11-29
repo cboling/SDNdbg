@@ -107,11 +107,11 @@ class Base(object):
         self._no_sync = kwargs.pop('no_sync', False)
         self._cache_client = kwargs.pop('cache_client', False)
 
-        self._name = kwargs.get('name')
+        self._name = kwargs.pop('name')
         self._id = UUID(kwargs.pop('id', str(get_uuid())))
 
-        self._parent = kwargs.get('parent', None)
-        self._children = kwargs.get('children', [])
+        self._parent = kwargs.get('parent', None)  # Do not 'pop'
+        self._children = kwargs.pop('children', [])
 
         self._enabled = kwargs.get('enabled', True)
         self._delete_pending = False

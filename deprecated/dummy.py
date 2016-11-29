@@ -1703,3 +1703,83 @@ ovs_tables = {
 # -----------
 # ip netns output
 #
+
+# ---------------------------------------------
+# Here is some interface and EthTOOL output that also has bonding listed as a driver type
+# ...
+#
+# 2016-11-29 12:36:22,247 INFO:SDNdbg:_get_interface_devices: output: [ 'bond0',
+#                                                                       'bonding_masters',
+#                                                                       'br-int',
+#                                                                       'docker0',
+#                                                                       'eth0',
+#                                                                       'fabric',
+#                                                                       'mgmtbr',
+#                                                                       'virbr0',
+#                                                                       'virbr0-nic']
+#
+# 2016-11-29 12:36:23,108 INFO:SDNdbg:_get_device_detail: output: { }
+# 2016-11-29 12:36:23,177 INFO:SDNdbg:Command: 'ethtool -i fabric', STDOUT: driver: bonding
+# version: 3.7.1
+# firmware-version: 2
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# 2016-11-29 12:36:23,177 INFO:SDNdbg:detail: driver: bonding
+# version: 3.7.1
+# firmware-version: 2
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# u'interface': [ { u'_uuid': UUID('0c0cc6b8-80cf-4e06-8067-b717b6029d01'),
+#                   u'admin_state': u'up',
+#                   u'bfd': { },
+#                   u'bfd_status': { },
+#                   u'cfm_fault': set([]),
+#                   u'cfm_fault_status': set([]),
+#                   u'cfm_flap_count': set([]),
+#                   u'cfm_health': set([]),
+#                   u'cfm_mpid': set([]),
+#                   u'cfm_remote_mpids': set([]),
+#                   u'cfm_remote_opstate': set([]),
+#                   u'duplex': u'full',
+#                   u'external_ids': { },
+#                   u'ifindex': 12,
+#                   u'ingress_policing_burst': 0,
+#                   u'ingress_policing_rate': 0,
+#                   u'lacp_current': set([]),
+#                   u'link_resets': 1,
+#                   u'link_speed': 100000000,
+#                   u'link_state': u'up',
+#                   u'mac': set([]),
+#                   u'mac_in_use': u'90:e2:ba:aa:80:c4',
+#                   u'mtu': 1500,
+#                   u'name': u'fabric',
+#                   u'ofport': 2,
+#                   u'ofport_request': set([]),
+#                   u'options': { },
+#                   u'other_config': { },
+#                   u'statistics': { u'collisions': 0,
+#                                    u'rx_bytes': 0,
+#                                    u'rx_crc_err': 0,
+#                                    u'rx_dropped': 0,
+#                                    u'rx_errors': 0,
+#                                    u'rx_frame_err': 0,
+#                                    u'rx_over_err': 0,
+#                                    u'rx_packets': 0,
+#                                    u'tx_bytes': 648,
+#                                    u'tx_dropped': 0,
+#                                    u'tx_errors': 0,
+#                                    u'tx_packets': 8},
+#                   u'status': { u'driver_name': u'bonding',
+#                                u'driver_version': u'3.7.1',
+#                                u'firmware_version': u'2'},
+#                   u'type': u''},
