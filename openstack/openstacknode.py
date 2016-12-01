@@ -302,7 +302,9 @@ class OpenStackNode(Node):
         if self.client is None:
             return False
 
-        # Snapshot the OVS subsystem. Should always have one?
+        # Snapshot the OVS subsystem.  It may not exist but we will always create a basic one and
+        # use it as the basis of the entire topology.  Other commands and interfaces will augment the
+        # existing data and create some new first-level items (such as 'VMs')
 
         brctl_topology = self.get_brctl_topology(refresh=True)
         if brctl_topology is None:

@@ -211,7 +211,9 @@ class Client(object):
     @staticmethod
     def _get_device_detail(connection, device):
 
-        command = 'ethtool -i {}'.format(device)
+        driver_info_command = 'ethtool -i {}'.format(device)
+        ifIndex_command = 'cat /sys/class/net/{}/ifIndex'.format(device)
+        stats_command = 'ethtool -S {}'.format(device)
 
         detail = {}
 
@@ -235,8 +237,43 @@ class Client(object):
         # supports-eeprom-access: no
         # supports-register-dump: no
         # supports-priv-flags: no
+        #
+        # ifIndex command just puts out one line with ifIndex
+        #
+        #  -S output for veth looks like
+        #       NIC statistics:
+        #           peer_ifindex: 33
+        #
+        # do ->  find /sys/calls/net/<dev>/ -type f -print    will output something like
+        #
+        #    ...
+        #   /sys/class/net/qvo5fedb8ab-96/queues/tx-0/byte_queue_limits/inflight
+        #   /sys/class/net/qvo5fedb8ab-96/tx_queue_len
+        #   /sys/class/net/qvo5fedb8ab-96/uevent
+        #   /sys/class/net/qvo5fedb8ab-96/statistics/rx_fifo_errors
+        #    ---
+        # do ->  find /sys/calls/net/<dev>/ -type f -print -exec cat {} ';   will output something like
+        #
+        #    ...
+        #       /sys/class/net/qvo5fedb8ab-96/queues/tx-0/byte_queue_limits/hold_time
+        #       1000
+        #       /sys/class/net/qvo5fedb8ab-96/queues/tx-0/byte_queue_limits/inflight
+        #       0
+        #       /sys/class/net/qvo5fedb8ab-96/tx_queue_len
+        #       1000
+        #       /sys/class/net/qvo5fedb8ab-96/uevent
+        #       INTERFACE=qvo5fedb8ab-96
+        #       IFINDEX=38
+        #       /sys/class/net/qvo5fedb8ab-96/statistics/rx_fifo_errors
+        #       0
+        #    ...
+        #
+        #   In the above output, there are zero or more lines output.  Can probably figure it out by
+        #   lookiing for /sys/class/net/... to know if it is a filename or useful statistic
+
+
         try:
-            output, error = Client._exec_command(connection, command)
+            output, error = Client._exec_command(connection, driver_info_command)
 
             logging.info('detail: {}'.format(output))
 
