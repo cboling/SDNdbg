@@ -97,7 +97,7 @@ class Client(object):
         return self.table_info
 
     @staticmethod
-    def _exec_command(connection, command, use_sudo=False):
+    def exec_command(connection, command, use_sudo=False):
 
         if use_sudo:
             command = 'sudo {}'.format(command)
@@ -112,7 +112,7 @@ class Client(object):
             for msg in permission_errors:
                 if msg in error.lower():
                     # Try with sudo
-                    return Client._exec_command(connection, command, use_sudo=True)
+                    return Client.exec_command(connection, command, use_sudo=True)
 
         logging.info("Command: '{}', STDOUT: {}".format(command, output))
 
@@ -123,10 +123,11 @@ class Client(object):
 
     @staticmethod
     def _get_bridge_table(connection):
+        # TODO Move to separate file
         command = str('brctl show')
         bridge_info = []
         try:
-            output, error = Client._exec_command(connection, command)
+            output, error = Client.exec_command(connection, command)
             whitespace = str(' \t\n\r')
             line_input = None
 
@@ -169,129 +170,20 @@ class Client(object):
 
     @staticmethod
     def _get_interface_table(connection):
+        from sys_class_net import get_sys_class_net_interface_devices
 
         # First get a list of all network devices we care about
 
-        devices = Client._get_interface_devices(connection)
-
-        for device in devices:
-            detail = Client._get_device_detail(connection, device)
-
-        intf_info = []
-
-        return intf_info
-
-    @staticmethod
-    def _get_interface_devices(connection):
-        """
-        Get a list of network devices
-        """
-        ignore = ['lo', 'ovs-system']
-        command = '/bin/ls /sys/class/net'
-
-        # Get something like -> br-ex br-ext br-int  br-mgmt0 br-tun docker0 eth0 eth1  lo  ovs-system  virbr0
-
-        devices = []
-
-        try:
-            output, error = Client._exec_command(connection, command)
-
-            for line in output.split(str('\n')):
-                for dev in str.split(line):
-                    if dev not in ignore:
-                        devices.append(dev)
-
-        except Exception as e:
-            logging.exception('Client._get_interface_devices')
-
-        logging.info('_get_interface_devices: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(devices)))
+        devices = get_sys_class_net_interface_devices(connection)
 
         return devices
-
-    @staticmethod
-    def _get_device_detail(connection, device):
-
-        driver_info_command = 'ethtool -i {}'.format(device)
-        ifIndex_command = 'cat /sys/class/net/{}/ifIndex'.format(device)
-        stats_command = 'ethtool -S {}'.format(device)
-
-        detail = {}
-
-        # Use ethtool t get more information on the interface
-        # For each **dev** _device_ above, it will execute the following command to extract out
-        # the driver involved:
-        #
-        # ```
-        # driver=$(ethtool -i $dev | awk '/driver:/ {print $2}' 2> /dev/null)
-        # ```
-        # The output for a sample number of devices above (ignoring the __awk__ filter) are:
-        #
-        # ```
-        # root@onos-sfc:/home/cboling/neutron-diag# ethtool -i br-ext
-        # driver: openvswitch
-        # version:
-        # firmware-version:
-        # bus-info:
-        # supports-statistics: no
-        # supports-test: no
-        # supports-eeprom-access: no
-        # supports-register-dump: no
-        # supports-priv-flags: no
-        #
-        # ifIndex command just puts out one line with ifIndex
-        #
-        #  -S output for veth looks like
-        #       NIC statistics:
-        #           peer_ifindex: 33
-        #
-        # do ->  find /sys/calls/net/<dev>/ -type f -print    will output something like
-        #
-        #    ...
-        #   /sys/class/net/qvo5fedb8ab-96/queues/tx-0/byte_queue_limits/inflight
-        #   /sys/class/net/qvo5fedb8ab-96/tx_queue_len
-        #   /sys/class/net/qvo5fedb8ab-96/uevent
-        #   /sys/class/net/qvo5fedb8ab-96/statistics/rx_fifo_errors
-        #    ---
-        # do ->  find /sys/calls/net/<dev>/ -type f -print -exec cat {} ';   will output something like
-        #
-        #    ...
-        #       /sys/class/net/qvo5fedb8ab-96/queues/tx-0/byte_queue_limits/hold_time
-        #       1000
-        #       /sys/class/net/qvo5fedb8ab-96/queues/tx-0/byte_queue_limits/inflight
-        #       0
-        #       /sys/class/net/qvo5fedb8ab-96/tx_queue_len
-        #       1000
-        #       /sys/class/net/qvo5fedb8ab-96/uevent
-        #       INTERFACE=qvo5fedb8ab-96
-        #       IFINDEX=38
-        #       /sys/class/net/qvo5fedb8ab-96/statistics/rx_fifo_errors
-        #       0
-        #    ...
-        #
-        #   In the above output, there are zero or more lines output.  Can probably figure it out by
-        #   lookiing for /sys/class/net/... to know if it is a filename or useful statistic
-
-
-        try:
-            output, error = Client._exec_command(connection, driver_info_command)
-
-            logging.info('detail: {}'.format(output))
-
-            # The script then looks for, and processes only the _veth_, _openvswitch_, and _bridge_
-            # driver types.  Each driver type device is saved off as in the **node** file.
-            # TODO: look into driver type 'bonding' to see how we may want to represent this
-
-        except Exception as e:
-            logging.exception('Client._get_interface_devices')
-
-        logging.info('_get_device_detail: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(detail)))
-
-        return detail
 
     @staticmethod
     def _get_namespace_table(connection):
         """
         Get a list of network namespaces and their contents
+
+        TODO: Move to separate file
         """
         namespaces = []
 
@@ -299,7 +191,7 @@ class Client(object):
             # First a list of namespaces
 
             command = 'ip netns list'
-            output, error = Client._exec_command(connection, command)
+            output, error = Client.exec_command(connection, command)
 
             for line in output.split(str('\n')):
                 for ns in str.split(line):

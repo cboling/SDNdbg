@@ -1708,7 +1708,7 @@ ovs_tables = {
 # Here is some interface and EthTOOL output that also has bonding listed as a driver type
 # ...
 #
-# 2016-11-29 12:36:22,247 INFO:SDNdbg:_get_interface_devices: output: [ 'bond0',
+# 2016-11-29 12:36:22,247 INFO:SDNdbg:_get_sys_class_net_interface_devices: output: [ 'bond0',
 #                                                                       'bonding_masters',
 #                                                                       'br-int',
 #                                                                       'docker0',
