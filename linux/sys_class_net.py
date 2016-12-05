@@ -23,11 +23,8 @@ from client import Client
 
 
 def get_sys_class_net_interface_devices(connection, cmd_prefix=""):
-    # Walk the /sys/class/net structure and create a dictionary with each device we care aboutr
-
-    devices = _get_device_list(connection, cmd_prefix)
-
-    return {"sys/class/net/devices": devices}
+    # Walk the /sys/class/net structure and create a dictionary with each device we care about
+    return _get_device_list(connection, cmd_prefix)
 
 
 def _get_device_list(connection, cmd_prefix=""):
@@ -41,7 +38,8 @@ def _get_device_list(connection, cmd_prefix=""):
     ignore = ['lo', 'ovs-system']
     command = cmd_prefix + '/bin/ls /sys/class/net'
 
-    devices = []
+    devices = {}
+    device_path = {}
 
     try:
         output, error = Client.exec_command(connection, command)
@@ -49,33 +47,35 @@ def _get_device_list(connection, cmd_prefix=""):
         for line in output.split(str('\n')):
             for dev in str.split(line):
                 if dev not in ignore:
-                    devices.append({str('name')       : dev,
-                                    str('device_path'): str('/sys/class/net/{}'.format(dev))})
+                    device_path[dev] = str('/sys/class/net/{}'.format(dev))
 
     except Exception as e:
         logging.exception('Client._get_sys_class_net_interface_devices')
 
     # Walk each device subdirectory a dictionary of information for the device
 
-    for device in devices:
-        _get_device_detail(connection, device, cmd_prefix)
+    for name, sys_path in device_path.items():
+        devices[name] = _get_device_detail(connection, sys_path, cmd_prefix)
+        devices[name][str('name')] = name
+        #
+        # TODO: Add driver detail and peer information if we can !!!
 
-    logging.info('_get_device_list: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(devices)))
+    logging.debug('_get_device_list: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(devices)))
 
     return devices
 
 
-def _get_device_detail(connection, device, cmd_prefix=""):
+def _get_device_detail(connection, sys_path, cmd_prefix=""):
     """
     Walk the /sys/class/net/<device> file structure and convert it into a usable dictionary.
 
     :param connection:
-    :param device:
+    :param sys_path:
     :param cmd_prefix:
     :return:
     """
-    path = device[str('device_path')]
-    command = cmd_prefix + 'find {} -type f -print -exec cat {{}} \; -exec echo \;'.format(path + '/')
+    command = cmd_prefix + 'find {} -type f -print -exec cat {{}} \; -exec echo \;'.format(sys_path + '/')
+    device = {}
 
     try:
         # do ->  find /sys/calls/net/<dev>/ -type f -print -exec cat {} \;   will output something like
@@ -101,8 +101,8 @@ def _get_device_detail(connection, device, cmd_prefix=""):
             if len(line) == 0:
                 continue  # Extra echo in command insures all 'cat' commands end with at least one \n
 
-            elif line.startswith(path):
-                item_name = line[len(path) + 1:]
+            elif line.startswith(sys_path):
+                item_name = line[len(sys_path) + 1:]
 
             elif item_name is not None:
                 # It is the contents of a file, add it as an item, watching to see if it is more than
@@ -140,16 +140,13 @@ def _get_device_detail(connection, device, cmd_prefix=""):
                 build_nested_dict_helper(key, container, tryeval(val))
             return container
 
-        # Save off device path since it will get parsed as well
-        device_path = device[str('device_path')]
-
         device = build_nested_dict(device)
-        device[str('device_path')] = device_path  # Restore this one
+        return device
 
     except Exception as e:
         logging.exception('Client._get_device_detail')
 
-    logging.info('_get_device_detail: detail:\n{}'.format(pprint.PrettyPrinter(indent=2).pformat(device)))
+    logging.debug('_get_device_detail: detail:\n{}'.format(pprint.PrettyPrinter(indent=2).pformat(device)))
 
 
 def _driver_info(connection, device):  # TODO Deprecated

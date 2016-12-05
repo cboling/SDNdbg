@@ -94,6 +94,9 @@ class Client(object):
             if connection is not None:
                 connection.close()
 
+        logging.info('_get_tables: Contents follow:\n{}'.
+                     format(pprint.PrettyPrinter(indent=2).pformat(self.table_info)))
+
         return self.table_info
 
     @staticmethod
@@ -114,7 +117,7 @@ class Client(object):
                     # Try with sudo
                     return Client.exec_command(connection, command, use_sudo=True)
 
-        logging.info("Command: '{}', STDOUT: {}".format(command, output))
+        logging.debug("Command: '{}', STDOUT: {}".format(command, output))
 
         if len(error) > 0:
             logging.warning("Command: '{}', STDERR: {}".format(command, error))
@@ -172,7 +175,7 @@ class Client(object):
     def _get_interface_table(connection):
         from sys_class_net import get_sys_class_net_interface_devices
 
-        # First get a list of all network devices we care about
+        # First get a list of all network devices we care about, first the global network namespace
 
         devices = get_sys_class_net_interface_devices(connection)
 
@@ -185,7 +188,9 @@ class Client(object):
 
         TODO: Move to separate file
         """
-        namespaces = []
+        from sys_class_net import get_sys_class_net_interface_devices
+
+        namespaces = {}
 
         try:
             # First a list of namespaces
@@ -195,13 +200,12 @@ class Client(object):
 
             for line in output.split(str('\n')):
                 for ns in str.split(line):
-                    namespaces.append({'name': ns})
-
-                    # Second, get a list of each interface in the NS
+                    prefix = 'ip netns exec {} '.format(ns)
+                    namespaces[ns] = get_sys_class_net_interface_devices(connection, cmd_prefix=prefix)
 
         except Exception as e:
             logging.exception('Client._get_namespace_table')
 
-        logging.info('_get_namespace_table: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(namespaces)))
+        logging.debug('_get_namespace_table: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(namespaces)))
 
         return namespaces
