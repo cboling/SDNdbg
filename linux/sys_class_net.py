@@ -59,6 +59,9 @@ def _get_device_list(connection, cmd_prefix=""):
         devices[name][str('name')] = name
         #
         # TODO: Add driver detail and peer information if we can !!!
+        # TODO: Also dump to the screen some ethtool output to see what is usefull
+
+        _driver_info(connection, name, cmd_prefix=cmd_prefix);
 
     logging.debug('_get_device_list: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(devices)))
 
@@ -141,18 +144,18 @@ def _get_device_detail(connection, sys_path, cmd_prefix=""):
             return container
 
         device = build_nested_dict(device)
-        return device
 
     except Exception as e:
         logging.exception('Client._get_device_detail')
 
     logging.debug('_get_device_detail: detail:\n{}'.format(pprint.PrettyPrinter(indent=2).pformat(device)))
 
+    return device
 
-def _driver_info(connection, device):  # TODO Deprecated
-    driver_info_command = 'ethtool -i {}'.format(device)
-    ifIndex_command = 'cat /sys/class/net/{}/ifIndex'.format(device)
-    stats_command = 'ethtool -S {}'.format(device)
+
+def _driver_info(connection, device, cmd_prefix=""):  # TODO Deprecated
+    driver_command = cmd_prefix + 'ethtool -i {}'.format(device)
+    stats_command = cmd_prefix + 'ethtool -S {}'.format(device)
 
     # Use ethtool t get more information on the interface
     # For each **dev** _device_ above, it will execute the following command to extract out
@@ -185,10 +188,13 @@ def _driver_info(connection, device):  # TODO Deprecated
     #   In the above output, there are zero or more lines output.  Can probably figure it out by
     #   lookiing for /sys/class/net/... to know if it is a filename or useful statistic
     detail = {}
-    try:
-        output, error = Client.exec_command(connection, driver_info_command)
 
-        logging.info('detail: {}'.format(output))
+    try:
+        output, error = Client.exec_command(connection, driver_command)
+        logging.info('Driver detail for {}: {}'.format(device, output))
+
+        output, error = Client.exec_command(connection, stats_command)
+        logging.info('Statistics detail for {}: {}'.format(device, output))
 
         # The script then looks for, and processes only the _veth_, _openvswitch_, and _bridge_
         # driver types.  Each driver type device is saved off as in the **node** file.
@@ -197,6 +203,6 @@ def _driver_info(connection, device):  # TODO Deprecated
     except Exception as e:
         logging.exception('Client._get_sys_class_net_interface_devices')
 
-    logging.info('_get_device_detail: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(detail)))
+    logging.debug('_get_device_detail: output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(detail)))
 
     return detail

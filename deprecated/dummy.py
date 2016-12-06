@@ -1783,3 +1783,123 @@ ovs_tables = {
 #                                u'driver_version': u'3.7.1',
 #                                u'firmware_version': u'2'},
 #                   u'type': u''},
+dummy = 0
+###################################################################
+#  ethtool -i output for some more devices (including some in namespaces)
+#
+# 2016-12-06 07:31:47,955 INFO:SDNdbg:Driver detail for docker0: driver: bridge
+# version: 2.3
+# firmware-version: N/A
+# bus-info: N/A
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+# ...
+# 2016-12-06 07:31:58,282 INFO:SDNdbg:Driver detail for br-tun: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+#
+# 2016-12-06 07:32:02,603 INFO:SDNdbg:Driver detail for virbr0: driver: bridge
+# version: 2.3
+# firmware-version: N/A
+# bus-info: N/A
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+#
+#   ...
+#
+# 2016-12-06 07:32:03,487 INFO:SDNdbg:Driver detail for eth0: driver: e1000
+# version: 7.3.21-k8-NAPI
+# firmware-version:
+# bus-info: 0000:00:03.0
+# supports-statistics: yes
+# supports-test: yes
+# supports-eeprom-access: yes
+# supports-register-dump: yes
+# supports-priv-flags: no
+dummy = 0
+
+# Here is the namespace dump for those items
+#
+# 2016-12-06 07:38:48,633 INFO:SDNdbg:Driver detail for qg-900b6d4e-51: driver: openvswitch
+# version:
+# firmware-version:
+# bus-info:
+# supports-statistics: no
+# supports-test: no
+# supports-eeprom-access: no
+# supports-register-dump: no
+# supports-priv-flags: no
+
+dummy = 0
+###################################################################
+#  ethtool -S output for some devices (including some in namespaces)
+#
+# 2016-12-06 07:31:47,998 WARNING:SDNdbg:Command: 'ethtool -S docker0', STDERR: no stats available
+# 2016-12-06 07:31:58,356 WARNING:SDNdbg:Command: 'ethtool -S br-tun', STDERR: no stats available
+# 2016-12-06 07:32:02,652 WARNING:SDNdbg:Command: 'ethtool -S virbr0', STDERR: no stats available
+#
+# 2016-12-06 07:32:03,564 INFO:SDNdbg:Statistics detail for eth0: NIC statistics:
+# rx_packets: 26486388
+# tx_packets: 610183
+# rx_bytes: 18622556065
+# tx_bytes: 57554697
+# rx_broadcast: 245722
+# tx_broadcast: 7
+# rx_multicast: 114433
+# tx_multicast: 338
+# rx_errors: 0
+# tx_errors: 0
+# tx_dropped: 0
+# multicast: 114433
+# collisions: 0
+# rx_length_errors: 0
+# rx_over_errors: 0
+# rx_crc_errors: 0
+# rx_frame_errors: 0
+# rx_no_buffer_count: 0
+# rx_missed_errors: 0
+# tx_aborted_errors: 0
+# tx_carrier_errors: 0
+# tx_fifo_errors: 0
+# tx_heartbeat_errors: 0
+# tx_window_errors: 0
+# tx_abort_late_coll: 0
+# tx_deferred_ok: 0
+# tx_single_coll_ok: 0
+# tx_multi_coll_ok: 0
+# tx_timeout_count: 3
+# tx_restart_queue: 0
+# rx_long_length_errors: 0
+# rx_short_length_errors: 0
+# rx_align_errors: 0
+# tx_tcp_seg_good: 582
+# tx_tcp_seg_failed: 0
+# rx_flow_control_xon: 0
+# rx_flow_control_xoff: 0
+# tx_flow_control_xon: 0
+# tx_flow_control_xoff: 0
+# rx_long_byte_count: 18622556065
+# rx_csum_offload_good: 0
+# rx_csum_offload_errors: 0
+# alloc_rx_buff_failed: 0
+# tx_smbus: 0
+# rx_smbus: 0
+# dropped_smbus: 0
+
+# Here is the namespace dump for those items
+#
+# 2016-12-06 07:38:48,804 WARNING:SDNdbg:Command: 'sudo ip netns exec qrouter-b6f5079d-e407-4d75-b772-be9fb719bbc5 ethtool -S qg-900b6d4e-51', STDERR: no stats available
