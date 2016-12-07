@@ -99,17 +99,18 @@ class Client(object):
         return self.table_info
 
     @staticmethod
-    def exec_command(connection, command, ignore_errors=[]):
+    def exec_command(connection, command, ignore_errors=None):
 
-        command = 'sudo {}'.format(command)
+        command = str('sudo {}'.format(command))
 
         ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(command)
-        error = ssh_stderr.read()
-        output = ssh_stdout.read()
+        error = str(ssh_stderr.read())
+        output = str(ssh_stdout.read())
 
         logging.debug("Command: '{}', STDOUT: {}".format(command, output))
 
-        if len(error) > 0 and not any(ignore in error.lower() for ignore in ignore_errors):
+        if len(error) > 0 and (ignore_errors is None or
+                                   not any(ignore in error.lower() for ignore in ignore_errors)):
             logging.warning("Command: '{}', STDERR: {}".format(command, error))
 
         return output, error
