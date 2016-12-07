@@ -102,10 +102,16 @@ class Client(object):
     def exec_command(connection, command, ignore_errors=None):
 
         command = str('sudo {}'.format(command))
+        error = 'Unicode Decode error during command output parsing'
+        output = ''
 
-        ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(command)
-        error = str(ssh_stderr.read())
-        output = str(ssh_stdout.read())
+        try:
+            ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(command)
+            output = str(ssh_stdout.read())
+            error = str(ssh_stderr.read())
+
+        except UnicodeDecodeError:
+            pass
 
         logging.debug("Command: '{}', STDOUT: {}".format(command, output))
 

@@ -100,7 +100,7 @@ def _get_bonding_master_detail(connection, sys_path, cmd_prefix=""):
     :param cmd_prefix:
     :return:
     """
-    command = cmd_prefix + 'cat {{}}'.format(sys_path)
+    command = cmd_prefix + 'cat {}'.format(sys_path)
     master = {}
 
     try:
