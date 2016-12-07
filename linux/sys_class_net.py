@@ -180,6 +180,8 @@ def _get_device_detail(connection, sys_path, cmd_prefix=""):
     :return:
     """
     command = cmd_prefix + 'find {} -type f -print -exec cat {{}} \; -exec echo \;'.format(sys_path + '/')
+    ignore_errors = ['invalid argument', 'operation not supported', 'permission denied']
+
     device = {}
 
     try:
@@ -198,7 +200,7 @@ def _get_device_detail(connection, sys_path, cmd_prefix=""):
         #       /sys/class/net/qvo5faab8ab-96/statistics/rx_fifo_errors
         #       0
         #    ...
-        output, error = Client.exec_command(connection, command)
+        output, error = Client.exec_command(connection, command, ignore_errors)
         item_name = None
 
         for line in output.split(str('\n')):
@@ -297,8 +299,10 @@ def _driver_info(connection, device, cmd_prefix=""):  # TODO Deprecated
                     fields[1] = True
                 elif fields[1].strip().lower() == 'no':
                     fields[1] = False
+                else:
+                    fields[1] = fields[1].strip()
 
-            detail[fields[0].strip()] = fields[1].strip()
+            detail[fields[0].strip()] = fields[1]
 
     except Exception as e:
         logging.exception('Client._driver_info')

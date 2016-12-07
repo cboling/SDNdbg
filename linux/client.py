@@ -99,7 +99,7 @@ class Client(object):
         return self.table_info
 
     @staticmethod
-    def exec_command(connection, command):
+    def exec_command(connection, command, ignore_errors=[]):
 
         command = 'sudo {}'.format(command)
 
@@ -109,7 +109,7 @@ class Client(object):
 
         logging.debug("Command: '{}', STDOUT: {}".format(command, output))
 
-        if len(error) > 0:
+        if len(error) > 0 and not any(ignore in error.lower() for ignore in ignore_errors):
             logging.warning("Command: '{}', STDERR: {}".format(command, error))
 
         return output, error
