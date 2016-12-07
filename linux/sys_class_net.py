@@ -109,7 +109,7 @@ def _get_bonding_master_detail(connection, sys_path, cmd_prefix=""):
         output, error = Client.exec_command(connection, command)
 
         for master_line in output.split(str('\n')):
-            for bonding_device in master_line:
+            for bonding_device in master_line.split():
                 master[bonding_device] = {}
 
                 # Pull configuration from /proc/net/bonding/<bonding_device>
