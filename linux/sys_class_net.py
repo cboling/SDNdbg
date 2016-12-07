@@ -71,6 +71,7 @@ def _get_device_list(connection, cmd_prefix=""):
             devices[name] = _get_bonding_master_detail(connection, sys_path, cmd_prefix)
         else:
             devices[name] = _get_device_detail(connection, sys_path, cmd_prefix)
+
         devices[name][str('name')] = name
         #
         # TODO: Add driver detail and peer information if we can !!!
@@ -78,7 +79,7 @@ def _get_device_list(connection, cmd_prefix=""):
 
         if sys_path != str(_sysfs_mount_point + '/class/net/bonding_masters'):
             devices[name]['driver'] = _driver_info(connection, name, cmd_prefix=cmd_prefix)
-            if devices[name]['driver'].get('supports-statistics', 'no').lower() == 'yes':
+            if devices[name]['driver'].get('supports-statistics', False):
                 stats = _driver_stats(connection, name, cmd_prefix=cmd_prefix)
 
                 if 'statistics' in devices[name]:
