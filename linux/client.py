@@ -85,7 +85,7 @@ class Client(object):
 
             if connection is not None:
                 for table in available_tables:
-                    self.table_info[table] = get_funcs.get(table)(connection)
+                    self.table_info[str(table)] = get_funcs.get(table)(connection)
             else:
                 logging.error('Linux.client: Could not open a connection to {}'.format(self.address))
 
@@ -110,10 +110,10 @@ class Client(object):
             output = str(ssh_stdout.read())
             error = str(ssh_stderr.read())
 
+            logging.debug("Command: '{}', STDOUT: {}".format(command, output))
+
         except UnicodeDecodeError:
             pass
-
-        logging.debug("Command: '{}', STDOUT: {}".format(command, output))
 
         if len(error) > 0 and (ignore_errors is None or
                                    not any(ignore in error.lower() for ignore in ignore_errors)):

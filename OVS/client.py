@@ -52,9 +52,9 @@ class Client(object):
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         try:
-            logging.info("Attempting ssh connection: {}@{}, password: '{}'".format(self.username,
-                                                                                   self.address,
-                                                                                   self.password))
+            logging.debug("Attempting ssh connection: {}@{}, password: '{}'".format(self.username,
+                                                                                    self.address,
+                                                                                    self.password))
             ssh_client.connect(address, username=username, password=password)
             return ssh_client
 
@@ -78,8 +78,6 @@ class Client(object):
                             'Flow_Table', 'QoS', 'Queue', 'Mirror', 'Controller',
                             'Manager', 'Netflow', 'SSL', 'sFlow', 'IPFIX',
                             'Flow_Sample_Collector_Set']
-        # TODO make 'need_sudo' persistent
-        need_sudo = False
         connection = None
 
         try:
@@ -96,20 +94,9 @@ class Client(object):
             for table in available_tables:
                 delta_start = time.clock()
 
-                ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(str('{}{} {}'.
-                                                                                format('sudo ' if need_sudo else '',
-                                                                                       command, table)))
+                ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(str('sudo {} {}'.format(command, table)))
                 error = ssh_stderr.read()
                 output = ssh_stdout.read()
-
-                if error is not None and 'permission denied' in error.lower():
-                    # Try with sudo
-
-                    ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(str('sudo {} {}'.
-                                                                                    format(command, table)))
-                    error = ssh_stderr.read()
-                    output = ssh_stdout.read()
-                    need_sudo = (error is None or 'permission denied' not in error.lower()) and len(output) > 0
 
                 logging.debug('Table: {}, STDOUT: {}'.format(table, pprint.PrettyPrinter(indent=2).pformat(output)))
                 logging.debug('Table: {}, STDERR: {}'.format(table, pprint.PrettyPrinter(indent=2).pformat(error)))
@@ -117,7 +104,7 @@ class Client(object):
                 delta_times[table.lower()] = time.clock() - delta_start
 
                 try:
-                    self.table_info[table.lower()] = self._table_json_to_dict(json.loads(output))
+                    self.table_info[str(table.lower())] = self._table_json_to_dict(json.loads(output))
 
                     logging.debug('Table: {}, output: {}'.format(table, pprint.PrettyPrinter(indent=2).
                                                                  pformat(self.table_info[table.lower()])))
@@ -125,7 +112,7 @@ class Client(object):
                     # May not have any data in the table but often this may mean that ovs may not even be
                     # installed (such as a VM or container only running Keystone, glance, ...)
                     logging.debug('Value error converting OVS table {}'.format(table))
-                    self.table_info[table.lower()] = {}
+                    self.table_info[str(table.lower())] = {}
 
         except Exception as e:
             logging.exception('Client.get_tables')
@@ -135,10 +122,10 @@ class Client(object):
                 connection.close()
 
         all_tables_delta_time = time.clock() - all_tables_start_time
-        logging.info('OVS Table parsing took {} seconds.  Individual table delta times follow:\n{}'.
-                     format(all_tables_delta_time, pprint.PrettyPrinter(indent=2).pformat(delta_times)))
+        logging.debug('OVS Table parsing took {} seconds.  Individual table delta times follow:\n{}'.
+                      format(all_tables_delta_time, pprint.PrettyPrinter(indent=2).pformat(delta_times)))
 
-        logging.info('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(self.table_info)))
+        logging.debug('output: {}'.format(pprint.PrettyPrinter(indent=2).pformat(self.table_info)))
 
         return self.table_info
 
@@ -159,7 +146,7 @@ class Client(object):
             for item in val:
                 assert (len(item) == 2)
                 assert (not isinstance(item[1], list))
-                k = item[0]
+                k = str(item[0])
                 val_type = item[1][0] if isinstance(item[1], list) else 'literal'
                 v = item[1][1] if isinstance(item[1], list) else item[1]
                 result[k] = convert_it(val_type, v)
