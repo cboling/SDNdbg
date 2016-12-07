@@ -32,7 +32,6 @@ class Client(object):
         self._password = password
         self.raw_table_info = {}
         self.table_info = {}
-        self.use_sudo = False
 
     @property
     def address(self):
@@ -100,22 +99,13 @@ class Client(object):
         return self.table_info
 
     @staticmethod
-    def exec_command(connection, command, use_sudo=False):
+    def exec_command(connection, command):
 
-        if use_sudo:
-            command = 'sudo {}'.format(command)
+        command = 'sudo {}'.format(command)
 
         ssh_stdin, ssh_stdout, ssh_stderr = connection.exec_command(command)
         error = ssh_stderr.read()
         output = ssh_stdout.read()
-
-        permission_errors = ['permission denied', 'operation not permitted']
-
-        if error is not None and not use_sudo:
-            for msg in permission_errors:
-                if msg in error.lower():
-                    # Try with sudo
-                    return Client.exec_command(connection, command, use_sudo=True)
 
         logging.debug("Command: '{}', STDOUT: {}".format(command, output))
 
