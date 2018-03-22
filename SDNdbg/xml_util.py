@@ -1,12 +1,14 @@
 #!/usr/bin/env python
-from types import StringTypes
-from lxml import etree
 from StringIO import StringIO
+from lxml import etree
+from types import StringTypes
+
 
 # helper functions to help build xpaths
+
+
 class XpathFilter:
     @staticmethod
-
     def filter_value(key, value):
         xpath = ""
         if isinstance(value, str):
