@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -3
 """
 Copyright (c) 2015 - 2016.  Boling Consulting Solutions , BCSW.net
 

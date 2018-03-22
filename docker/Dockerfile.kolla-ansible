@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2015 - Present.  Boling Consulting Solutions, BCSW.net
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#######################################################################
+# kolla-ansible base image
+#######################################################################
+
+ARG TAG=latest
+ARG REGISTRY=''
+ARG REPOSITORY=''
+
+FROM ${REGISTRY}${REPOSITORY}sdndbg-base:${TAG}
+MAINTAINER Chip Boling <chip@bcsw.net>
+
+ENV KOLLA_HOME=/home/kolla
+
+# Kolla specific items
+RUN apt-get update && \
+    apt-get install -y ansible python-dev libffi-dev gcc libssl-dev python-selinux sudo \
+            lsb-release software-properties-common python-software-properties
+
+# Install docker/docker-ce
+RUN curl -sSL https://get.docker.io | bash
+RUN mkdir -p /etc/systemd/system/docker.service.d
+#RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+#RUN sudo apt-add-repository \
+#   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+#   $(lsb_release -cs) \
+#   stable"
+
+RUN apt-get update && \
+    apt-get install docker-ce
+
+# Touch up (add) mountflags for docker
+RUN sed --in-place '/^\[Service\]/aMountFlags=shared' /etc/systemd/system/multi-user.target.wants/docker.service
+# RUN systemctl daemon-reload
+# RUN systemctl enable docker
+# RUN systemctl restart docker
+
+# A user named kolla with password kolla, with sudo & docker
+RUN adduser --gecos GECOS --quiet --disabled-login kolla && \
+    echo "kolla:kolla" | chpasswd && \
+    adduser kolla sudo && \
+    adduser kolla docker
+
+# Ansible support
+RUN pip install --upgrade pip && \
+    pip install -U ansible jinja2 docker-py
+
+# Tweek the /etc/ansible/ansible.cfg file
+#[defaults]
+#host_key_checking=False
+#pipelining=True
+#forks=100
+RUN cp /etc/ansible/ansible.cfg /etc/ansible.cfg.bak && \
+    sed --in-place 's/#host_key_checking/host_key_checking/' /etc/ansible/ansible.cfg && \
+    sed --in-place 's/#pipelining[[:blank:]]*=[[:blank:]]*False/pipelining=True/' /etc/ansible/ansible.cfg && \
+    sed --in-place 's/#forks[[:blank:]]*=[[:blank:]]*5/forks=100/' /etc/ansible/ansible.cfg
+
+# Install kolla-ansible
+RUN pip install kolla-ansible && \
+    cp -r /usr/local/share/kolla-ansible/etc_examples/kolla /etc/kolla/
+
+# Get a copy of the inventory examples
+RUN mkdir -p /home/kolla/inventory && \
+    cp -r /usr/local/share/kolla-ansible/ansible/inventory/* /home/kolla/inventory/ && \
+    chown -R kolla:kolla /home/kolla/inventory
+
+# At this point, we prepare the initial configuration.  Here is the common base
+# settings we want for all
+WORKDIR /home/kolla
+RUN chown -R kolla:kolla /home/kolla
+
+# Minor cleanups
+# TODO: Test removing others -> software-properties-common python-software-properties
+run apt-get purge -y lsb-release &&  apt-get autoremove -y

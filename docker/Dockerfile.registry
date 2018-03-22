@@ -1,0 +1,70 @@
+#
+# Copyright (c) 2015 - Present.  Boling Consulting Solutions, BCSW.net
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+########################################################################
+# Local docker registry container to help improve kolla container builds
+#
+# TODO: Need external registry mount from container
+########################################################################
+
+ARG TAG=latest
+ARG REGISTRY=''
+ARG REPOSITORY=''
+ARG HOSTNAME=docker-kolla
+
+FROM ${REGISTRY}${REPOSITORY}sdndbg-base:${TAG}
+MAINTAINER Chip Boling <chip@bcsw.net>
+
+ENV REGISTRY_HOME /opt/docker-registry
+ENV REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY /opt/docker-registry
+# ENV HOST_NAME docker-kolla
+
+# Registry needs
+RUN apt-get update && \
+    apt-get install -y openssl apache2-utils curl apt-transport-https software-properties-common sudo
+
+# Directories
+RUN mkdir -p /opt/docker-registry
+RUN mkdir -p /opt/docker-registry/data
+RUN mkdir -p /opt/docker-registry/nginx
+RUN mkdir -p /opt/docker-registry/certs
+RUN chown root:root /opt/docker-registry
+
+# Self-Signed Certificates
+# RUN hostname docker-kolla
+RUN openssl req -newkey rsa:4096 -nodes -sha256 -keyout /opt/docker-registry/certs/kolla.key \
+    -x509 -days 365 -out /opt/docker-registry/certs/kolla.crt \
+    -subj /C=US/ST=Alabama/L=Huntsville/O=BCSW/OU=SDNdbgDev/CN=docker-kolla
+
+# Download and install docker
+
+RUN curl -sSL https://get.docker.io | bash
+RUN mkdir -p /etc/systemd/system/docker.service.d
+COPY docker/config/docker-kolla.conf /etc/systemd/system/docker.service.d/kolla.conf
+
+# Run as docker user (and username)
+# RUN adduser -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+# Docker Python needs, just in case # TODO: Remove if not ever used
+RUN pip install --upgrade pip
+
+# USER docker
+EXPOSE 5000 443
+
+# TODO: Add a storage volume for the /opt/docker-registry
+CMD service docker start
+
+ENTRYPOINT ["/bin/bash", "-c", \
+  "docker run -it -p 5000:5000 --restart=always -e REGISTRY_HTTP_ADDR=0.0.0.0:443 -e REGISTRY_HTTP_TLS_CERTIFICATE=/cert/kolla.cert -e REGISTRY_HTTP_TLS_KEY=/cert/kolla.key --name registry registry:2"]

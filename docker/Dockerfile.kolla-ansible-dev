@@ -1,0 +1,58 @@
+#
+# Copyright (c) 2015 - Present.  Boling Consulting Solutions, BCSW.net
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#######################################################################
+# Developement version of base kolla-ansible container
+#######################################################################
+
+ARG TAG=latest
+ARG REGISTRY=''
+ARG REPOSITORY=''
+
+FROM ${REGISTRY}${REPOSITORY}sdndbg-kolla-ansible:${TAG}
+MAINTAINER Chip Boling <chip@bcsw.net>
+
+ENV KOLLA_HOME=/home/kolla
+
+# Kolla specific items
+RUN apt-get update && \
+    apt-get install -y net-tools bridge-utils
+
+# Backup configuration and then edit the Kolla Configuration
+RUN mv /etc/kolla/globals.yml /etc/kolla/globals.yml.dist
+RUN mv /etc/kolla/passwords.yml /etc/kolla/passwords.yml.dist
+COPY docker/config/all-in-one-dev/globals.yml /etc/kolla/globals.yml
+COPY docker/config/all-in-one-dev/passwords.yml /etc/kolla/passwords.yml
+
+# Nova setup
+RUN mkdir -p /etc/kolla/config/nova
+COPY docker/config/all-in-one-dev/nova-compute.conf /etc/kolla/config/nova
+
+# Network setup
+COPY docker/config/all-in-one-dev/eth0 /etc/network/interfaces.d/
+COPY docker/config/all-in-one-dev/eth1 /etc/network/interfaces.d/
+
+# Password generation
+RUN kolla-genpwd
+
+# Touch up default/main.yaml to not customize the etc/hosts file
+RUN sed --in-place 's/^customize_etc_hosts/#customize_etc_hosts/' /usr/local/share/kolla-ansible/ansible/roles/baremetal/defaults/main.yml
+RUN sed --in-place '/^#customize_etc_hosts*/acustomize_etc_hosts: False' /usr/local/share/kolla-ansible/ansible/roles/baremetal/defaults/main.yml
+
+# Bootstrap the server
+# RUN kolla-ansible -i /home/kolla/inventory/all-in-one bootstrap-servers
+
+# Seed the docker images
+# RUN kolla-ansible pull

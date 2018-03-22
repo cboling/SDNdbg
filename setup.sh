@@ -27,7 +27,7 @@ create_database()
 # Activate the models for our apps
 #
 activate_models()
-{pyt
+{
     # TODO Add all models here
     models=collector
 

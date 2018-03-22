@@ -1,0 +1,138 @@
+{
+  "apps": {
+    "org.opencord.aaa": {
+      "AAA": {
+        "radiusIp": "108.79.128.16",
+        "nasIp": "41.189.195.203",
+        "radiusServerPort": "1812",
+        "radiusSecret": "mysecret",
+        "radiusConnectionType": "socket",
+        "packetCustomizer": "sample"
+      }
+    },
+    "org.opencord.sadis": {
+      "sadis": {
+        "integration": {
+          "cache": {
+            "enabled": true,
+            "maxsize": 50,
+            "ttl": "PT1m"
+          }
+        },
+        "entries": [
+          {
+            "id": "uni-66",
+            "cTag": 242,
+            "sTag": 2,
+            "nasPortId": "PON 1/1/03/1 1:1.1",
+            "circuitId": "LBADTN1730AD299 PON 1/1/01/01:1.1.1",
+            "remoteId": "60:fe:20:6a:b3:20"
+          }
+        ]
+      }
+    },
+    "org.opencord.dhcpl2relay": {
+      "dhcpl2relay": {
+        "dhcpServerConnectPoints": [
+          "of:b1b2486e73010256/1025"
+        ]
+      }
+    },
+    "org.opencord.igmpproxy": {
+      "igmpproxy": {
+        "globalConnectPointMode": "true",
+        "globalConnectPoint": "of:b1b2486e73010256/1025",
+        "UnsolicitedTimeOut": "2",
+        "MaxResp": "10",
+        "KeepAliveInterval": "120",
+        "KeepAliveCount": "3",
+        "LastQueryInterval": "2",
+        "LastQueryCount": "2",
+        "FastLeave": "false",
+        "PeriodicQuery": "true",
+        "IgmpCos": "7",
+        "withRAUpLink": "true",
+        "withRADownLink": "true",
+        "pimSSmInterworking": "false"
+      },
+      "ssmTranslate": [
+        {
+          "source": "70.143.157.110",
+          "group": "239.192.1.126"
+        },
+        {
+          "source": "70.143.157.110",
+          "group": "239.192.1.41"
+        },
+        {
+          "source": "70.143.157.110",
+          "group": "239.192.38.11"
+        },
+        {
+          "source": "70.143.157.110",
+          "group": "239.192.39.11"
+        },
+        {
+          "source": "70.143.157.110",
+          "group": "239.192.38.4"
+        },
+        {
+          "source": "70.143.157.110",
+          "group": "239.192.39.4"
+        },
+        {
+          "source": "70.143.157.110",
+          "group": "239.195.5.1"
+        },
+        {
+          "source": "70.143.157.110",
+          "group": "239.192.1.127"
+        }
+      ]
+    },
+    "org.opencord.mcast": {
+      "multicast": {
+        "ingressVlan": "4000",
+        "egressVlan": "4000"
+      }
+    }
+  },
+  "devices": {
+    "of:000100139521a26a": {
+      "basic": {
+        "driver": "pmc-olt"
+      },
+      "accessDevice": {
+        "uplink": "1",
+        "vlan": "2"
+      }
+    },
+    "of:000000139521a26a": {
+      "basic": {
+        "driver": "pmc-olt"
+      },
+      "accessDevice": {
+        "uplink": "1",
+        "vlan": "2"
+      }
+    }
+  },
+  "links": {
+    "of:b1b2486e73010256/1025-of:0001000000000001/1": {
+      "basic": {}
+    },
+    "of:0001000000000001/1-of:b1b2486e73010256/1025": {
+      "basic": {}
+    }
+  },
+  "ports": {
+    "of:b1b2486e73010256/73": {
+      "interfaces": [
+        {
+        }
+      ]
+    }
+  },
+  "hosts": {
+  }
+}

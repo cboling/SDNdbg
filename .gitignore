@@ -67,3 +67,6 @@ target/
 vENV/
 /config2.yaml
 /ostack-admin.sh
+
+# SDNdbg specific
+support/kolla/inventory/

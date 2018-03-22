@@ -1,5 +1,5 @@
 """
-Copyright (c) 2015 - Present.  Boling Consulting Solutions , BCSW.net
+Copyright (c) 2015 - present.  Boling Consulting Solutions, BCSW.net
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
