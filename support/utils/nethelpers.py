@@ -82,5 +82,6 @@ def _get_my_primary_local_ipv4(ifname=None):
     except Exception as e:
         return None
 
+
 if __name__ == '__main__':
-    print get_my_primary_local_ipv4()
+    print(get_my_primary_local_ipv4())

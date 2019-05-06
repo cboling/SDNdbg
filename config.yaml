@@ -4,10 +4,11 @@
 # 'default-credentials' is a list of SSH credentials to use on SSH connections where SSH is the only
 # supported mechanism to retrieve information
 
-default-credentials:   &default-creds-1
-  - {'username': 'stack', 'password': 'stack'}
+default-credentials: &default-creds-1
   - {'username': 'ubuntu', 'password': 'ubuntu'}
   - {'username': 'root',   'password': 'root'}
+  - {'username': 'voltha',  'password': 'admin'}
+  - {'username': 'stack',  'password': 'stack'}
 
 # OpenStack Credentials support both keystone v2.0 and v3. The determination of which keystone API
 # to use is based on the AUTH URL.
@@ -27,7 +28,7 @@ openstack-credentials: &openstack-creds-1
 
 # ONOS Credentials are for REST access to one or more ONOS clusters
 
-onos-credentials:   &onos-creds
+onos-credentials: &onos-creds
   'name':        'ONOS Example'
   'type':        'ONOS'
   'address':     'localhost'
@@ -39,7 +40,7 @@ onos-credentials:   &onos-creds
 ############################################################################################
 # Some global settings
 
-logging-level: 'info'
+logging-level: 'debug'
 
 ############################################################################################
 # Now begin the definition of controllers to map.  Note that in the 'sdn-controllers' section
@@ -47,13 +48,14 @@ logging-level: 'info'
 # override the name and address to keep it unique  The same could have been done if you
 # hand more than one VIM/NFVi systems to discover
 
-example-site:   &example-site
+example-site: &example-site
   'name':             'Example Site'
   'ssh-credentials':  *default-creds-1
   'seed-file':        'seed.json'
 
   'vims':
     - *openstack-creds-1
+    # TODO: Support docker, docker-compose, and kubernetes
 
   'sdn-controllers':
     - *onos-creds

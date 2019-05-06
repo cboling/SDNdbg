@@ -16,8 +16,8 @@ from __future__ import unicode_literals
 import logging
 import pprint
 
-from credentials import Credentials
-from node import Node
+from .credentials import Credentials
+from .node import Node
 
 
 class Controller(Node):

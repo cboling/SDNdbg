@@ -13,7 +13,7 @@
 
 from __future__ import unicode_literals
 
-from base import Base
+from .base import Base
 
 
 class Edge(Base):

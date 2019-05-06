@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from StringIO import StringIO
+from io import StringIO
 from lxml import etree
 from types import StringTypes
 
@@ -148,7 +148,7 @@ class XmlElement:
     # are redirected on self.element
     def __getattr__ (self, name):
         if not hasattr(self.element, name):
-            raise AttributeError, name
+            raise AttributeError(name)
         return getattr(self.element, name)
 
 class Xml:
@@ -177,8 +177,8 @@ class Xml:
             # 'rspec' file doesnt exist. 'rspec' is proably an xml string
             try:
                 tree = etree.parse(StringIO(xml), parser)
-            except Exception, e:
-                raise Exception, str(e)
+            except Exception as e:
+                raise Exception(str(e))
         root = tree.getroot()
         self.namespaces = dict(root.nsmap)
         # set namespaces map
@@ -248,7 +248,7 @@ class Xml:
         if not relaxng(self.root):
             error = relaxng.error_log.last_error
             message = "%s (line %s)" % (error.message, error.line)
-            raise Exception, message
+            raise Exception(message)
         return True
 
     def xpath(self, xpath, namespaces=None):

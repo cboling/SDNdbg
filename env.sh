@@ -22,19 +22,23 @@ export SDNDBG_BASE=${PWD}
 
 # load local python virtualenv if exists, otherwise create it
 VENVDIR="venv-$(uname -s | tr '[:upper:]' '[:lower:]')"
-if [ ! -e "${VENVDIR}/.built" ]; then
+
+if [ ! -e "$VENVDIR/.built" ]; then
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "Initializing OS-appropriate virtual env."
     echo "This will take a few minutes."
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-    make venv
+    virtualenv -p python3 ${VENVDIR}
+    . ${VENVDIR}/bin/activate
+    pip3 install --upgrade pip
+    if pip3 install -r requirements.txt; \
+	    then \
+	        uname -s > ${VENVDIR}/.built; \
+	    fi
+	(cd ${VENVDIR}/lib && find . -name python3\* -exec ln -s {} python3 \;)
 fi
 . ${VENVDIR}/bin/activate
 
-# add top-level SDNdbg dir to pythonpath
-export PYTHONPATH=${SDNDBG_BASE}/${VENVDIR}/lib/python2.7/site-packages:${PYTHONPATH}:${SDNDBG_BASE}
-
-# assign DOCKER_HOST_IP to be the main ip address of this host
-export DOCKER_HOST_IP=$(python support/utils/nethelpers.py)
-
+# add top-level parser dir to pythonpath
+export PYTHONPATH=${SDNDBG_BASE}/${VENVDIR}/lib/python3/site-packages:${PYTHONPATH}:${SDNDBG_BASE}
 export PATH=${SDNDBG_BASE}/bin:${PATH}

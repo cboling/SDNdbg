@@ -18,7 +18,7 @@ import logging
 import pprint
 
 from core.node import Node
-from interface import Interface
+from .interface import Interface
 
 
 class Port(Node):

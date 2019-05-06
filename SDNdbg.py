@@ -64,7 +64,6 @@ def shutdown(wait_delay):
 
 def main():
     # Parse input
-
     parser = argparse.ArgumentParser(description=app_name)
 
     parser.add_argument('--config', '-c', action='store', default=None,

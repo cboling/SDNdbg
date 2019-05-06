@@ -19,7 +19,7 @@ from os import path
 import urllib3.util as urlutil
 
 from core.utils import get_uuid, levelname_to_level
-from credentials import Credentials
+from .credentials import Credentials
 
 
 class Config(object):

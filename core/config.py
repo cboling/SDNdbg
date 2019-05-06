@@ -47,9 +47,10 @@ class Config(object):
 
         # Continue with loading of the configuration file. If not present, try to load from
         # environment variables
+        config_file = kwargs.get('config_file')
 
-        if 'config_file' in kwargs:
-            self._config_data = self._load_file(kwargs['config_file'])
+        if config_file is not None:
+            self._config_data = self._load_file(config_file)
 
             if 'sites' not in self._config_data:
                 raise KeyError("Unable to locate required key 'sites' in configuration file '{}'".
@@ -61,7 +62,7 @@ class Config(object):
 
     @staticmethod
     def _load_env_vars():
-        from site import Config as SiteConfig
+        from .site import Config as SiteConfig
         return {'sites': [SiteConfig.load_env_vars()]}
 
     def _load_file(self, filename):
@@ -93,7 +94,7 @@ class Config(object):
 
         :return: (list) Site configuration objects
         """
-        from site import Config as SiteConfig
+        from .site import Config as SiteConfig
         sites = []
 
         for site_config in site_configs:

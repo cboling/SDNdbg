@@ -18,7 +18,7 @@ import logging
 import pprint
 
 from core.switch import Switch as CoreSwitch
-from port import Port
+from .port import Port
 
 
 class Switch(CoreSwitch):

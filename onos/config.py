@@ -17,7 +17,7 @@ import logging
 from os import path
 
 from core.utils import get_uuid, levelname_to_level
-from credentials import OnosCredentials
+from .credentials import OnosCredentials
 
 
 class Config(object):

@@ -17,7 +17,7 @@ import ast
 import logging
 import pprint
 
-from client import Client
+from .client import Client
 
 DEFAULT_SYSFS_MOUNT_POINT = '/sys'
 _sysfs_mount_point = DEFAULT_SYSFS_MOUNT_POINT

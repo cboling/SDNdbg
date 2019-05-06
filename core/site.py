@@ -18,9 +18,9 @@ import logging
 import os
 import pprint
 
-from controller import Controller
-from node import Node
-from utils import get_uuid
+from .controller import Controller
+from .node import Node
+from .utils import get_uuid
 
 
 class Config(object):
@@ -61,7 +61,7 @@ class Config(object):
         """
         Load up our configuration based on common environment variables.
 
-        Obviously can only handle a single Openstack and onos controller
+        Obviously can only handle a single OpenStack and ONOS controller
 
         :return: (dict) Site configuration dictionary constructed from environment variables
         """

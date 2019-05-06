@@ -20,7 +20,7 @@ from uuid import UUID
 
 from transitions import Machine
 
-from utils import get_uuid
+from .utils import get_uuid
 
 # Some constants
 DEFAULT_UPDATE_INTERVAL_SECS = 60  # When in sync, default 'update with VIM' delta in seconds
@@ -33,7 +33,7 @@ class Base(object):
     This class provides a set of common properties and methods implemented by most all other
     orchestrator objects (site, user, vnf, ...).
 
-    An object of a class derived from 'Base' will exist in one of 5 states. The definition of each
+    An object of a class derived from 'Base' will exist in one of 4 states. The definition of each
     state is defined below:
 
     OUT_OF_SYNC This is the initial state of an object an when it is first created and after connectivity
